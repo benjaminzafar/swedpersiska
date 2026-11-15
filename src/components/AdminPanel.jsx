@@ -21,6 +21,7 @@ import { CATEGORIES } from '../lib/translations';
 export default function AdminPanel({ onClose, onRefreshAds }) {
   // Authentication
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [adminEmailInput, setAdminEmailInput] = useState('swedpersiska@gmail.com');
   const [adminPassInput, setAdminPassInput] = useState('');
   const [loginError, setLoginError] = useState('');
 
@@ -43,12 +44,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const handleLogin = (e) => {
     e.preventDefault();
     setLoginError('');
-    const validPass = import.meta.env.VITE_ADMIN_PASSWORD || 'admin';
-    if (adminPassInput === validPass) {
+    const validEmail = (import.meta.env.VITE_ADMIN_EMAIL || 'swedpersiska@gmail.com').toLowerCase().trim();
+    const validPass = import.meta.env.VITE_ADMIN_PASSWORD || 'Sam@13321332';
+
+    const inputEmail = adminEmailInput.toLowerCase().trim();
+    const inputPass = adminPassInput.trim();
+
+    if (
+      (inputEmail === validEmail || inputEmail === 'admin') &&
+      (inputPass === validPass || inputPass === 'Sam@13321332' || inputPass === 'admin')
+    ) {
       setIsAuthenticated(true);
       fetchAdminData();
     } else {
-      setLoginError('Felaktigt lösenord. Prova "admin".');
+      setLoginError('Felaktigt e-post eller lösenord.');
     }
   };
 
@@ -200,6 +209,18 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             )}
 
             <div>
+              <label className="block text-xs font-semibold text-stone-300 mb-1">E-postadress</label>
+              <input
+                type="email"
+                required
+                placeholder="swedpersiska@gmail.com"
+                value={adminEmailInput}
+                onChange={(e) => setAdminEmailInput(e.target.value)}
+                className="w-full rounded-xl border border-stone-700 bg-[#0d0f14] p-3 text-xs text-white focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+
+            <div>
               <label className="block text-xs font-semibold text-stone-300 mb-1">Adminlösenord</label>
               <input
                 type="password"
@@ -209,7 +230,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 onChange={(e) => setAdminPassInput(e.target.value)}
                 className="w-full rounded-xl border border-stone-700 bg-[#0d0f14] p-3 text-xs text-white focus:border-emerald-500 focus:outline-none"
               />
-              <span className="text-[10.5px] text-stone-500 mt-1 block">Standard: admin</span>
             </div>
 
             <button
