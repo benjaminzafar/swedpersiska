@@ -296,7 +296,6 @@ export default function PostAdModal({
                           : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                       }`}
                     >
-                      <span className="text-base">{c.flag}</span>
                       <span>{c.nameFa}</span>
                     </button>
                   ))}

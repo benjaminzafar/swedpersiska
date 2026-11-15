@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, Clock } from 'lucide-react';
+import { MapPin, Eye, Clock } from 'lucide-react';
 import { CATEGORIES } from '../lib/translations';
 
 export default function AdCard({ ad, lang, onSelect }) {
@@ -46,9 +46,9 @@ export default function AdCard({ ad, lang, onSelect }) {
           {catName}
         </div>
 
-        {/* City & Country Pill */}
-        <div className="absolute bottom-2.5 start-2.5 flex items-center gap-1.5 rounded-full bg-slate-950/80 px-2.5 py-0.5 text-[11px] font-medium text-slate-200 backdrop-blur-xs">
-          <span>{ad.country === 'no' ? '🇳🇴' : ad.country === 'dk' ? '🇩🇰' : ad.country === 'fi' ? '🇫🇮' : '🇸🇪'}</span>
+        {/* City Pill */}
+        <div className="absolute bottom-2.5 start-2.5 flex items-center gap-1 rounded-full bg-slate-950/80 px-2.5 py-0.5 text-[11px] font-medium text-slate-200 backdrop-blur-xs">
+          <MapPin size={11} className="text-blue-400 shrink-0" />
           <span>{ad.city}{ad.area ? ` • ${ad.area}` : ''}</span>
         </div>
       </div>

@@ -143,7 +143,7 @@ export default function AdDetailModal({ ad, lang = 'fa', onClose }) {
             {/* Location & Metadata Badges */}
             <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-stone-500 tabular-nums">
               <div className="flex items-center gap-1.5 font-semibold text-stone-700 bg-stone-100 px-2.5 py-1 rounded-lg border border-stone-200/60">
-                <span>{ad.country === 'no' ? '🇳🇴 نروژ' : ad.country === 'dk' ? '🇩🇰 دانمارک' : ad.country === 'fi' ? '🇫🇮 فنلاند' : '🇸🇪 سوئد'}</span>
+                <span>{ad.country === 'no' ? 'نروژ' : ad.country === 'dk' ? 'دانمارک' : ad.country === 'fi' ? 'فنلاند' : 'سوئد'}</span>
                 <span className="text-stone-300">•</span>
                 <MapPin size={13} className="text-blue-600 shrink-0" />
                 <span>{ad.city}{ad.area ? ` (${ad.area})` : ''}</span>

@@ -28,19 +28,48 @@ export default function App() {
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Filters
+  // Country & URL synchronization (Address bar: /?c=se, /?c=no, etc.)
   const [selectedCountry, setSelectedCountry] = useState(() => {
-    return localStorage.getItem('scandi_country_selected') || 'se';
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlC = (params.get('c') || params.get('country') || '').toLowerCase();
+      if (['se', 'no', 'dk', 'fi'].includes(urlC)) {
+        return urlC;
+      }
+    } catch {}
+    const saved = localStorage.getItem('scandi_country_selected');
+    if (['se', 'no', 'dk', 'fi'].includes(saved)) {
+      return saved;
+    }
+    return 'se';
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
 
   const handleCountryChange = (c) => {
-    setSelectedCountry(c);
+    const valid = ['se', 'no', 'dk', 'fi'].includes(c) ? c : 'se';
+    setSelectedCountry(valid);
     setSelectedCity('all');
-    localStorage.setItem('scandi_country_selected', c);
+    localStorage.setItem('scandi_country_selected', valid);
+    // Update address bar with country code
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('c', valid);
+      window.history.replaceState({}, '', url.toString());
+    } catch {}
   };
+
+  // Sync address bar on mount
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      if (!url.searchParams.get('c')) {
+        url.searchParams.set('c', selectedCountry);
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
+  }, [selectedCountry]);
 
   // Modals
   const [countryModalOpen, setCountryModalOpen] = useState(() => {
@@ -114,24 +143,13 @@ export default function App() {
   const currentCountryObj = COUNTRIES.find(c => c.id === selectedCountry) || COUNTRIES[0];
 
   // Dynamic available cities for current country
-  const availableCities = selectedCountry === 'all'
-    ? [
-        { id: 'all', fa: 'تمام شهرهای اسکاندیناوی' },
-        ...COUNTRIES.flatMap(c => c.cities.filter(city => city.id !== 'all').map(city => ({
-          id: city.id,
-          fa: `${city.fa} (${c.nameFa})`
-        })))
-      ]
-    : currentCountryObj.cities;
+  const availableCities = currentCountryObj.cities;
 
   // Dynamic Hero Titles based on selected country
   let heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در سوئد';
   let heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های ایرانیان در استکهلم، یوتبوری، مالمو و سراسر سوئد.';
 
-  if (selectedCountry === 'all') {
-    heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در سراسر اسکاندیناوی';
-    heroSubheading = 'جامع‌ترین بازارچه آنلاین ایرانیان مقیم سوئد، نروژ، دانمارک و فنلاند. ثبت رایگان آگهی با کد پیگیری اختصاصی.';
-  } else if (selectedCountry === 'no') {
+  if (selectedCountry === 'no') {
     heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در نروژ';
     heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های ایرانیان در اسلو، برگن، تروندهایم و سراسر نروژ.';
   } else if (selectedCountry === 'dk') {
@@ -144,7 +162,7 @@ export default function App() {
 
   // Filter ads
   const filteredAds = ads.filter(ad => {
-    const matchCountry = selectedCountry === 'all' || ad.country === selectedCountry || (!ad.country && selectedCountry === 'se');
+    const matchCountry = ad.country === selectedCountry || (!ad.country && selectedCountry === 'se');
     const matchCat = selectedCategory === 'all' || ad.category === selectedCategory;
     const matchCity = selectedCity === 'all' || ad.city === selectedCity;
     const q = searchQuery.toLowerCase().trim();

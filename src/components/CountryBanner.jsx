@@ -13,7 +13,7 @@ export default function CountryBanner({
 
   // Keep activeChoice synced with selectedCountry when opened
   useEffect(() => {
-    if (selectedCountry) {
+    if (selectedCountry && selectedCountry !== 'all') {
       setActiveChoice(selectedCountry);
     }
   }, [selectedCountry, isOpen]);
@@ -71,7 +71,7 @@ export default function CountryBanner({
   }, []);
 
   const handleConfirm = (countryId) => {
-    const finalId = countryId || activeChoice;
+    const finalId = countryId || activeChoice || 'se';
     setActiveChoice(finalId);
     if (onSelectCountry) onSelectCountry(finalId);
     localStorage.setItem('scandi_country_selected', finalId);
@@ -98,7 +98,7 @@ export default function CountryBanner({
   if (!isOpen) return null;
 
   const detectedObj = COUNTRIES.find(c => c.id === detectedCountryId) || COUNTRIES[0];
-  const chosenObj = COUNTRIES.find(c => c.id === activeChoice);
+  const chosenObj = COUNTRIES.find(c => c.id === activeChoice) || COUNTRIES[0];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto font-vazir select-none" dir="rtl">
@@ -110,7 +110,7 @@ export default function CountryBanner({
       />
 
       {/* Pop-Up Modal Card */}
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] border border-slate-200/90 overflow-hidden z-10 animate-in zoom-in-95 duration-200 p-6 sm:p-8 space-y-6">
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] border border-slate-200/90 overflow-hidden z-10 animate-in zoom-in-95 duration-200 p-6 sm:p-7 space-y-5">
         
         {/* Close Button */}
         <button
@@ -123,14 +123,14 @@ export default function CountryBanner({
         </button>
 
         {/* Header with Icon Badge */}
-        <div className="text-center space-y-3 pt-1">
+        <div className="text-center space-y-2.5 pt-1">
           
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 shadow-2xs">
-            <Globe size={28} className="text-[#1877F2]" />
+          <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 shadow-2xs">
+            <Globe size={24} className="text-[#1877F2]" />
           </div>
 
           <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
+            <span className="text-[10.5px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
               پرتال جامع نیازمندی‌های ایرانیان اسکاندیناوی
             </span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight pt-1">
@@ -138,24 +138,23 @@ export default function CountryBanner({
             </h2>
           </div>
 
-          {/* Detected location notice */}
-          <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 flex items-center justify-center gap-2">
-            <MapPin size={15} className="text-blue-600 shrink-0" />
+          {/* Detected location notice (NO COUNTRY CODE, ONLY PERSIAN NAME) */}
+          <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 flex items-center justify-center gap-2">
+            <MapPin size={14} className="text-blue-600 shrink-0" />
             <span>
               موقعیت شناسایی‌شده شما:{' '}
-              <strong className="font-extrabold text-slate-900 inline-flex items-center gap-1 mx-0.5 px-2 py-0.5 rounded-lg bg-white border border-slate-200 shadow-2xs">
-                <span>{detectedObj.flag}</span>
-                <span>{detectedObj.nameFa}</span>
+              <strong className="font-extrabold text-slate-900 mx-0.5 px-2 py-0.5 rounded-lg bg-white border border-slate-200 shadow-2xs">
+                {detectedObj.nameFa}
               </strong>
             </span>
           </div>
 
-          <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
+          <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
             لطفاً کشوری را که مایلید آگهی‌ها، مسکن، رستوران‌ها و خدمات آن را مشاهده کنید، انتخاب نمایید:
           </p>
         </div>
 
-        {/* Scandinavian Countries Selection Grid */}
+        {/* 4 Scandinavian Countries Selection Grid (NO "ALL COUNTRIES", NO COUNTRY CODES) */}
         <div className="grid grid-cols-2 gap-2.5">
           {COUNTRIES.map(country => {
             const isSelected = activeChoice === country.id;
@@ -172,26 +171,23 @@ export default function CountryBanner({
                     : 'border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-2xl">{country.flag}</span>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className={`text-[13px] font-bold ${isSelected ? 'text-blue-900' : 'text-slate-900'}`}>
-                        {country.nameFa}
-                      </span>
-                      {isDetected && (
-                        <span className="text-[9.5px] font-semibold px-1.5 py-0.2 rounded-md bg-emerald-100 text-emerald-800">
-                          شما
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[11px] text-slate-400 font-medium">
-                      {country.nameNative}
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`text-[14px] font-bold ${isSelected ? 'text-blue-900' : 'text-slate-900'}`}>
+                      {country.nameFa}
                     </span>
+                    {isDetected && (
+                      <span className="text-[9.5px] font-semibold px-1.5 py-0.2 rounded-md bg-emerald-100 text-emerald-800">
+                        شما
+                      </span>
+                    )}
                   </div>
+                  <span className="text-[11px] text-slate-400 font-medium block pt-0.5">
+                    {country.nameNative}
+                  </span>
                 </div>
 
-                <div className={`flex h-5 w-5 items-center justify-center rounded-full border transition-all ${
+                <div className={`flex h-5 w-5 items-center justify-center rounded-full border transition-all shrink-0 ${
                   isSelected 
                     ? 'border-[#1877F2] bg-[#1877F2] text-white' 
                     : 'border-slate-300 bg-white'
@@ -201,50 +197,17 @@ export default function CountryBanner({
               </button>
             );
           })}
-
-          {/* Option: All Scandinavian Countries (Span 2 cols) */}
-          <button
-            type="button"
-            onClick={() => setActiveChoice('all')}
-            className={`col-span-2 relative flex items-center justify-between p-3.5 rounded-2xl border text-right transition-all cursor-pointer active:scale-[0.98] ${
-              activeChoice === 'all'
-                ? 'border-[#1877F2] bg-blue-50/70 shadow-2xs ring-1 ring-[#1877F2]'
-                : 'border-slate-200/90 bg-white hover:bg-slate-50 hover:border-slate-300'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl">🌍</span>
-              <div>
-                <span className={`text-[13px] font-bold block ${activeChoice === 'all' ? 'text-blue-900' : 'text-slate-900'}`}>
-                  همه کشورهای اسکاندیناوی
-                </span>
-                <span className="text-[11px] text-slate-400 font-medium">
-                  نمایش آگهی‌های سوئد، نروژ، دانمارک و فنلاند به صورت یکپارچه
-                </span>
-              </div>
-            </div>
-
-            <div className={`flex h-5 w-5 items-center justify-center rounded-full border transition-all ${
-              activeChoice === 'all' 
-                ? 'border-[#1877F2] bg-[#1877F2] text-white' 
-                : 'border-slate-300 bg-white'
-            }`}>
-              {activeChoice === 'all' && <Check size={12} strokeWidth={3} />}
-            </div>
-          </button>
         </div>
 
-        {/* Action Buttons */}
-        <div className="space-y-2 pt-2">
+        {/* Action Buttons (NO COUNTRY CODE) */}
+        <div className="space-y-2 pt-1">
           <button
             type="button"
             onClick={() => handleConfirm(activeChoice)}
-            className="w-full h-12 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs sm:text-sm font-bold active:scale-98 transition-all flex items-center justify-center gap-2 shadow-sm shadow-blue-500/20 cursor-pointer"
+            className="w-full h-11 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs sm:text-sm font-bold active:scale-98 transition-all flex items-center justify-center gap-2 shadow-sm shadow-blue-500/20 cursor-pointer"
           >
             <span>
-              {activeChoice === 'all' 
-                ? 'ورود به بخش همه اسکاندیناوی' 
-                : `ورود به بخش ${chosenObj ? `${chosenObj.nameFa} ${chosenObj.flag}` : 'انتخاب شده'}`}
+              ورود به بخش {chosenObj.nameFa}
             </span>
             <ArrowLeft size={16} />
           </button>
@@ -252,7 +215,7 @@ export default function CountryBanner({
           <button
             type="button"
             onClick={handleDismiss}
-            className="w-full h-9 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+            className="w-full h-8 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
           >
             بستن پنجره
           </button>
