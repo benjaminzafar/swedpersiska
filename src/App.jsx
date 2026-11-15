@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import MobileBottomNav from './components/MobileBottomNav';
 import CountryBanner from './components/CountryBanner';
 import AdCard from './components/AdCard';
 import AdDetailModal from './components/AdDetailModal';
@@ -213,7 +214,7 @@ export default function App() {
   const featuredAds = filteredAds.filter(a => a.is_featured);
 
   return (
-    <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 overflow-x-hidden w-full max-w-full ${lang === 'fa' ? 'font-vazir' : ''}`}>
+    <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 overflow-x-hidden w-full max-w-full pb-16 md:pb-0 ${lang === 'fa' ? 'font-vazir' : ''}`}>
       
       {/* Geolocation Scandinavian Detection Pop-Up Modal */}
       <CountryBanner
@@ -444,6 +445,19 @@ export default function App() {
         }}
         onOpenManageAd={() => setManageAdOpen(true)}
         onOpenAdmin={() => setAdminOpen(true)}
+      />
+
+      {/* Mobile Sticky Bottom Menu for Collections & Quick Actions */}
+      <MobileBottomNav
+        selectedCategory={selectedCategory}
+        selectedCountry={selectedCountry}
+        onSelectCategory={(catId) => setSelectedCategory(catId)}
+        onOpenCountryModal={() => setCountryModalOpen(true)}
+        onOpenPostAd={() => {
+          setPostAdCategory('bostad');
+          setPostAdOpen(true);
+        }}
+        onOpenManageAd={() => setManageAdOpen(true)}
       />
 
       {/* MODAL 1: Ad Detail */}
