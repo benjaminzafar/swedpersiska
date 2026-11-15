@@ -6,13 +6,31 @@
   html {
     font-family: 'Plus Jakarta Sans', 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* RTL / Persian typography craft (unslop rules) */
+  [dir="rtl"] {
+    font-family: 'Vazirmatn', -apple-system, sans-serif;
+    letter-spacing: 0 !important;
+    text-align: start;
+    line-height: 1.65;
+  }
+
+  [dir="rtl"] * {
+    letter-spacing: 0 !important;
   }
 }
 
-/* Persian typography support */
-[dir="rtl"] {
-  font-family: 'Vazirmatn', 'Plus Jakarta Sans', sans-serif;
-  text-align: right;
+/* Directional mirroring for navigation/arrows in RTL */
+[dir="rtl"] .icon-flip-rtl {
+  transform: scaleX(-1);
+}
+
+/* Numbers craft */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Smooth hidden scrollbar */
@@ -22,17 +40,4 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* Custom subtle glass backdrop */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.glass-panel-dark {
-  background: rgba(17, 20, 26, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
 }

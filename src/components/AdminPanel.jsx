@@ -526,24 +526,24 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       {filteredAds.map(ad => (
                         <tr key={ad.id} className="hover:bg-white/[0.02] transition-colors">
                           <td className="px-4 py-3 font-mono">
-                            <span className="font-bold text-emerald-400 block">{ad.reference_number}</span>
+                            <span className="font-semibold text-emerald-400 block"><bdi>{ad.reference_number}</bdi></span>
                             <span className="text-[10px] text-stone-500">{new Date(ad.created_at).toLocaleDateString('sv-SE')}</span>
                           </td>
 
                           <td className="px-4 py-3 max-w-xs">
-                            <p className="font-bold text-white truncate">{ad.title}</p>
+                            <p className="font-semibold text-stone-200 truncate">{ad.title}</p>
                             <span className="text-[10px] text-stone-400 block">{ad.category}</span>
                           </td>
 
                           <td className="px-4 py-3 whitespace-nowrap">
-                            <span className="text-stone-200 block">{ad.city}</span>
-                            <span className="text-[11px] font-bold text-emerald-400">
-                              {ad.price ? `${ad.price} ${ad.price_type}` : 'Enligt ök'}
+                            <span className="text-stone-300 block">{ad.city}</span>
+                            <span className="text-[11px] font-semibold text-emerald-400 tabular-nums">
+                              <bdi>{ad.price ? `${ad.price} ${ad.price_type}` : 'Enligt ök'}</bdi>
                             </span>
                           </td>
 
-                          <td className="px-4 py-3 font-mono text-amber-300 font-bold">
-                            {ad.pin_code}
+                          <td className="px-4 py-3 font-mono text-amber-300 font-semibold">
+                            <bdi>{ad.pin_code}</bdi>
                           </td>
 
                           <td className="px-4 py-3">

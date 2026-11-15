@@ -140,45 +140,41 @@ export default function App() {
 
       {/* Floating Toast Notification */}
       {toastMsg && (
-        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-2xl bg-stone-900 text-white px-4 py-3 shadow-2xl border border-stone-800 text-xs font-bold animate-in slide-in-from-bottom-3 duration-200">
-          <CheckCircle2 size={16} className="text-emerald-400" />
+        <div className="fixed bottom-5 end-5 z-50 flex items-center gap-2 rounded-xl bg-stone-900 text-white px-3.5 py-2.5 shadow-lg border border-stone-800 text-xs font-medium animate-in slide-in-from-bottom-2 duration-150">
+          <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
           <span>{toastMsg}</span>
         </div>
       )}
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-stone-900 via-[#11141a] to-stone-950 text-white pt-12 pb-16 px-4 sm:px-6 lg:px-8 border-b border-stone-800">
-        
-        {/* Subtle decorative background glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-tr from-emerald-600/20 to-amber-500/10 blur-[90px] rounded-full pointer-events-none" />
-
-        <div className="relative max-w-4xl mx-auto text-center space-y-6">
+      {/* Hero Section - Unslopped calm craft, no colorful blurry blobs */}
+      <section className="relative bg-[#0f1217] text-white pt-12 pb-14 px-4 sm:px-6 lg:px-8 border-b border-stone-800/80">
+        <div className="relative max-w-4xl mx-auto text-center space-y-5">
           
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-950/60 border border-emerald-500/30 px-3.5 py-1 text-xs font-semibold text-emerald-300 shadow-sm backdrop-blur-md">
-            <Sparkles size={14} className="text-amber-400" />
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-stone-800/80 border border-stone-700/70 px-3 py-0.5 text-xs font-medium text-stone-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
             <span>{currentT.heroBadge}</span>
           </div>
 
           {/* Heading */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
             {currentT.heroHeading}
           </h1>
 
-          <p className="text-sm sm:text-base text-stone-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-stone-400 max-w-xl mx-auto leading-relaxed">
             {currentT.heroSubheading}
           </p>
 
           {/* Search Box Card */}
-          <div className="bg-white/95 rounded-2xl p-2 sm:p-2.5 shadow-2xl border border-stone-200/50 max-w-3xl mx-auto flex flex-col sm:flex-row gap-2 text-stone-900 backdrop-blur-md">
+          <div className="bg-white rounded-xl p-2 shadow-sm border border-stone-200/90 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 text-stone-900">
             
             {/* City Dropdown */}
-            <div className="relative sm:w-44 shrink-0">
-              <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+            <div className="relative sm:w-40 shrink-0">
+              <MapPin size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full h-11 rounded-xl bg-stone-100 pl-9 pr-3 text-xs font-bold text-stone-800 border-0 focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                className="w-full h-10 rounded-lg bg-stone-100 ps-8 pe-3 text-xs font-semibold text-stone-800 border-0 focus:ring-1 focus:ring-stone-400 cursor-pointer"
               >
                 {CITIES.map(c => (
                   <option key={c.id} value={c.id}>
@@ -190,13 +186,13 @@ export default function App() {
 
             {/* Keyword Input */}
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+              <Search size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
                 type="text"
                 placeholder={currentT.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 rounded-xl bg-stone-50 pl-9 pr-4 text-xs font-medium text-stone-900 border-0 focus:ring-2 focus:ring-emerald-500 placeholder-stone-400"
+                className="w-full h-10 rounded-lg bg-stone-50 ps-8 pe-3 text-xs font-medium text-stone-900 border-0 focus:ring-1 focus:ring-stone-400 placeholder-stone-400"
               />
             </div>
 
@@ -204,39 +200,39 @@ export default function App() {
             <button
               type="button"
               onClick={() => {}}
-              className="h-11 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1.5"
+              className="h-10 px-5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold shadow-2xs active:scale-95 transition-all flex items-center justify-center gap-1.5"
             >
-              <Search size={14} />
+              <Search size={13} />
               <span>{currentT.searchBtn}</span>
             </button>
 
           </div>
 
-          {/* Quick Action Pills under search */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs">
+          {/* Category Shortcut Pills - quiet clean tags, no emojis */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-xs">
             <button
               onClick={() => setSelectedCategory('bostad')}
-              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 border border-white/10 transition-colors"
+              className="px-2.5 py-1 rounded-md bg-stone-800/80 hover:bg-stone-700 text-stone-300 border border-stone-700/60 transition-colors"
             >
-              🏠 {lang === 'fa' ? 'مسکن و خانه' : 'Bostad & Rum'}
+              {lang === 'fa' ? 'مسکن و خانه' : 'Bostad & Rum'}
             </button>
             <button
               onClick={() => setSelectedCategory('restaurang')}
-              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 border border-white/10 transition-colors"
+              className="px-2.5 py-1 rounded-md bg-stone-800/80 hover:bg-stone-700 text-stone-300 border border-stone-700/60 transition-colors"
             >
-              🥘 {lang === 'fa' ? 'رستوران و غذای ایرانی' : 'Persisk mat & kebab'}
+              {lang === 'fa' ? 'رستوران و غذای ایرانی' : 'Persisk mat & kebab'}
             </button>
             <button
               onClick={() => setSelectedCategory('tjanster')}
-              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 border border-white/10 transition-colors"
+              className="px-2.5 py-1 rounded-md bg-stone-800/80 hover:bg-stone-700 text-stone-300 border border-stone-700/60 transition-colors"
             >
-              ⚖️ {lang === 'fa' ? 'مترجم رسمی و وکیل' : 'Tolk & juridik'}
+              {lang === 'fa' ? 'مترجم رسمی و وکیل' : 'Tolk & juridik'}
             </button>
             <button
               onClick={() => setSelectedCategory('jobb')}
-              className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-stone-200 border border-white/10 transition-colors"
+              className="px-2.5 py-1 rounded-md bg-stone-800/80 hover:bg-stone-700 text-stone-300 border border-stone-700/60 transition-colors"
             >
-              💼 {lang === 'fa' ? 'فرصت‌های شغلی' : 'Jobb & karriär'}
+              {lang === 'fa' ? 'فرصت‌های شغلی' : 'Jobb & karriär'}
             </button>
           </div>
 
@@ -245,9 +241,9 @@ export default function App() {
       </section>
 
       {/* Category Pills Bar (Horizontal Scrollable) */}
-      <section className="bg-white border-b border-stone-200/80 sticky top-16 z-30 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+      <section className="bg-white border-b border-stone-200/70 sticky top-16 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             {CATEGORIES.map(cat => {
               const IconComp = CATEGORY_ICONS[cat.icon] || Tag;
               const isSelected = selectedCategory === cat.id;
@@ -257,13 +253,13 @@ export default function App() {
                   key={cat.id}
                   type="button"
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 active:scale-95 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors shrink-0 active:scale-95 ${
                     isSelected
-                      ? 'bg-stone-900 text-white font-bold shadow-xs'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200/80 hover:text-stone-900'
+                      ? 'bg-stone-900 text-white font-semibold'
+                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200/70 hover:text-stone-900'
                   }`}
                 >
-                  <IconComp size={15} className={isSelected ? 'text-emerald-400' : 'text-stone-500'} />
+                  <IconComp size={14} className={isSelected ? 'text-emerald-400' : 'text-stone-400'} />
                   <span>{lang === 'fa' ? cat.fa : cat.sv}</span>
                 </button>
               );
@@ -273,26 +269,24 @@ export default function App() {
       </section>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* VIP / Featured Section (if any) */}
         {featuredAds.length > 0 && (
-          <section className="space-y-4">
+          <section className="space-y-3.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
-                  <Sparkles size={16} />
-                </div>
-                <h2 className="text-base font-extrabold text-stone-900">
+                <span className="flex h-2 w-2 rounded-full bg-amber-500" />
+                <h2 className="text-sm font-bold text-stone-900 uppercase tracking-wider">
                   {currentT.featuredAds}
                 </h2>
               </div>
-              <span className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+              <span className="text-[11px] font-medium text-stone-500">
                 {featuredAds.length} {lang === 'fa' ? 'آگهی ویژه' : 'utvalda'}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {featuredAds.map(ad => (
                 <AdCard
                   key={ad.id}
@@ -306,14 +300,16 @@ export default function App() {
         )}
 
         {/* Regular Stream / All Ads */}
-        <section className="space-y-4">
+        <section className="space-y-3.5">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-extrabold text-stone-900">
-              {currentT.recentAds}
-              <span className="ml-2 text-xs font-medium text-stone-500 font-normal">
-                ({filteredAds.length} st)
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm font-bold text-stone-900 uppercase tracking-wider">
+                {currentT.recentAds}
+              </h2>
+              <span className="text-xs text-stone-400 font-mono">
+                ({filteredAds.length})
               </span>
-            </h2>
+            </div>
 
             {/* Clear filters if active */}
             {(selectedCategory !== 'all' || selectedCity !== 'all' || searchQuery) && (
@@ -324,9 +320,9 @@ export default function App() {
                   setSelectedCity('all');
                   setSearchQuery('');
                 }}
-                className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-1"
               >
-                <RefreshCw size={12} />
+                <RefreshCw size={11} />
                 <span>{lang === 'fa' ? 'پاک کردن فیلترها' : 'Rensa filter'}</span>
               </button>
             )}
@@ -334,39 +330,39 @@ export default function App() {
 
           {loading ? (
             /* Loading skeletons */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="h-64 rounded-2xl bg-stone-200/70 animate-pulse" />
+                <div key={i} className="h-64 rounded-2xl bg-stone-200/60 animate-pulse" />
               ))}
             </div>
           ) : filteredAds.length === 0 ? (
             /* Empty State */
-            <div className="rounded-3xl border-2 border-dashed border-stone-200 bg-white p-12 text-center space-y-4">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-stone-400">
-                <Search size={24} />
+            <div className="rounded-2xl border border-dashed border-stone-200 bg-white p-10 text-center space-y-3">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-stone-100 text-stone-400">
+                <Search size={20} />
               </div>
-              <div className="space-y-1">
-                <h3 className="text-base font-bold text-stone-800">
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-semibold text-stone-800">
                   {currentT.noAdsFound}
                 </h3>
-                <p className="text-xs text-stone-500">
+                <p className="text-xs text-stone-400">
                   {lang === 'fa' 
-                    ? 'اولین نفری باشید که در این دسته آگهی ثبت می‌کند!' 
-                    : 'Bli den första att lägga upp en annons i denna kategori!'}
+                    ? 'اولین نفری باشید که در این دسته آگهی ثبت می‌کند.' 
+                    : 'Bli den första att lägga upp en annons i denna kategori.'}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setPostAdOpen(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs shadow-xs active:scale-95 transition-all"
               >
-                <PlusCircle size={15} />
+                <PlusCircle size={14} />
                 <span>{currentT.postAdBtn}</span>
               </button>
             </div>
           ) : (
             /* Ads Grid */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {filteredAds.map(ad => (
                 <AdCard
                   key={ad.id}
@@ -387,11 +383,11 @@ export default function App() {
         lang={lang}
         onSelectCategory={(catId) => {
           setSelectedCategory(catId);
-          window.scrollTo({ top: 400, behavior: 'smooth' });
+          window.scrollTo({ top: 380, behavior: 'smooth' });
         }}
         onSelectCity={(cityId) => {
           setSelectedCity(cityId);
-          window.scrollTo({ top: 400, behavior: 'smooth' });
+          window.scrollTo({ top: 380, behavior: 'smooth' });
         }}
       />
 
@@ -411,7 +407,7 @@ export default function App() {
           onClose={() => setPostAdOpen(false)}
           onCreated={(newAd) => {
             fetchAds();
-            showToast(lang === 'fa' ? `آگهی ${newAd.reference_number} ثبت شد!` : `Annons ${newAd.reference_number} har publicerats!`);
+            showToast(lang === 'fa' ? `آگهی ${newAd.reference_number} ثبت شد.` : `Annons ${newAd.reference_number} har publicerats.`);
           }}
         />
       )}
@@ -423,7 +419,7 @@ export default function App() {
           onClose={() => setManageAdOpen(false)}
           onDeleted={(deletedId) => {
             setAds(ads.filter(a => a.id !== deletedId));
-            showToast(lang === 'fa' ? 'آگهی با موفقیت حذف شد.' : 'Annonsen har raderats.');
+            showToast(lang === 'fa' ? 'آگهی حذف شد.' : 'Annonsen har raderats.');
           }}
           onUpdated={(updatedAd) => {
             setAds(ads.map(a => a.id === updatedAd.id ? updatedAd : a));

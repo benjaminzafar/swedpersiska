@@ -265,12 +265,12 @@ export default function ManageAdModal({ lang, onClose, onDeleted, onUpdated }) {
             <div className="space-y-5">
               
               {/* Ad Card Snapshot */}
-              <div className="rounded-2xl border border-stone-200 bg-stone-50/80 p-4 space-y-3">
+              <div className="rounded-xl border border-stone-200 bg-stone-50 p-4 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-white text-stone-800 border border-stone-200">
-                    {matchedAd.reference_number}
+                  <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-white text-stone-800 border border-stone-200">
+                    <bdi>{matchedAd.reference_number}</bdi>
                   </span>
-                  <span className={`px-2 py-0.5 rounded text-[10.5px] font-bold uppercase ${
+                  <span className={`px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase ${
                     matchedAd.status === 'active' 
                       ? 'bg-emerald-100 text-emerald-800' 
                       : 'bg-stone-200 text-stone-700'
@@ -280,13 +280,13 @@ export default function ManageAdModal({ lang, onClose, onDeleted, onUpdated }) {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-extrabold text-stone-900">
+                  <h3 className="text-sm font-bold text-stone-900">
                     {matchedAd.title}
                   </h3>
-                  <div className="mt-1 flex items-center gap-3 text-xs text-stone-500">
+                  <div className="mt-1 flex items-center gap-2 text-xs text-stone-500 tabular-nums">
                     <span>{matchedAd.city}</span>
                     <span>•</span>
-                    <span>{matchedAd.price ? `${matchedAd.price} ${matchedAd.price_type}` : 'Enligt ök'}</span>
+                    <span><bdi>{matchedAd.price ? `${matchedAd.price} ${matchedAd.price_type}` : 'Enligt ök'}</bdi></span>
                     <span>•</span>
                     <span>{matchedAd.views_count || 1} visningar</span>
                   </div>

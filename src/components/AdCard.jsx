@@ -23,69 +23,69 @@ export default function AdCard({ ad, lang, onSelect }) {
   return (
     <article
       onClick={() => onSelect(ad)}
-      className="group relative flex flex-col bg-white rounded-2xl border border-stone-200/90 shadow-2xs hover:shadow-md hover:border-emerald-500/50 transition-all duration-200 cursor-pointer overflow-hidden active:scale-[0.99]"
+      className="group relative flex flex-col bg-white rounded-2xl border border-stone-200/80 shadow-2xs hover:shadow-sm hover:border-stone-400 transition-all duration-150 cursor-pointer overflow-hidden active:scale-[0.99]"
     >
       {/* Thumbnail Container */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-100">
         <img
           src={coverImage}
           alt={ad.title}
-          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="h-full w-full object-cover group-hover:opacity-95 transition-opacity"
           loading="lazy"
         />
 
-        {/* Featured VIP badge */}
+        {/* Featured VIP badge - calm craft, no pulse */}
         {ad.is_featured && (
-          <div className="absolute top-2.5 left-2.5 flex items-center gap-1 rounded-full bg-amber-500/90 px-2.5 py-0.5 text-[10.5px] font-bold text-white shadow-xs backdrop-blur-xs">
-            <Sparkles size={12} className="animate-pulse" />
-            <span>VIP / ویژه</span>
+          <div className="absolute top-2.5 start-2.5 flex items-center gap-1 rounded-md bg-stone-900/90 text-amber-300 border border-amber-400/30 px-2 py-0.5 text-[10px] font-semibold backdrop-blur-xs">
+            <Sparkles size={11} className="text-amber-400" />
+            <span>VIP</span>
           </div>
         )}
 
         {/* City Pill */}
-        <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 rounded-lg bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-xs">
-          <MapPin size={11} className="text-emerald-400" />
+        <div className="absolute bottom-2.5 start-2.5 flex items-center gap-1 rounded-md bg-stone-950/80 px-2 py-0.5 text-[11px] font-medium text-stone-200 backdrop-blur-xs">
+          <MapPin size={11} className="text-emerald-400 shrink-0" />
           <span>{ad.city}{ad.area ? ` • ${ad.area}` : ''}</span>
         </div>
 
         {/* Category Pill */}
-        <div className="absolute top-2.5 right-2.5 rounded-lg bg-white/90 px-2 py-0.5 text-[11px] font-bold text-stone-800 shadow-2xs backdrop-blur-xs">
+        <div className="absolute top-2.5 end-2.5 rounded-md bg-white/95 px-2 py-0.5 text-[10.5px] font-semibold text-stone-700 shadow-2xs border border-stone-200/60 backdrop-blur-xs">
           {catName}
         </div>
       </div>
 
       {/* Body details */}
-      <div className="flex flex-1 flex-col p-4 justify-between">
-        <div>
-          {/* Price */}
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[16px] font-extrabold text-emerald-700 tracking-tight">
-              {displayPrice}
+      <div className="flex flex-1 flex-col p-4 justify-between space-y-3">
+        <div className="space-y-1.5">
+          {/* Price & Ref */}
+          <div className="flex items-center justify-between">
+            <span className="text-[15px] font-bold text-stone-950 tabular-nums">
+              <bdi>{displayPrice}</bdi>
             </span>
-            <span className="text-[10px] font-mono text-stone-500 uppercase tracking-wider">
-              {ad.reference_number}
+            <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">
+              <bdi>{ad.reference_number}</bdi>
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="text-[14px] font-bold text-stone-900 group-hover:text-emerald-700 transition-colors line-clamp-2 leading-snug">
+          <h3 className="text-[13.5px] font-semibold text-stone-900 group-hover:text-emerald-800 transition-colors line-clamp-2 leading-snug">
             {lang === 'fa' && ad.title_fa ? ad.title_fa : ad.title}
           </h3>
 
           {/* Short description preview */}
-          <p className="mt-1.5 text-[12px] text-stone-500 line-clamp-2 leading-relaxed">
+          <p className="text-[12px] text-stone-500 line-clamp-2 leading-relaxed">
             {ad.description}
           </p>
         </div>
 
-        {/* Footer info: views, date, contact preview */}
-        <div className="mt-4 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
+        {/* Footer info: views, date */}
+        <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-400 tabular-nums">
           <div className="flex items-center gap-1">
-            <Clock size={12} />
+            <Clock size={11} />
             <span>{dateStr}</span>
           </div>
-          <div className="flex items-center gap-1 text-stone-500">
-            <Eye size={12} />
+          <div className="flex items-center gap-1">
+            <Eye size={11} />
             <span>{ad.views_count || 1} {lang === 'fa' ? 'بازدید' : 'visningar'}</span>
           </div>
         </div>

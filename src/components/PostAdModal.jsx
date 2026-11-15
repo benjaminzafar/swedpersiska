@@ -175,70 +175,70 @@ export default function PostAdModal({ lang, onClose, onCreated }) {
         <div className="flex-1 overflow-y-auto p-6">
           
           {successData ? (
-            /* Celebration Success Screen */
-            <div className="py-6 text-center space-y-6">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 animate-bounce">
-                <Check size={32} />
+            /* Celebration Success Screen - Unslopped quiet craft */
+            <div className="py-6 text-center space-y-5">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <Check size={24} />
               </div>
 
               <div className="space-y-1">
-                <h3 className="text-2xl font-black text-stone-900">
+                <h3 className="text-xl font-bold text-stone-900">
                   {currentT.adCreatedSuccess}
                 </h3>
-                <p className="text-sm text-stone-600 max-w-md mx-auto">
+                <p className="text-xs text-stone-500 max-w-sm mx-auto leading-relaxed">
                   {currentT.saveYourCredentials}
                 </p>
               </div>
 
               {/* Reference & PIN Box */}
-              <div className="max-w-md mx-auto rounded-2xl border-2 border-emerald-500/40 bg-emerald-50/60 p-5 space-y-4 text-left">
+              <div className="max-w-sm mx-auto rounded-xl border border-stone-200 bg-stone-50/70 p-4 space-y-3 text-start">
                 
                 {/* Reference Number */}
-                <div className="flex items-center justify-between bg-white rounded-xl p-3 border border-emerald-200">
+                <div className="flex items-center justify-between bg-white rounded-lg p-2.5 border border-stone-200">
                   <div>
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-stone-400">
                       {currentT.referenceNo}
                     </span>
-                    <span className="font-mono text-lg font-extrabold text-emerald-900 tracking-wider">
-                      {successData.referenceNumber}
+                    <span className="font-mono text-base font-bold text-stone-900 tracking-wider">
+                      <bdi>{successData.referenceNumber}</bdi>
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => copyToClipboard(successData.referenceNumber, 'ref')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 active:scale-95 transition-all"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold active:scale-95 transition-all border border-stone-200"
                   >
-                    {copiedRef ? <Check size={14} /> : <Copy size={14} />}
+                    {copiedRef ? <Check size={13} className="text-emerald-700" /> : <Copy size={13} />}
                     <span>{copiedRef ? currentT.copied : currentT.copyRef}</span>
                   </button>
                 </div>
 
                 {/* Secret PIN */}
-                <div className="flex items-center justify-between bg-white rounded-xl p-3 border border-emerald-200">
+                <div className="flex items-center justify-between bg-white rounded-lg p-2.5 border border-stone-200">
                   <div>
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-stone-400">
                       {currentT.pinCode}
                     </span>
-                    <span className="font-mono text-lg font-extrabold text-amber-700 tracking-wider">
-                      {successData.pinCode}
+                    <span className="font-mono text-base font-bold text-stone-900 tracking-wider">
+                      <bdi>{successData.pinCode}</bdi>
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => copyToClipboard(successData.pinCode, 'pin')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-bold hover:bg-amber-700 active:scale-95 transition-all"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold active:scale-95 transition-all border border-stone-200"
                   >
-                    {copiedPin ? <Check size={14} /> : <Copy size={14} />}
+                    {copiedPin ? <Check size={13} className="text-emerald-700" /> : <Copy size={13} />}
                     <span>{copiedPin ? currentT.copied : currentT.copyPin}</span>
                   </button>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-emerald-800">
-                  <KeyRound size={15} className="shrink-0 text-emerald-600" />
+                <div className="flex items-center gap-2 text-xs text-stone-500 pt-1">
+                  <KeyRound size={14} className="shrink-0 text-stone-400" />
                   <span>
                     {lang === 'fa' 
-                      ? 'با این دو مشخصه می‌توانید در هر زمان آگهی خود را ویرایش یا برای همیشه حذف کنید.'
-                      : 'Använd dessa två uppgifter under "Hantera min annons" för att uppdatera eller ta bort annonsen.'}
+                      ? 'با این دو مشخصه می‌توانید در هر زمان آگهی خود را ویرایش یا حذف کنید.'
+                      : 'Använd dessa uppgifter under "Hantera annons" för att uppdatera eller ta bort annonsen.'}
                   </span>
                 </div>
               </div>
@@ -246,7 +246,7 @@ export default function PostAdModal({ lang, onClose, onCreated }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2.5 rounded-xl bg-stone-900 hover:bg-black text-white font-bold text-sm shadow-sm active:scale-95 transition-all"
+                className="px-5 py-2 rounded-lg bg-stone-900 hover:bg-black text-white font-semibold text-xs active:scale-95 transition-all"
               >
                 {currentT.close}
               </button>
