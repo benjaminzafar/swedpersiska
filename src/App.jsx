@@ -80,6 +80,37 @@ export default function App() {
   const [postAdCategory, setPostAdCategory] = useState('bostad');
   const [manageAdOpen, setManageAdOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [siteName, setSiteName] = useState('سوئد پرشیا');
+  const [logoUrl, setLogoUrl] = useState('');
+
+  // Fetch Site Branding & Settings
+  const fetchSettings = async () => {
+    try {
+      const { data } = await supabase.from('swedpersiska_settings').select('*');
+      if (data) {
+        const branding = data.find(item => item.key === 'site_branding')?.value;
+        if (branding) {
+          if (branding.siteName) setSiteName(branding.siteName);
+          if (branding.logoUrl) setLogoUrl(branding.logoUrl);
+        }
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  // Dynamic Country SEO Document Title
+  useEffect(() => {
+    const titles = {
+      se: 'نیازمندی‌ها، مسکن و خدمات ایرانیان در سوئد | سوئد پرشیا',
+      no: 'نیازمندی‌ها، مسکن و مشاغل ایرانی در نروژ | سوئد پرشیا',
+      dk: 'نیازمندی‌ها، مسکن و خدمات ایرانی در دانمارک | سوئد پرشیا',
+      fi: 'نیازمندی‌ها، مسکن و مشاغل ایرانی در فنلاند | سوئد پرشیا'
+    };
+    document.title = titles[selectedCountry] || titles.se;
+  }, [selectedCountry]);
 
   // Success Toast
   const [toastMsg, setToastMsg] = useState('');
@@ -193,6 +224,8 @@ export default function App() {
 
       {/* Top Navbar */}
       <Navbar
+        siteName={siteName}
+        logoUrl={logoUrl}
         onOpenCountryModal={() => setCountryModalOpen(true)}
         onOpenPostAd={(catId) => {
           setPostAdCategory(catId || 'bostad');
@@ -447,7 +480,10 @@ export default function App() {
       {adminOpen && (
         <AdminPanel
           onClose={() => setAdminOpen(false)}
-          onRefreshAds={fetchAds}
+          onRefreshAds={() => {
+            fetchAds();
+            fetchSettings();
+          }}
         />
       )}
 

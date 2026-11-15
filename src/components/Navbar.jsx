@@ -16,6 +16,8 @@ import {
 import { CATEGORIES } from '../lib/translations';
 
 export default function Navbar({ 
+  siteName = 'سوئد پرشیا',
+  logoUrl,
   onOpenCountryModal,
   onOpenPostAd, 
   onOpenManageAd,
@@ -62,13 +64,19 @@ export default function Navbar({
           {/* Logo & Brand (Clean, no country/language selector) */}
           <div className="flex items-center gap-4 sm:gap-6">
             <a href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-xs border border-slate-800 transition-all duration-150 group-hover:scale-105 active:scale-95">
-                <span className="font-mono text-emerald-400 font-black">SP</span>
-              </div>
+              {logoUrl ? (
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-white shadow-xs border border-slate-200">
+                  <img src={logoUrl} alt={siteName} className="h-full w-full object-contain" />
+                </div>
+              ) : (
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-xs border border-slate-800 transition-all duration-150 group-hover:scale-105 active:scale-95">
+                  <span className="font-mono text-emerald-400 font-black">SP</span>
+                </div>
+              )}
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <span className="font-extrabold text-[17px] tracking-tight text-slate-950 group-hover:text-blue-600 transition-colors">
-                    سوئد پرشیا
+                    {siteName}
                   </span>
                   <span className="text-[10px] font-mono text-slate-400 font-semibold hidden sm:inline">
                     SwedPersiska
