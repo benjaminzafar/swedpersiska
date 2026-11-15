@@ -1,7 +1,7 @@
 # Graph Report - swedpersiska  (2026-11-15)
 
 ## Corpus Check
-- 19 files · ~14,240 words
+- 19 files · ~13,611 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

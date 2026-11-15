@@ -5,7 +5,6 @@ import {
   KeyRound, 
   Check, 
   Copy, 
-  Sparkles, 
   AlertCircle
 } from 'lucide-react';
 import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supabase';
@@ -539,9 +538,9 @@ export default function PostAdModal({ lang, onClose, onCreated }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-sm py-3.5 shadow-md shadow-emerald-700/20 active:scale-98 transition-all"
+                  className="w-full flex items-center justify-center gap-2 rounded-full bg-[#1877F2] hover:bg-[#166fe5] disabled:opacity-50 text-white font-bold text-sm py-3.5 shadow-xs active:scale-[0.98] transition-all cursor-pointer"
                 >
-                  <Sparkles size={16} />
+                  <PlusCircle size={16} />
                   <span>
                     {loading ? (lang === 'fa' ? 'در حال ثبت...' : 'Publicerar...') : currentT.postAdBtn}
                   </span>

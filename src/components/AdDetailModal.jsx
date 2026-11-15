@@ -11,7 +11,6 @@ import {
   ShieldCheck, 
   Share2, 
   Check, 
-  Sparkles,
   AlertCircle
 } from 'lucide-react';
 import { CATEGORIES, t } from '../lib/translations';
@@ -99,9 +98,8 @@ export default function AdDetailModal({ ad, lang, onClose }) {
                 className="w-full h-full object-cover"
               />
               {ad.is_featured && (
-                <div className="absolute top-3 start-3 flex items-center gap-1 rounded-lg bg-stone-900/90 text-amber-300 border border-amber-400/30 px-2.5 py-1 text-xs font-bold backdrop-blur-xs">
-                  <Sparkles size={13} className="text-amber-400" />
-                  <span>VIP</span>
+                <div className="absolute top-3 start-3 rounded-full bg-slate-900/85 text-white border border-white/20 px-3 py-1 text-xs font-semibold backdrop-blur-xs shadow-2xs">
+                  {lang === 'fa' ? 'آگهی برگزیده' : 'Utvald annons'}
                 </div>
               )}
             </div>
@@ -185,12 +183,12 @@ export default function AdDetailModal({ ad, lang, onClose }) {
               <ShieldCheck size={24} className="text-emerald-700" />
             </div>
 
-            {/* Direct Contact Buttons Grid with 42px touch targets */}
+            {/* Direct Contact Buttons Grid with Meta Rounded-full tactile buttons */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {ad.contact_phone && (
                 <a
                   href={`tel:${ad.contact_phone}`}
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs h-11 px-3 shadow-2xs active:scale-[0.98] transition-all text-center"
+                  className="flex items-center justify-center gap-1.5 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-semibold text-xs h-11 px-3 shadow-xs active:scale-95 transition-all text-center"
                 >
                   <Phone size={14} />
                   <span>{currentT.call}</span>
@@ -202,7 +200,7 @@ export default function AdDetailModal({ ad, lang, onClose }) {
                   href={`https://wa.me/${ad.contact_whatsapp.replace(/[^0-9]/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-[#128C7E] hover:bg-[#075E54] text-white font-bold text-xs h-11 px-3 shadow-2xs active:scale-[0.98] transition-all text-center"
+                  className="flex items-center justify-center gap-1.5 rounded-full bg-[#128C7E] hover:bg-[#075E54] text-white font-semibold text-xs h-11 px-3 shadow-xs active:scale-95 transition-all text-center"
                 >
                   <MessageSquare size={14} />
                   <span>{currentT.whatsapp}</span>
@@ -214,7 +212,7 @@ export default function AdDetailModal({ ad, lang, onClose }) {
                   href={ad.contact_telegram.startsWith('http') ? ad.contact_telegram : `https://t.me/${ad.contact_telegram.replace('@', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-[#229ED9] hover:bg-[#1d87ba] text-white font-bold text-xs h-11 px-3 shadow-2xs active:scale-[0.98] transition-all text-center"
+                  className="flex items-center justify-center gap-1.5 rounded-full bg-[#229ED9] hover:bg-[#1d87ba] text-white font-semibold text-xs h-11 px-3 shadow-xs active:scale-95 transition-all text-center"
                 >
                   <Send size={14} className="icon-flip-rtl" />
                   <span>{currentT.telegram}</span>
@@ -224,7 +222,7 @@ export default function AdDetailModal({ ad, lang, onClose }) {
               {ad.contact_email && (
                 <a
                   href={`mailto:${ad.contact_email}?subject=Angående annons ${ad.reference_number}: ${ad.title}`}
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-stone-900 hover:bg-stone-950 text-white font-bold text-xs h-11 px-3 shadow-2xs active:scale-[0.98] transition-all text-center"
+                  className="flex items-center justify-center gap-1.5 rounded-full bg-slate-900 hover:bg-black text-white font-semibold text-xs h-11 px-3 shadow-xs active:scale-95 transition-all text-center"
                 >
                   <Mail size={14} />
                   <span>{currentT.email}</span>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Eye, Clock, Sparkles } from 'lucide-react';
+import { MapPin, Eye, Clock } from 'lucide-react';
 import { CATEGORIES } from '../lib/translations';
 
 export default function AdCard({ ad, lang, onSelect }) {
@@ -23,10 +23,10 @@ export default function AdCard({ ad, lang, onSelect }) {
   return (
     <article
       onClick={() => onSelect(ad)}
-      className="group relative flex flex-col bg-white rounded-2xl border border-stone-200/80 shadow-2xs hover:shadow-sm hover:border-stone-300 transition-all duration-150 cursor-pointer overflow-hidden active:scale-[0.98]"
+      className="group relative flex flex-col bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:border-slate-300 transition-all duration-200 cursor-pointer overflow-hidden active:scale-[0.99]"
     >
-      {/* Thumbnail Container */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-100">
+      {/* Thumbnail */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
         <img
           src={coverImage}
           alt={ad.title}
@@ -34,52 +34,51 @@ export default function AdCard({ ad, lang, onSelect }) {
           loading="lazy"
         />
 
-        {/* Featured VIP badge - calm craft */}
+        {/* Featured pill (Clean Meta style, no screaming yellow) */}
         {ad.is_featured && (
-          <div className="absolute top-2.5 start-2.5 flex items-center gap-1 rounded-lg bg-stone-900/90 text-amber-300 border border-amber-400/30 px-2 py-0.5 text-[10.5px] font-bold backdrop-blur-xs shadow-2xs">
-            <Sparkles size={11} className="text-amber-400" />
-            <span>VIP</span>
+          <div className="absolute top-2.5 start-2.5 rounded-full bg-slate-900/85 text-white border border-white/20 px-2.5 py-0.5 text-[10.5px] font-semibold backdrop-blur-xs shadow-2xs">
+            {lang === 'fa' ? 'برگزیده' : 'Utvald'}
           </div>
         )}
 
-        {/* City Pill */}
-        <div className="absolute bottom-2.5 start-2.5 flex items-center gap-1 rounded-lg bg-stone-950/85 px-2 py-0.5 text-[11px] font-semibold text-stone-200 backdrop-blur-xs shadow-2xs">
-          <MapPin size={11} className="text-emerald-400 shrink-0" />
-          <span>{ad.city}{ad.area ? ` • ${ad.area}` : ''}</span>
+        {/* Category Pill */}
+        <div className="absolute top-2.5 end-2.5 rounded-full bg-white/95 px-2.5 py-0.5 text-[10.5px] font-semibold text-slate-700 shadow-2xs border border-slate-200/70 backdrop-blur-xs">
+          {catName}
         </div>
 
-        {/* Category Pill */}
-        <div className="absolute top-2.5 end-2.5 rounded-lg bg-white/95 px-2.5 py-0.5 text-[10.5px] font-bold text-stone-700 shadow-2xs border border-stone-200/60 backdrop-blur-xs">
-          {catName}
+        {/* City Pill */}
+        <div className="absolute bottom-2.5 start-2.5 flex items-center gap-1 rounded-full bg-slate-950/80 px-2.5 py-0.5 text-[11px] font-medium text-slate-200 backdrop-blur-xs">
+          <MapPin size={11} className="text-blue-400 shrink-0" />
+          <span>{ad.city}{ad.area ? ` • ${ad.area}` : ''}</span>
         </div>
       </div>
 
-      {/* Body details with Astryx Spacing Scale */}
+      {/* Body details */}
       <div className="flex flex-1 flex-col p-4 justify-between space-y-3">
         <div className="space-y-1.5">
-          {/* Price & Ref */}
+          {/* Price */}
           <div className="flex items-center justify-between">
-            <span className="text-[15px] font-extrabold text-stone-950 tabular-nums">
+            <span className="text-[17px] font-extrabold text-slate-950 tabular-nums tracking-tight">
               <bdi>{displayPrice}</bdi>
             </span>
-            <span className="text-[10px] font-mono text-stone-400 font-bold uppercase tracking-wider">
+            <span className="text-[10px] font-mono text-slate-400 font-semibold uppercase">
               <bdi>{ad.reference_number}</bdi>
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="text-[13.5px] font-bold text-stone-900 group-hover:text-emerald-800 transition-colors line-clamp-2 leading-snug">
+          <h3 className="text-[14px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
             {lang === 'fa' && ad.title_fa ? ad.title_fa : ad.title}
           </h3>
 
-          {/* Short description preview */}
-          <p className="text-[12px] text-stone-500 line-clamp-2 leading-relaxed">
+          {/* Description */}
+          <p className="text-[12px] text-slate-500 line-clamp-2 leading-relaxed">
             {ad.description}
           </p>
         </div>
 
-        {/* Footer info: views, date */}
-        <div className="pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-400 tabular-nums">
+        {/* Footer info */}
+        <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 tabular-nums">
           <div className="flex items-center gap-1 font-medium">
             <Clock size={11} />
             <span>{dateStr}</span>

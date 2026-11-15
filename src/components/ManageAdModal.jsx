@@ -252,7 +252,7 @@ export default function ManageAdModal({ lang, onClose, onDeleted, onUpdated }) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-stone-900 hover:bg-black text-white font-bold text-xs py-3 active:scale-98 transition-all disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 rounded-full bg-slate-900 hover:bg-black text-white font-bold text-xs py-3 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
                 >
                   <span>{loading ? (lang === 'fa' ? 'در حال بررسی...' : 'Söker...') : (lang === 'fa' ? 'یافتن و تایید آگهی' : 'Hitta annons')}</span>
                   <ArrowRight size={15} />
