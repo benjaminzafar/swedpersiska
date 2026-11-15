@@ -138,26 +138,26 @@ export default function App() {
         { id: 'all', fa: 'تمام شهرهای اسکاندیناوی' },
         ...COUNTRIES.flatMap(c => c.cities.filter(city => city.id !== 'all').map(city => ({
           id: city.id,
-          fa: `${city.fa} (${c.flag})`
+          fa: `${city.fa} (${c.nameFa})`
         })))
       ]
     : currentCountryObj.cities;
 
   // Dynamic Hero Titles based on selected country
-  let heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در سوئد 🇸🇪';
+  let heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در سوئد';
   let heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های ایرانیان در استکهلم، یوتبوری، مالمو و سراسر سوئد.';
 
   if (selectedCountry === 'all') {
     heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در سراسر اسکاندیناوی';
-    heroSubheading = 'جامع‌ترین بازارچه آنلاین ایرانیان مقیم سوئد 🇸🇪، نروژ 🇳🇴، دانمارک 🇩🇰 و فنلاند 🇫🇮. ثبت رایگان آگهی با کد پیگیری اختصاصی.';
+    heroSubheading = 'جامع‌ترین بازارچه آنلاین ایرانیان مقیم سوئد، نروژ، دانمارک و فنلاند. ثبت رایگان آگهی با کد پیگیری اختصاصی.';
   } else if (selectedCountry === 'no') {
-    heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در نروژ 🇳🇴';
+    heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در نروژ';
     heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های ایرانیان در اسلو، برگن، تروندهایم و سراسر نروژ.';
   } else if (selectedCountry === 'dk') {
-    heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در دانمارک 🇩🇰';
+    heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در دانمارک';
     heroSubheading = 'جامع‌ترین پرتال فارسی‌زبانان در کپنهاگ، آرهوس، اودنسه و سراسر دانمارک.';
   } else if (selectedCountry === 'fi') {
-    heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در فنلاند 🇫🇮';
+    heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در فنلاند';
     heroSubheading = 'جامع‌ترین بازارچه و پرتال نیازمندی‌های ایرانیان در هلسینکی، اسپو، تامپره و سراسر فنلاند.';
   }
 
@@ -192,11 +192,8 @@ export default function App() {
         onSelectCountry={handleCountryChange}
       />
 
-      {/* Top Navbar (100% Persian, Meta Style with Dropdown Menus & Country Switcher) */}
+      {/* Top Navbar (Meta Style with Single "آگهی" Action Button & Categories) */}
       <Navbar
-        selectedCountry={selectedCountry}
-        onSelectCountry={handleCountryChange}
-        onOpenCountryModal={() => setCountryModalOpen(true)}
         onOpenPostAd={(catId) => {
           setPostAdCategory(catId || 'bostad');
           setPostAdOpen(true);

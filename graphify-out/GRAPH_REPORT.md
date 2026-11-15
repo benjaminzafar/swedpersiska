@@ -1,7 +1,7 @@
 # Graph Report - swedpersiska  (2026-11-15)
 
 ## Corpus Check
-- 20 files · ~15,703 words
+- 20 files · ~15,145 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a673b9e9`
+- Built from commit: `ef6bedf3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
