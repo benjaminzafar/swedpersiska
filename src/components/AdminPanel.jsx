@@ -454,116 +454,68 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const vipAds = ads.filter(a => a.is_featured).length;
   const totalViews = ads.reduce((sum, a) => sum + (a.views_count || 0), 0);
 
-  // LOGIN SCREEN (Executive Dark Theme)
+  // LOGIN SCREEN - Perfectly matched to Website UI/UX (Clean Scandinavian White/Slate Theme)
   if (!isAuthenticated) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#07090e] p-4 text-white font-vazir select-none" dir="rtl">
-        <div className="w-full max-w-sm rounded-3xl bg-[#0f141f] border border-slate-800 p-7 shadow-2xl space-y-6">
-          <div className="text-center space-y-2">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#1877F2] to-blue-700 text-white shadow-lg shadow-blue-500/20">
-              <ShieldCheck size={28} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md text-slate-800 font-vazir select-none" dir="rtl">
+        {/* Ambient subtle light glow */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/10 rounded-full blur-3xl" />
+        </div>
+
+        {/* Modal Card */}
+        <div className="relative w-full max-w-sm rounded-3xl bg-white border border-slate-200/90 p-7 sm:p-8 shadow-2xl space-y-6 z-10 animate-in zoom-in-95 duration-150">
+          
+          {/* Brand Header */}
+          <div className="text-center space-y-2.5">
+            <div className="mx-auto flex h-13 w-13 items-center justify-center rounded-2xl bg-blue-50 border border-blue-100 text-[#1877F2] shadow-xs">
+              <ShieldCheck size={26} />
             </div>
-            <h2 className="text-lg font-black tracking-tight text-white">کنترل پنل مدیریت سوئد پرشیا</h2>
-            <p className="text-xs text-slate-400">ورود مدیر برای نظارت بر آگهی‌ها، کشورها و سئو</p>
+            <div>
+              <h2 className="text-lg font-black text-slate-900 tracking-tight">کنترل پنل مدیریت سوئد پرشیا</h2>
+              <p className="text-[11px] text-slate-500 font-medium mt-0.5">ورود مدیر برای نظارت بر آگهی‌ها، کشورها و سئو</p>
+            </div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             {loginError && (
-              <div className="rounded-xl bg-rose-950/40 border border-rose-900/50 p-2.5 text-xs text-rose-300">
-                {loginError}
-              </div>
-            )}
-
-            {/* Mobile CRM Details Drawer */}
-            {mobileDetailOpen && currentSelectedAd && (
-              <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden">
-                <div 
-                  className="fixed inset-0 bg-black/70 backdrop-blur-xs"
-                  onClick={() => setMobileDetailOpen(false)}
-                />
-                <div className="relative w-full max-h-[85vh] bg-[#0d121c] rounded-t-3xl border-t border-slate-800 p-5 overflow-y-auto custom-scrollbar z-10 space-y-4">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                    <h3 className="text-sm font-bold text-white truncate max-w-[240px]">
-                      {currentSelectedAd.title}
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() => setMobileDetailOpen(false)}
-                      className="p-1.5 rounded-full text-slate-400 hover:text-white"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-
-                  {/* Quick Status and Country */}
-                  <div className="p-3 rounded-2xl bg-[#07090e] border border-slate-800 space-y-2">
-                    <label className="block text-[11px] font-bold text-slate-400">تغییر کشور آگهی:</label>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {COUNTRIES.map(c => {
-                        const isCurrent = (currentSelectedAd.country || 'se') === c.id;
-                        return (
-                          <button
-                            key={c.id}
-                            type="button"
-                            onClick={() => updateAdCountry(currentSelectedAd.id, c.id)}
-                            className={`py-1.5 px-2 rounded-xl text-xs font-bold ${isCurrent ? 'bg-[#1877F2] text-white' : 'bg-slate-800 text-slate-300'}`}
-                          >
-                            {c.nameFa}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleFeatured(currentSelectedAd)}
-                      className="flex-1 py-2 rounded-xl bg-amber-500/20 text-amber-400 font-bold text-xs"
-                    >
-                      {currentSelectedAd.is_featured ? 'برداشتن VIP' : 'اعطای VIP'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => toggleStatus(currentSelectedAd)}
-                      className="flex-1 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold text-xs"
-                    >
-                      {currentSelectedAd.status === 'active' ? 'مخفی کردن' : 'فعال کردن'}
-                    </button>
-                  </div>
-                </div>
+              <div className="rounded-xl bg-rose-50 border border-rose-200 p-2.5 text-xs font-semibold text-rose-700 flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-rose-600 shrink-0" />
+                <span>{loginError}</span>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">ایمیل مدیریت</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">ایمیل مدیریت</label>
               <input
                 type="email"
                 required
                 placeholder="swedpersiska@gmail.com"
                 value={adminEmailInput}
                 onChange={(e) => setAdminEmailInput(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-[#07090e] p-3 text-xs text-white focus:border-[#1877F2] focus:outline-none"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 focus:bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:border-[#1877F2] focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all font-mono text-left"
+                dir="ltr"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">رمز عبور اختصاصی</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">رمز عبور اختصاصی</label>
               <input
                 type="password"
                 required
                 placeholder="••••••••"
                 value={adminPassInput}
                 onChange={(e) => setAdminPassInput(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-[#07090e] p-3 text-xs text-white focus:border-[#1877F2] focus:outline-none"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 focus:bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:border-[#1877F2] focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all font-mono text-left"
+                dir="ltr"
               />
             </div>
 
-            {/* Cloudflare Turnstile Anti-Bot Verification for Admin Login */}
+            {/* Cloudflare Turnstile Anti-Bot Verification - Light Theme */}
             {turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false && (
               <div className="pt-1 flex flex-col items-center justify-center">
                 <CloudflareTurnstile
-                  theme="dark"
+                  theme="light"
                   siteKey={turnstileSettings.mode === 'live' ? turnstileSettings.siteKey : undefined}
                   onVerify={(token) => {
                     setAdminTurnstileToken(token);
@@ -576,7 +528,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
             <button
               type="submit"
-              className="w-full rounded-xl bg-[#1877F2] hover:bg-blue-600 text-white font-bold text-xs py-3 shadow-md active:scale-95 transition-all cursor-pointer"
+              className="w-full rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs py-3.5 shadow-md shadow-blue-500/20 active:scale-[0.98] transition-all cursor-pointer"
             >
               ورود به داشبورد مدیریت
             </button>
@@ -585,7 +537,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           <button
             type="button"
             onClick={onClose}
-            className="w-full text-center text-xs text-slate-400 hover:text-slate-200 cursor-pointer pt-1"
+            className="w-full text-center text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors cursor-pointer pt-1"
           >
             ← بازگشت به سایت اصلی
           </button>
