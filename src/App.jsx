@@ -178,32 +178,6 @@ export default function App() {
   // Dynamic available cities for current country
   const availableCities = currentCountryObj.cities;
 
-  // Dynamic Hero Architectural Cityscape Backgrounds
-  const HERO_BACKGROUNDS = {
-    se: {
-      image: '/images/cities/stockholm.jpg',
-      cityFa: 'استکهلم، سوئد',
-      cityEn: 'Stockholm, Sweden'
-    },
-    no: {
-      image: '/images/cities/oslo.jpg',
-      cityFa: 'اسلو، نروژ',
-      cityEn: 'Oslo, Norway'
-    },
-    dk: {
-      image: '/images/cities/copenhagen.jpg',
-      cityFa: 'کپنهاگ، دانمارک',
-      cityEn: 'Copenhagen, Denmark'
-    },
-    fi: {
-      image: '/images/cities/helsinki.jpg',
-      cityFa: 'هلسینکی، فنلاند',
-      cityEn: 'Helsinki, Finland'
-    }
-  };
-
-  const activeHero = HERO_BACKGROUNDS[selectedCountry] || HERO_BACKGROUNDS.se;
-
   // Dynamic Hero Titles based on selected country
   let heroHeading = 'مسکن، رستوران‌ها و خدمات فارسی‌زبانان در سوئد';
   let heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های فارسی‌زبانان در استکهلم، یوتبوری، مالمو و سراسر سوئد.';
@@ -282,57 +256,35 @@ export default function App() {
         </div>
       )}
 
-      {/* Hero Section - Majestic Nordic Cityscape Canvas */}
-      <section className="relative overflow-hidden border-b border-slate-200/80 pt-10 sm:pt-16 pb-12 sm:pb-20 px-3 sm:px-6 lg:px-8 w-full bg-slate-950">
-        
-        {/* Dynamic Architectural Country Cityscape Background */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
-          <img
-            key={activeHero.image}
-            src={activeHero.image}
-            alt={activeHero.cityFa}
-            className="w-full h-full object-cover object-center scale-105 transition-all duration-700 ease-out"
-          />
-          {/* Rich Cinematic Contrast Scrim - Makes the photo pop while keeping white text 100% crisp & beautiful */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/50 to-slate-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/40 via-transparent to-slate-950/40" />
-          {/* Subtle bottom fade into the page body */}
-          <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#f8fafc] to-transparent" />
-        </div>
-
-        {/* Discreet City Landmark Badge (Corner credit) */}
-        <div className="hidden sm:inline-flex absolute bottom-4 end-5 z-10 items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/75 backdrop-blur-md text-white/90 text-[11px] font-medium border border-white/15 shadow-sm">
-          <MapPin size={11} className="text-blue-400 shrink-0" />
-          <span>{activeHero.cityFa}</span>
-        </div>
-
-        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-3.5 sm:space-y-4">
+      {/* Desktop Hero Section - Pure Nordic Clean Canvas */}
+      <section className="hidden md:block bg-gradient-to-b from-slate-50 via-white to-slate-50/50 border-b border-slate-200/70 pt-8 pb-10 px-6 lg:px-8 w-full">
+        <div className="max-w-4xl mx-auto text-center space-y-3.5">
           
-          {/* Nordic Pill Tag */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-md text-white text-[11px] font-bold border border-white/25 shadow-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          {/* Subtle Nordic Pill Tag */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-100 shadow-2xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
             <span>پرتال نیازمندی‌های فارسی‌زبانان در سراسر اسکاندیناوی</span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] leading-snug sm:leading-tight px-1 break-words">
+          <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-slate-900 leading-tight">
             {heroHeading}
           </h1>
 
-          <p className="text-xs sm:text-base text-slate-100 max-w-xl mx-auto leading-relaxed px-2 font-medium drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+          <p className="text-sm text-slate-500 max-w-xl mx-auto leading-relaxed font-medium">
             {heroSubheading}
           </p>
 
-          {/* Meta Floating Search Capsule (Desktop) */}
-          <div className="pt-2 px-1 hidden md:block">
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-full p-2 sm:p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.22)] border border-white/60 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 sm:gap-1.5 transition-all">
+          {/* Desktop Floating Search Capsule */}
+          <div className="pt-2">
+            <div className="bg-white rounded-full p-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-slate-200/90 hover:border-slate-300 max-w-2xl mx-auto flex items-center gap-1.5 transition-all">
               
               {/* City Dropdown */}
-              <div className="relative w-full sm:w-48 shrink-0">
+              <div className="relative w-48 shrink-0">
                 <MapPin size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
-                  className="w-full h-11 rounded-xl sm:rounded-full bg-slate-50 hover:bg-slate-100 ps-8 pe-8 text-xs font-semibold text-slate-800 border border-slate-200/60 sm:border-0 focus:ring-1 focus:ring-slate-300 cursor-pointer appearance-none text-right"
+                  className="w-full h-11 rounded-full bg-slate-50 hover:bg-slate-100 ps-8 pe-8 text-xs font-semibold text-slate-800 border-0 focus:ring-1 focus:ring-slate-300 cursor-pointer appearance-none text-right"
                 >
                   {availableCities.map(c => (
                     <option key={c.id} value={c.id}>
@@ -344,21 +296,21 @@ export default function App() {
               </div>
 
               {/* Keyword Input */}
-              <div className="relative w-full flex-1">
+              <div className="relative flex-1">
                 <Search size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 <input
                   type="text"
                   placeholder={currentT.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-11 rounded-xl sm:rounded-full bg-slate-50 sm:bg-transparent border border-slate-200/60 sm:border-0 ps-8 pe-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 sm:focus:ring-0 focus:ring-slate-300 text-right"
+                  className="w-full h-11 rounded-full bg-transparent border-0 ps-8 pe-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none text-right"
                 />
               </div>
 
-              {/* CTA Button (Meta Blue) */}
+              {/* Search Button */}
               <button
                 type="button"
-                className="w-full sm:w-auto h-11 px-6 rounded-xl sm:rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-xs"
+                className="h-11 px-6 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-xs"
               >
                 <Search size={14} />
                 <span>{currentT.searchBtn}</span>
@@ -370,24 +322,48 @@ export default function App() {
         </div>
       </section>
 
+      {/* Mobile Fast Category Strip & Country Badge - Peak Mobile UX */}
+      <div className="md:hidden bg-white border-b border-slate-100">
+        {/* Horizontal Category Scroll Bar */}
+        <div className="px-3 py-2.5 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1.5">
+          {CATEGORIES.map(cat => {
+            const isActive = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                type="button"
+                className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer flex items-center gap-1 ${
+                  isActive
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                }`}
+              >
+                <span>{cat.fa}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 overflow-hidden">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 py-3 sm:py-8 space-y-4 sm:space-y-8 overflow-hidden">
         
         {/* VIP / Featured Section */}
         {featuredAds.length > 0 && (
-          <section className="space-y-3 sm:space-y-4">
+          <section className="space-y-2.5 sm:space-y-4">
             <div className="flex items-center justify-between px-1">
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+              <h2 className="text-sm sm:text-lg font-bold text-slate-900 tracking-tight">
                 {currentT.featuredAds}
               </h2>
-              <span className="text-[11px] sm:text-xs font-medium text-slate-500">
+              <span className="text-[10px] sm:text-xs font-medium text-slate-500">
                 {featuredAds.length} {lang === 'fa' ? 'آگهی' : 'annonser'}
               </span>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-5">
               {featuredAds.map(ad => (
                 <AdCard
                   key={ad.id}
@@ -441,9 +417,9 @@ export default function App() {
 
           {loading ? (
             /* Loading skeletons */
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-5">
               {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="h-56 sm:h-64 rounded-xl sm:rounded-2xl bg-stone-200/60 animate-pulse" />
+                <div key={i} className="h-52 sm:h-64 rounded-xl sm:rounded-2xl bg-stone-200/60 animate-pulse" />
               ))}
             </div>
           ) : filteredAds.length === 0 ? (
@@ -473,7 +449,7 @@ export default function App() {
             </div>
           ) : (
             /* Ads Grid */
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-5">
               {filteredAds.map(ad => (
                 <AdCard
                   key={ad.id}
