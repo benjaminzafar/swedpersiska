@@ -6,10 +6,7 @@ import {
   Check, 
   Copy, 
   Sparkles, 
-  Image, 
-  AlertCircle,
-  HelpCircle,
-  ShieldAlert
+  AlertCircle
 } from 'lucide-react';
 import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supabase';
 import { CITIES, CATEGORIES, t } from '../lib/translations';

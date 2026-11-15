@@ -4,13 +4,10 @@ import {
   KeyRound, 
   Trash2, 
   Edit3, 
-  Check, 
   AlertCircle, 
   ShieldAlert, 
   ArrowRight,
-  Save,
-  Eye,
-  Calendar
+  Save
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { t } from '../lib/translations';

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Heart, ShieldCheck, MapPin, Sparkles } from 'lucide-react';
-import { CITIES, CATEGORIES, t } from '../lib/translations';
+import { ShieldCheck } from 'lucide-react';
+import { CITIES, CATEGORIES } from '../lib/translations';
+
+const currentYear = new Date().getFullYear();
 
 export default function Footer({ lang, onSelectCategory, onSelectCity }) {
-  const currentT = t[lang];
-
   return (
     <footer className="border-t border-stone-200 bg-white pt-12 pb-8 text-stone-600 text-xs select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -90,7 +90,7 @@ export default function Footer({ lang, onSelectCategory, onSelectCity }) {
         {/* Bottom bar */}
         <div className="border-t border-stone-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-stone-400">
           <div>
-            © {new Date().getFullYear()} SwedPersiska.se • سوئد پرشیا
+            © {currentYear} SwedPersiska.se • سوئد پرشیا
           </div>
           <div className="flex items-center gap-1">
             <span>Byggd för den iranska och persisktalande gemenskapen i Sverige</span>

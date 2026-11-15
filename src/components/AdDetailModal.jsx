@@ -17,10 +17,11 @@ import {
 import { CATEGORIES, t } from '../lib/translations';
 
 export default function AdDetailModal({ ad, lang, onClose }) {
-  if (!ad) return null;
-  const currentT = t[lang];
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  if (!ad) return null;
+  const currentT = t[lang];
 
   const images = (ad.images && ad.images.length > 0)
     ? ad.images

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
   Layers, 
@@ -7,21 +7,13 @@ import {
   Trash2, 
   Sparkles, 
   CheckCircle, 
-  XCircle, 
   Search, 
-  MapPin, 
   ShieldCheck, 
   Send, 
-  Eye, 
-  Phone, 
-  Mail, 
-  AlertCircle,
-  Home,
-  Save,
-  Bell,
-  Menu,
-  X,
-  Plus
+  Home, 
+  Save, 
+  Menu, 
+  X
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { CATEGORIES } from '../lib/translations';
@@ -38,7 +30,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
   // Ads state
   const [ads, setAds] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 

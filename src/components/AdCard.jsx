@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Eye, Clock, CheckCircle, Sparkles, Tag } from 'lucide-react';
+import { MapPin, Eye, Clock, Sparkles } from 'lucide-react';
 import { CATEGORIES } from '../lib/translations';
 
 export default function AdCard({ ad, lang, onSelect }) {

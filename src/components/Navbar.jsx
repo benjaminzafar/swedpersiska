@@ -5,10 +5,7 @@ import {
   ShieldCheck, 
   Globe, 
   Menu, 
-  X, 
-  Sparkles,
-  MapPin,
-  Search
+  X
 } from 'lucide-react';
 import { t } from '../lib/translations';
 
