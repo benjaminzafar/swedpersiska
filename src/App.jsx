@@ -173,8 +173,9 @@ export default function App() {
         onSelectCountry={handleCountryChange}
       />
 
-      {/* Top Navbar (Meta Style with Single "آگهی" Action Button & Categories) */}
+      {/* Top Navbar */}
       <Navbar
+        onOpenCountryModal={() => setCountryModalOpen(true)}
         onOpenPostAd={(catId) => {
           setPostAdCategory(catId || 'bostad');
           setPostAdOpen(true);

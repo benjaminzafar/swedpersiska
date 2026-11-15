@@ -10,11 +10,13 @@ import {
   Utensils,
   Briefcase,
   GraduationCap,
-  Tag
+  Tag,
+  Globe
 } from 'lucide-react';
 import { CATEGORIES } from '../lib/translations';
 
 export default function Navbar({ 
+  onOpenCountryModal,
   onOpenPostAd, 
   onOpenManageAd,
   onSelectCategory
@@ -126,8 +128,19 @@ export default function Navbar({
             </nav>
           </div>
 
-          {/* Desktop Right Action: ONLY ONE BUTTON NAMED "آگهی" WITH "+" ICON */}
-          <div className="hidden md:flex items-center">
+          {/* Desktop Right Action: "انتخاب کشور" WITH GLOBE ICON + "آگهی" BUTTON */}
+          <div className="hidden md:flex items-center gap-2.5">
+            {/* Country Selector Button with Globe icon */}
+            <button
+              type="button"
+              onClick={onOpenCountryModal}
+              className="flex items-center gap-1.5 h-10 px-3.5 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200/90 text-slate-700 hover:text-slate-950 text-[13px] font-semibold transition-all active:scale-95 cursor-pointer shadow-2xs group"
+              title="انتخاب کشور در اسکاندیناوی"
+            >
+              <Globe size={15} className="text-slate-500 group-hover:text-[#1877F2] transition-colors" />
+              <span>انتخاب کشور</span>
+            </button>
+
             <div className="relative" ref={adMenuRef}>
               <button
                 type="button"
@@ -198,8 +211,18 @@ export default function Navbar({
           </div>
 
           {/* Mobile Right Controls */}
-          <div className="flex md:hidden items-center gap-2">
-            
+          <div className="flex md:hidden items-center gap-1.5">
+            {/* Mobile Country Selector with Globe icon */}
+            <button
+              type="button"
+              onClick={onOpenCountryModal}
+              className="flex items-center gap-1 h-9 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 text-xs font-semibold active:scale-95 cursor-pointer"
+              title="انتخاب کشور"
+            >
+              <Globe size={13} className="text-slate-500" />
+              <span>انتخاب کشور</span>
+            </button>
+
             {/* Mobile Single Button: "آگهی" with "+" */}
             <div className="relative" ref={mobileAdMenuRef}>
               <button

@@ -477,7 +477,7 @@
       "label": "Navbar()",
       "file_type": "code",
       "source_file": "src/components/Navbar.jsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "components_navbar_navbar",
       "community": 11,
@@ -1942,5 +1942,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "df8d797f941c1166533d3d9331bebd0f958d57f6"
+  "built_at_commit": "f96645d0e2e9b01a482987ae2af24d0d95abb039"
 }
