@@ -16,7 +16,10 @@ import {
   Globe,
   Save,
   RefreshCw,
-  Sliders
+  Sliders,
+  CreditCard,
+  Lock,
+  Coins
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { CATEGORIES, COUNTRIES } from '../lib/translations';
@@ -84,6 +87,19 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }
   });
 
+  // Stripe & VIP Monetization State
+  const [stripeSettings, setStripeSettings] = useState({
+    enabled: true,
+    mode: 'test', // 'test' | 'live'
+    publishableKey: '',
+    secretKey: '',
+    webhookSecret: '',
+    vipPrice: 99,
+    currency: 'SEK',
+    vipDurationDays: 30,
+    vipSlotsCount: 4
+  });
+
   const [savingSettings, setSavingSettings] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
@@ -148,6 +164,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           }
           if (item.key === 'seo_settings' && item.value) {
             setSeoSettings(prev => ({
+              ...prev,
+              ...item.value
+            }));
+          }
+          if (item.key === 'stripe_settings' && item.value) {
+            setStripeSettings(prev => ({
               ...prev,
               ...item.value
             }));
@@ -291,6 +313,29 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (err) {
       alert('خطا در ذخیره سئو: ' + err.message);
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  // Save Stripe & Monetization Settings
+  const saveStripeSettings = async (e) => {
+    e.preventDefault();
+    setSavingSettings(true);
+    try {
+      const { error } = await supabase
+        .from('swedpersiska_settings')
+        .upsert({
+          key: 'stripe_settings',
+          value: stripeSettings,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+      setSaveSuccessMsg('تنظیمات درگاه پرداخت Stripe و تعرفه VIP با موفقیت ذخیره شد.');
+      setTimeout(() => setSaveSuccessMsg(''), 3000);
+    } catch (err) {
+      alert('خطا در ذخیره تنظیمات Stripe: ' + err.message);
     } finally {
       setSavingSettings(false);
     }
@@ -543,6 +588,22 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
           <button
             type="button"
+            onClick={() => setActiveTab('monetization')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'monetization'
+                ? 'bg-[#1877F2] text-white shadow-xs'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+            }`}
+          >
+            <CreditCard size={14} />
+            <span>درگاه Stripe و تبلیغات</span>
+            <span className="px-1.5 py-0.2 rounded-md bg-amber-400/20 text-amber-300 text-[10px] font-bold">
+              VIP
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('settings')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'settings'
@@ -595,6 +656,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'ads' ? 'bg-[#1877F2] text-white' : 'bg-slate-800/50 text-slate-300'}`}
           >
             آگهی‌ها ({ads.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => { setActiveTab('monetization'); setMobileMenuOpen(false); }}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'monetization' ? 'bg-[#1877F2] text-white' : 'bg-slate-800/50 text-slate-300'}`}
+          >
+            درگاه Stripe
           </button>
           <button
             type="button"
@@ -1546,6 +1614,239 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
               </form>
             </div>
+
+          </div>
+        )}
+
+        {/* ========================================================
+            TAB 4: STRIPE PAYMENT GATEWAY & VIP MONETIZATION SETTINGS
+            ======================================================== */}
+        {activeTab === 'monetization' && (
+          <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar">
+            
+            {/* Header Banner */}
+            <div className="p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950/40 to-slate-900 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-400/20 text-amber-300">
+                    <CreditCard size={18} />
+                  </div>
+                  <h2 className="text-lg font-black text-white">درگاه پرداخت آنلاین Stripe و درآمدزایی</h2>
+                </div>
+                <p className="text-xs text-slate-400">
+                  مدیریت کلیدهای امنیتی درگاه، تعرفه فروش آگهی‌های ویژه (VIP) و ۴ اسلات تبلیغاتی
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 ${
+                  stripeSettings.mode === 'live' 
+                    ? 'bg-emerald-950/50 text-emerald-400 border-emerald-800' 
+                    : 'bg-amber-950/50 text-amber-300 border-amber-800'
+                }`}>
+                  <span className={`h-2 w-2 rounded-full ${stripeSettings.mode === 'live' ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`} />
+                  <span>{stripeSettings.mode === 'live' ? 'درگاه زنده (Live)' : 'درگاه آزمایشی (Test)'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Monetization KPI Metrics */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-4 rounded-2xl bg-[#0f1420] border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 font-medium">آگهی‌های ویژه فعال (Active VIP)</span>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-2xl font-black text-amber-400 tabular-nums">{vipAds}</span>
+                  <span className="text-[11px] text-slate-500 font-mono">۴ جایگاه در صفحات</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#0f1420] border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 font-medium">تعرفه هر آگهی ویژه</span>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-2xl font-black text-blue-400 tabular-nums">
+                    {stripeSettings.vipPrice} <span className="text-sm">{stripeSettings.currency}</span>
+                  </span>
+                  <span className="text-[11px] text-slate-500">{stripeSettings.vipDurationDays} روز اعتبار</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#0f1420] border border-slate-800 space-y-1">
+                <span className="text-xs text-slate-400 font-medium">ارزش تخمینی آگهی‌های فعال</span>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-2xl font-black text-emerald-400 tabular-nums">
+                    {(vipAds * (stripeSettings.vipPrice || 99)).toLocaleString()} <span className="text-sm">{stripeSettings.currency}</span>
+                  </span>
+                  <span className="text-[11px] text-emerald-500/80 font-bold">درآمد جاری</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={saveStripeSettings} className="space-y-6">
+              
+              {/* SECTION 1: STRIPE GATEWAY KEYS */}
+              <div className="p-6 rounded-3xl bg-[#0f1420] border border-slate-800 space-y-4">
+                <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-black text-white flex items-center gap-2">
+                      <Lock size={16} className="text-[#1877F2]" />
+                      <span>کلیدهای امنیتی درگاه Stripe (Stripe API Keys)</span>
+                    </h3>
+                    <p className="text-xs text-slate-400">اطلاعات دریافتی از داشبورد رسمی Stripe (Developer &gt; API keys)</p>
+                  </div>
+
+                  {/* Mode Selector */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-400">حالت:</span>
+                    <div className="flex bg-[#07090e] p-1 rounded-xl border border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setStripeSettings(prev => ({ ...prev, mode: 'test' }))}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          stripeSettings.mode === 'test' ? 'bg-amber-600 text-white' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        آزمایشی (Test)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setStripeSettings(prev => ({ ...prev, mode: 'live' }))}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          stripeSettings.mode === 'live' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        زنده (Live)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Stripe Publishable Key (کلید عمومی)
+                    </label>
+                    <input
+                      type="text"
+                      value={stripeSettings.publishableKey}
+                      onChange={(e) => setStripeSettings(prev => ({ ...prev, publishableKey: e.target.value }))}
+                      placeholder="pk_test_... یا pk_live_..."
+                      className="w-full h-10 rounded-xl bg-[#07090e] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
+                      dir="ltr"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Stripe Secret Key (کلید محرمانه)
+                    </label>
+                    <input
+                      type="password"
+                      value={stripeSettings.secretKey}
+                      onChange={(e) => setStripeSettings(prev => ({ ...prev, secretKey: e.target.value }))}
+                      placeholder="sk_test_... یا sk_live_..."
+                      className="w-full h-10 rounded-xl bg-[#07090e] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
+                      dir="ltr"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      Stripe Webhook Secret (اختیاری)
+                    </label>
+                    <input
+                      type="password"
+                      value={stripeSettings.webhookSecret}
+                      onChange={(e) => setStripeSettings(prev => ({ ...prev, webhookSecret: e.target.value }))}
+                      placeholder="whsec_..."
+                      className="w-full h-10 rounded-xl bg-[#07090e] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 2: VIP PRICING & SLOTS CONFIG */}
+              <div className="p-6 rounded-3xl bg-[#0f1420] border border-slate-800 space-y-4">
+                <div className="border-b border-slate-800 pb-3">
+                  <h3 className="text-sm font-black text-white flex items-center gap-2">
+                    <Coins size={16} className="text-amber-400" />
+                    <span>تعرفه تبلیغات و اسلات‌های ۴ گانه ویژه</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">تنظیم قیمت ارتقای هر آگهی، ارز پرداختی و مدت زمان ویژه بودن</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      قیمت ارتقا به ویژه (VIP Fee)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={stripeSettings.vipPrice}
+                      onChange={(e) => setStripeSettings(prev => ({ ...prev, vipPrice: Number(e.target.value) }))}
+                      className="w-full h-10 rounded-xl bg-[#07090e] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      واحد پولی (Currency)
+                    </label>
+                    <select
+                      value={stripeSettings.currency}
+                      onChange={(e) => setStripeSettings(prev => ({ ...prev, currency: e.target.value }))}
+                      className="w-full h-10 rounded-xl bg-[#07090e] border border-slate-800 px-3 text-xs text-white focus:border-[#1877F2] focus:outline-none cursor-pointer"
+                    >
+                      <option value="SEK">SEK (کرون سوئد)</option>
+                      <option value="NOK">NOK (کرون نروژ)</option>
+                      <option value="DKK">DKK (کرون دانمارک)</option>
+                      <option value="EUR">EUR (یورو فنلاند)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                      مدت زمان اعتبار نمایش ویژه
+                    </label>
+                    <select
+                      value={stripeSettings.vipDurationDays}
+                      onChange={(e) => setStripeSettings(prev => ({ ...prev, vipDurationDays: Number(e.target.value) }))}
+                      className="w-full h-10 rounded-xl bg-[#07090e] border border-slate-800 px-3 text-xs text-white focus:border-[#1877F2] focus:outline-none cursor-pointer"
+                    >
+                      <option value={7}>۷ روز</option>
+                      <option value={14}>۱۴ روز</option>
+                      <option value={30}>۳۰ روز (توصیه شده)</option>
+                      <option value={60}>۶۰ روز</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-blue-950/40 border border-blue-900/60 p-3.5 text-xs text-blue-200 space-y-1">
+                  <div className="font-bold flex items-center gap-1.5 text-blue-300">
+                    <CheckCircle size={14} />
+                    <span>تضمین نمایش ۴ آگهی VIP در سایدبار:</span>
+                  </div>
+                  <p className="text-[11px] text-blue-300/80 leading-relaxed">
+                    با پرداخت کاربران، آگهی آن‌ها به صورت خودکار در صفحه اصلی، بالای نتایج جستجو و سایدبار اختصاصی تمام صفحات آگهی‌ها در میان ۴ آگهی برتر به نمایش درمی‌آید.
+                  </p>
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={savingSettings}
+                  className="h-11 px-6 rounded-xl bg-[#1877F2] hover:bg-blue-600 disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 active:scale-95 transition-all cursor-pointer shadow-md"
+                >
+                  <Save size={16} />
+                  <span>{savingSettings ? 'در حال ذخیره تنظیمات Stripe...' : 'ذخیره تنظیمات درگاه Stripe'}</span>
+                </button>
+              </div>
+
+            </form>
 
           </div>
         )}

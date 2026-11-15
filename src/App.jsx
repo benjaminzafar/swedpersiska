@@ -13,7 +13,8 @@ import Footer from './components/Footer';
 import MobileBottomNav from './components/MobileBottomNav';
 import CountryBanner from './components/CountryBanner';
 import AdCard from './components/AdCard';
-import AdDetailModal from './components/AdDetailModal';
+import AdDetailPage from './components/AdDetailPage';
+import PaymentModal from './components/PaymentModal';
 import PostAdModal from './components/PostAdModal';
 import ManageAdModal from './components/ManageAdModal';
 import AdminPanel from './components/AdminPanel';
@@ -78,6 +79,8 @@ export default function App() {
     return !localStorage.getItem('scandi_country_popup_seen');
   });
   const [activeAdDetail, setActiveAdDetail] = useState(null);
+  const [paymentAd, setPaymentAd] = useState(null);
+  const [stripeSettings, setStripeSettings] = useState(null);
   const [postAdOpen, setPostAdOpen] = useState(false);
   const [postAdCategory, setPostAdCategory] = useState('bostad');
   const [manageAdOpen, setManageAdOpen] = useState(false);
@@ -95,6 +98,8 @@ export default function App() {
           if (branding.siteName) setSiteName(branding.siteName);
           if (branding.logoUrl) setLogoUrl(branding.logoUrl);
         }
+        const stripe = data.find(item => item.key === 'stripe_settings')?.value;
+        if (stripe) setStripeSettings(stripe);
       }
     } catch {}
   };
@@ -160,9 +165,48 @@ export default function App() {
     fetchAds();
   }, []);
 
-  // When clicking an ad, increment view count in background and open modal
+  // Handle browser Back / Forward history navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const adParam = params.get('ad');
+        if (adParam) {
+          const found = ads.find(a => a.reference_number === adParam || a.id === adParam);
+          if (found) setActiveAdDetail(found);
+        } else {
+          setActiveAdDetail(null);
+        }
+      } catch {}
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [ads]);
+
+  // Sync initial URL on ads fetch
+  useEffect(() => {
+    if (ads.length > 0 && !activeAdDetail) {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const adParam = params.get('ad');
+        if (adParam) {
+          const found = ads.find(a => a.reference_number === adParam || a.id === adParam);
+          if (found) setActiveAdDetail(found);
+        }
+      } catch {}
+    }
+  }, [ads]);
+
+  // When clicking an ad, open full page view and update URL
   const handleSelectAd = (ad) => {
     setActiveAdDetail(ad);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('ad', ad.reference_number || ad.id);
+      window.history.pushState({}, '', url.toString());
+    } catch {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     supabase
       .from('swedpersiska_ads')
       .update({ views_count: (ad.views_count || 0) + 1 })
@@ -170,6 +214,16 @@ export default function App() {
       .then(() => {
         // Updated in background
       });
+  };
+
+  // Back to ads feed
+  const handleBackToFeed = () => {
+    setActiveAdDetail(null);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('ad');
+      window.history.pushState({}, '', url.toString());
+    } catch {}
   };
 
   // Active country details
@@ -266,6 +320,7 @@ export default function App() {
         }}
         onOpenManageAd={() => setManageAdOpen(true)}
         onSelectCategory={(catId) => {
+          if (activeAdDetail) handleBackToFeed();
           setSelectedCategory(catId);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
@@ -282,8 +337,20 @@ export default function App() {
         </div>
       )}
 
-      {/* Hero Section - Displayed only on Home (selectedCategory === 'all') */}
-      {selectedCategory === 'all' && (
+      {/* Full Page Ad View (No popup on desktop, No swipe on mobile) OR Home Feed */}
+      {activeAdDetail ? (
+        <AdDetailPage
+          ad={activeAdDetail}
+          allAds={ads}
+          lang={lang}
+          onBack={handleBackToFeed}
+          onSelectAd={handleSelectAd}
+          onOpenPromote={(targetAd) => setPaymentAd(targetAd)}
+        />
+      ) : (
+        <>
+          {/* Hero Section - Displayed only on Home (selectedCategory === 'all') */}
+          {selectedCategory === 'all' && (
         <section className="relative overflow-hidden bg-[#07090e] border-b border-slate-800/80 pt-6 sm:pt-14 pb-7 sm:pb-16 px-4 sm:px-6 lg:px-8 w-full animate-in fade-in duration-200">
           
           {/* Dynamic Darkened Architectural Cityscape Backdrop - NO white smudges */}
@@ -511,12 +578,15 @@ export default function App() {
         </section>
 
       </main>
+        </>
+      )}
 
       {/* Community Footer */}
       <Footer
         siteName={siteName}
         logoUrl={logoUrl}
         onSelectCategory={(catId) => {
+          if (activeAdDetail) handleBackToFeed();
           setSelectedCategory(catId);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
@@ -536,7 +606,10 @@ export default function App() {
       <MobileBottomNav
         selectedCategory={selectedCategory}
         selectedCountry={selectedCountry}
-        onSelectCategory={(catId) => setSelectedCategory(catId)}
+        onSelectCategory={(catId) => {
+          if (activeAdDetail) handleBackToFeed();
+          setSelectedCategory(catId);
+        }}
         onOpenCountryModal={() => setCountryModalOpen(true)}
         onOpenPostAd={() => {
           setPostAdCategory('bostad');
@@ -545,12 +618,21 @@ export default function App() {
         onOpenManageAd={() => setManageAdOpen(true)}
       />
 
-      {/* MODAL 1: Ad Detail */}
-      {activeAdDetail && (
-        <AdDetailModal
-          ad={activeAdDetail}
-          lang={lang}
-          onClose={() => setActiveAdDetail(null)}
+      {/* MODAL: Stripe Payment for VIP Ad Promotion */}
+      {paymentAd && (
+        <PaymentModal
+          ad={paymentAd}
+          price={stripeSettings?.vipPrice || 99}
+          currency={stripeSettings?.currency || 'SEK'}
+          stripeSettings={stripeSettings}
+          onClose={() => setPaymentAd(null)}
+          onSuccess={(promotedAd) => {
+            fetchAds();
+            if (activeAdDetail && activeAdDetail.id === promotedAd.id) {
+              setActiveAdDetail(promotedAd);
+            }
+            showToast(`آگهی "${promotedAd.title}" با موفقیت به رتبه ویژه (VIP) ارتقا یافت!`);
+          }}
         />
       )}
 
@@ -561,9 +643,14 @@ export default function App() {
           initialCategory={postAdCategory}
           selectedCountry={selectedCountry}
           onClose={() => setPostAdOpen(false)}
-          onCreated={(newAd) => {
+          onCreated={(newAd, wantVip) => {
             fetchAds();
-            showToast(`آگهی با کد مرجع ${newAd.reference_number} با موفقیت ثبت شد.`);
+            if (wantVip) {
+              setPostAdOpen(false);
+              setPaymentAd(newAd);
+            } else {
+              showToast(`آگهی با کد مرجع ${newAd.reference_number} با موفقیت ثبت شد.`);
+            }
           }}
         />
       )}

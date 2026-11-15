@@ -5,7 +5,9 @@ import {
   KeyRound, 
   Check, 
   Copy, 
-  AlertCircle
+  AlertCircle,
+  Crown,
+  Sparkles
 } from 'lucide-react';
 import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supabase';
 import { COUNTRIES, CATEGORIES, t } from '../lib/translations';
@@ -24,6 +26,7 @@ export default function PostAdModal({
   const [successData, setSuccessData] = useState(null);
   const [copiedRef, setCopiedRef] = useState(false);
   const [copiedPin, setCopiedPin] = useState(false);
+  const [wantVipPromotion, setWantVipPromotion] = useState(false);
 
   // Form fields
   const [adCountry, setAdCountry] = useState(selectedCountry === 'all' ? 'se' : (selectedCountry || 'se'));
@@ -126,7 +129,7 @@ export default function PostAdModal({
       });
 
       if (onCreated) {
-        onCreated(data);
+        onCreated(data, wantVipPromotion);
       }
     } catch (err) {
       console.error('Error posting ad:', err);
@@ -555,6 +558,55 @@ export default function PostAdModal({
                 </div>
               </div>
 
+              {/* VIP Promotion Upgrade Box */}
+              <div 
+                onClick={() => setWantVipPromotion(!wantVipPromotion)}
+                className={`rounded-2xl border p-4 transition-all cursor-pointer select-none space-y-2.5 ${
+                  wantVipPromotion 
+                    ? 'bg-gradient-to-br from-blue-50 to-indigo-50/70 border-blue-400 ring-2 ring-blue-200' 
+                    : 'bg-slate-50/80 hover:bg-slate-50 border-slate-200'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-2.5">
+                    <input
+                      type="checkbox"
+                      checked={wantVipPromotion}
+                      onChange={(e) => setWantVipPromotion(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black text-slate-950">ارتقا به آگهی ویژه (VIP Promoted)</span>
+                        <span className="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[9.5px] font-bold">پیشنهاد ویژه</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        نمایش در صدر آگهی‌ها و ۴ جایگاه ویژه در سایدبار تمام صفحات برای جذب ۳ برابری مشتریان.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="text-left shrink-0">
+                    <span className="text-sm font-black text-blue-700">۹۹ کرون</span>
+                    <span className="text-[10px] text-slate-400 block">۳۰ روز اعتبار</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60 text-[10.5px] text-slate-600">
+                  <span className="flex items-center gap-1 font-semibold text-emerald-700">
+                    <Check size={12} /> صدر نتایج جستجو
+                  </span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1 font-semibold text-blue-700">
+                    <Check size={12} /> ۴ جایگاه ویژه صفحات
+                  </span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1 font-semibold text-purple-700">
+                    <Check size={12} /> برچسب اختصاصی ویژه
+                  </span>
+                </div>
+              </div>
+
               {/* Submit CTA */}
               <div className="pt-2">
                 <button
@@ -564,7 +616,9 @@ export default function PostAdModal({
                 >
                   <PlusCircle size={16} />
                   <span>
-                    {loading ? 'در حال ثبت و ذخیره...' : currentT.postAdBtn}
+                    {loading 
+                      ? 'در حال ثبت و ذخیره...' 
+                      : (wantVipPromotion ? 'ثبت آگهی و انتقال به پرداخت امن Stripe' : currentT.postAdBtn)}
                   </span>
                 </button>
               </div>
