@@ -63,30 +63,30 @@ export default function Navbar({
     : 'همه شهرها';
 
   return (
-    <header className="fixed top-0 inset-x-0 z-40 w-full bg-[#1877F2] md:bg-white/95 md:backdrop-blur-md border-b border-blue-600/30 md:border-slate-200/80 select-none font-vazir shadow-md md:shadow-xs transition-colors" dir="rtl">
+    <header className="fixed top-0 inset-x-0 z-40 w-full bg-[#1877F2] md:bg-white/95 md:backdrop-blur-md border-b border-blue-700/20 md:border-slate-200/80 select-none font-vazir shadow-none transition-colors" dir="rtl">
       <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
         
-        {/* MOBILE VIEW: Blue Header with White Logo + White Search & Select City Capsule */}
+        {/* MOBILE VIEW: Soft Blue Header with Clean White Logo + Flat Search & Select City Capsule */}
         <div className="flex md:hidden h-16 items-center gap-2.5">
-          {/* Logo (White Badge on Blue) */}
+          {/* Logo (Soft White Badge on Blue) */}
           <a href="/" className="flex items-center shrink-0" title={siteName}>
             {logoUrl ? (
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden bg-white shadow-xs border border-white/40">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden bg-white border border-white/20">
                 <img src={logoUrl} alt={siteName} className="h-full w-full object-contain" />
               </div>
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#1877F2] font-black text-sm shadow-xs border border-white/50 transition-transform active:scale-95">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#1877F2] font-black text-sm border border-white/30 transition-transform active:scale-95">
                 <span className="font-mono tracking-tighter">SP</span>
               </div>
             )}
           </a>
 
-          {/* Integrated City Selector & Search Capsule (White Card inside Blue Bar) */}
-          <div className="flex-1 flex items-center h-11 sm:h-12 rounded-full bg-white shadow-md border border-white/80 px-2.5 gap-2 transition-all min-w-0">
+          {/* Integrated City Selector & Search Capsule (Soft Flat White Card without harsh shadows) */}
+          <div className="flex-1 flex items-center h-11 sm:h-12 rounded-full bg-white border-0 px-2.5 gap-2 transition-all min-w-0">
             
             {/* City Selector Pill with native select overlay */}
             <div className="relative shrink-0 flex items-center">
-              <div className="flex items-center gap-1.5 ps-2.5 pe-2 py-1.5 rounded-full bg-blue-50/90 hover:bg-blue-100 text-blue-900 text-[11.5px] font-bold border border-blue-200/70 transition-colors">
+              <div className="flex items-center gap-1.5 ps-2.5 pe-2 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-900 text-[11.5px] font-bold border border-blue-100 transition-colors">
                 <MapPin size={12} className="text-[#1877F2] shrink-0" />
                 <span className="truncate max-w-[68px]">
                   {cityLabel}

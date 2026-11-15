@@ -62,9 +62,9 @@ export default function MobileBottomNav({
 
   return (
     <>
-      {/* 1. Sleek Compact Mobile Bottom Navigation Bar */}
+      {/* 1. Sleek Compact Mobile Bottom Navigation Bar (Flat & Soft) */}
       <nav 
-        className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-3px_16px_rgba(0,0,0,0.05)] px-2 pt-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] font-vazir select-none"
+        className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/80 shadow-none px-2 pt-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] font-vazir select-none"
         dir="rtl"
         aria-label="منوی دسترسی موبایل"
       >
