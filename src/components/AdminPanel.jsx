@@ -19,8 +19,10 @@ import {
   Sliders,
   CreditCard,
   Lock,
-  Coins
+  Coins,
+  Bot
 } from 'lucide-react';
+import CloudflareTurnstile from './CloudflareTurnstile';
 import { supabase } from '../lib/supabase';
 import { CATEGORIES, COUNTRIES } from '../lib/translations';
 
@@ -100,6 +102,23 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     vipSlotsCount: 4
   });
 
+  // Cloudflare Turnstile Anti-Bot State
+  const [adminTurnstileToken, setAdminTurnstileToken] = useState('');
+  const [turnstileSettings, setTurnstileSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem('swedpersiska_turnstile_settings');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      enabled: true,
+      mode: 'test', // 'test' | 'live'
+      siteKey: '',
+      secretKey: '',
+      protectAdminLogin: true,
+      protectPostAd: true
+    };
+  });
+
   const [savingSettings, setSavingSettings] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
@@ -113,6 +132,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const handleLogin = (e) => {
     e.preventDefault();
     setLoginError('');
+
+    const turnstileRequired = turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false;
+    if (turnstileRequired && !adminTurnstileToken) {
+      setLoginError('لطفاً تایید امنیتی کلودفلر (من ربات نیستم) را کامل فرمایید.');
+      return;
+    }
+
     const validEmail = (import.meta.env.VITE_ADMIN_EMAIL || 'swedpersiska@gmail.com').toLowerCase().trim();
     const validPass = import.meta.env.VITE_ADMIN_PASSWORD || 'Sam@13321332';
 
@@ -170,6 +196,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           }
           if (item.key === 'stripe_settings' && item.value) {
             setStripeSettings(prev => ({
+              ...prev,
+              ...item.value
+            }));
+          }
+          if (item.key === 'turnstile_settings' && item.value) {
+            setTurnstileSettings(prev => ({
               ...prev,
               ...item.value
             }));
@@ -341,6 +373,32 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }
   };
 
+  // Save Cloudflare Turnstile Anti-Bot Settings
+  const saveTurnstileSettings = async (e) => {
+    if (e) e.preventDefault();
+    setSavingSettings(true);
+    try {
+      localStorage.setItem('swedpersiska_turnstile_settings', JSON.stringify(turnstileSettings));
+      const { error } = await supabase
+        .from('swedpersiska_settings')
+        .upsert({
+          key: 'turnstile_settings',
+          value: turnstileSettings,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+      setSaveSuccessMsg('تنظیمات آنتی‌بات کلودفلر Turnstile با موفقیت ذخیره شد.');
+      setTimeout(() => setSaveSuccessMsg(''), 3000);
+    } catch (err) {
+      console.error('Error saving turnstile settings:', err);
+      setSaveSuccessMsg('تنظیمات به صورت محلی ذخیره شد.');
+      setTimeout(() => setSaveSuccessMsg(''), 3000);
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
   // Copy helper
   const copyText = (text, type) => {
     if (navigator.clipboard) {
@@ -501,6 +559,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               />
             </div>
 
+            {/* Cloudflare Turnstile Anti-Bot Verification for Admin Login */}
+            {turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false && (
+              <div className="pt-1 flex flex-col items-center justify-center">
+                <CloudflareTurnstile
+                  theme="dark"
+                  siteKey={turnstileSettings.mode === 'live' ? turnstileSettings.siteKey : undefined}
+                  onVerify={(token) => {
+                    setAdminTurnstileToken(token);
+                    setLoginError('');
+                  }}
+                  onExpire={() => setAdminTurnstileToken('')}
+                />
+              </div>
+            )}
+
             <button
               type="submit"
               className="w-full rounded-xl bg-[#1877F2] hover:bg-blue-600 text-white font-bold text-xs py-3 shadow-md active:scale-95 transition-all cursor-pointer"
@@ -604,6 +677,24 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
           <button
             type="button"
+            onClick={() => setActiveTab('security')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'security'
+                ? 'bg-[#1877F2] text-white shadow-xs'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+            }`}
+          >
+            <ShieldCheck size={14} />
+            <span>امنیت کلودفلر (Anti-Bot)</span>
+            <span className={`px-1.5 py-0.2 rounded-md text-[10px] font-bold ${
+              turnstileSettings.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'
+            }`}>
+              {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
+            </span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('settings')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'settings'
@@ -642,7 +733,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0d121c] border-b border-slate-800 p-3 flex gap-2">
+        <div className="lg:hidden bg-[#0d121c] border-b border-slate-800 p-3 flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => { setActiveTab('overview'); setMobileMenuOpen(false); }}
@@ -663,6 +754,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'monetization' ? 'bg-[#1877F2] text-white' : 'bg-slate-800/50 text-slate-300'}`}
           >
             درگاه Stripe
+          </button>
+          <button
+            type="button"
+            onClick={() => { setActiveTab('security'); setMobileMenuOpen(false); }}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'security' ? 'bg-[#1877F2] text-white' : 'bg-slate-800/50 text-slate-300'}`}
+          >
+            آنتی‌بات
           </button>
           <button
             type="button"
@@ -1847,6 +1945,228 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </div>
 
             </form>
+
+          </div>
+        )}
+
+        {/* ========================================================
+            TAB 5: CLOUDFLARE TURNSTILE ANTI-BOT SETTINGS
+        ======================================================== */}
+        {activeTab === 'security' && (
+          <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar">
+            
+            <div className="max-w-4xl mx-auto space-y-6">
+              
+              {/* Header Title */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck size={22} className="text-emerald-400" />
+                    <h2 className="text-lg font-black text-white">سامانه ضد اسپم و آنتی‌بات کلودفلر (Cloudflare Turnstile)</h2>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    محافظت هوشمند از فرم ورود مدیران و ثبت آگهی‌های کاربران در برابر ربات‌ها، حملات Brute Force و اسپم‌های اتوماتیک
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <div className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 ${
+                    turnstileSettings.enabled
+                      ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800'
+                      : 'bg-rose-950/60 text-rose-400 border-rose-800'
+                  }`}>
+                    <span className={`h-2 w-2 rounded-full ${turnstileSettings.enabled ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
+                    <span>{turnstileSettings.enabled ? 'آنتی‌بات فعال' : 'آنتی‌بات غیرفعال'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {saveSuccessMsg && (
+                <div className="p-3.5 rounded-2xl bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-bold flex items-center gap-2">
+                  <CheckCircle size={16} />
+                  <span>{saveSuccessMsg}</span>
+                </div>
+              )}
+
+              <form onSubmit={saveTurnstileSettings} className="space-y-6">
+                
+                {/* 1. General Controls & Mode */}
+                <div className="rounded-2xl bg-[#0f1420] border border-slate-800 p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <div>
+                      <h3 className="text-xs font-extrabold text-white">تنظیمات اصلی آنتی‌بات</h3>
+                      <p className="text-[11px] text-slate-400">فعال‌سازی و انتخاب نوع محیط کلودفلر</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    {/* Master Switch */}
+                    <label className="flex items-center justify-between p-3.5 rounded-xl bg-[#07090e] border border-slate-800 cursor-pointer">
+                      <div>
+                        <span className="text-xs font-bold text-white block">فعال‌سازی سراسری Turnstile</span>
+                        <span className="text-[10px] text-slate-400">اعمال بررسی امنیتی در سراسر سایت</span>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={turnstileSettings.enabled}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, enabled: e.target.checked }))}
+                        className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </label>
+
+                    {/* Mode Selector */}
+                    <div className="p-3.5 rounded-xl bg-[#07090e] border border-slate-800 space-y-1.5">
+                      <label className="block text-xs font-bold text-slate-300">
+                        محیط اجرا (Mode)
+                      </label>
+                      <select
+                        value={turnstileSettings.mode}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, mode: e.target.value }))}
+                        className="w-full h-9 rounded-lg bg-[#0d121c] border border-slate-700 px-3 text-xs text-white focus:border-[#1877F2] focus:outline-none cursor-pointer"
+                      >
+                        <option value="test">آزمایشی (Test Mode - کلید تستی Cloudflare)</option>
+                        <option value="live">عملیاتی زنده (Live Production - کلید اختصاصی)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Scope Toggles */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <label className="flex items-center justify-between p-3.5 rounded-xl bg-[#07090e] border border-slate-800 cursor-pointer">
+                      <div className="flex items-center gap-2.5">
+                        <Lock size={15} className="text-amber-400" />
+                        <div>
+                          <span className="text-xs font-bold text-white block">حفاظت از صفحه ورود مدیریت</span>
+                          <span className="text-[10px] text-slate-400">جلوگیری از ربات‌ها و تست رمز عبور</span>
+                        </div>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={turnstileSettings.protectAdminLogin}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, protectAdminLogin: e.target.checked }))}
+                        className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </label>
+
+                    <label className="flex items-center justify-between p-3.5 rounded-xl bg-[#07090e] border border-slate-800 cursor-pointer">
+                      <div className="flex items-center gap-2.5">
+                        <Bot size={15} className="text-blue-400" />
+                        <div>
+                          <span className="text-xs font-bold text-white block">حفاظت از فرم انتشار آگهی</span>
+                          <span className="text-[10px] text-slate-400">جلوگیری از ارسال اسپم و آگهی‌های فیک</span>
+                        </div>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={turnstileSettings.protectPostAd}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, protectPostAd: e.target.checked }))}
+                        className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {/* 2. Cloudflare API Keys */}
+                <div className="rounded-2xl bg-[#0f1420] border border-slate-800 p-5 space-y-4">
+                  <div className="border-b border-slate-800/80 pb-3">
+                    <h3 className="text-xs font-extrabold text-white">کلیدهای اختصاصی Cloudflare Turnstile</h3>
+                    <p className="text-[11px] text-slate-400">
+                      این کلیدها را می‌توانید به صورت رایگان از پنل کلودفلر خود (بخش Turnstile) دریافت کنید
+                    </p>
+                  </div>
+
+                  <div className="space-y-3.5">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                        Turnstile Site Key (کلید عمومی کلاینت)
+                      </label>
+                      <input
+                        type="text"
+                        value={turnstileSettings.siteKey}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, siteKey: e.target.value }))}
+                        placeholder={turnstileSettings.mode === 'test' ? 'در حالت تستی از کلید پیش‌فرض کلودفلر استفاده می‌شود' : '0x4AAAAAA...'}
+                        className="w-full h-10 rounded-xl bg-[#07090e] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
+                        dir="ltr"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                        Turnstile Secret Key (کلید محرمانه سرور - اختیاری)
+                      </label>
+                      <input
+                        type="password"
+                        value={turnstileSettings.secretKey}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, secretKey: e.target.value }))}
+                        placeholder={turnstileSettings.mode === 'test' ? 'در حالت تستی نیازی به کلید محرمانه نیست' : '0x4AAAAAA...'}
+                        className="w-full h-10 rounded-xl bg-[#07090e] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
+                        dir="ltr"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cloudflare Direct Link & Help */}
+                  <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-3.5 text-xs text-slate-300 space-y-2">
+                    <div className="font-bold flex items-center justify-between text-slate-200">
+                      <span className="flex items-center gap-1.5">
+                        <Globe size={14} className="text-blue-400" />
+                        <span>نحوه دریافت کلیدهای رایگان کلودفلر:</span>
+                      </span>
+                      <a
+                        href="https://dash.cloudflare.com/?to=/:account/turnstile"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-400 hover:text-blue-300 underline font-semibold text-[11px]"
+                      >
+                        ورود به داشبورد Cloudflare Turnstile ↗
+                      </a>
+                    </div>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      ۱. وارد حساب Cloudflare خود شوید و از منوی کناری گزینه <b>Turnstile</b> را انتخاب فرمایید.<br />
+                      ۲. روی <b>Add Site</b> کلیک کنید، دامنه سایت (مانند swedpersiska.vercel.app) را وارد نمایید.<br />
+                      ۳. نوع ویجت را روی <b>Managed</b> یا <b>Non-interactive</b> بگذارید و Site Key دریافتی را در کادر بالا کپی کنید.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. Live Interactive Widget Test */}
+                <div className="rounded-2xl bg-[#0f1420] border border-slate-800 p-5 space-y-3.5">
+                  <div className="border-b border-slate-800/80 pb-3 flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xs font-extrabold text-white">تست زنده عملکرد ویجت Cloudflare</h3>
+                      <p className="text-[11px] text-slate-400">پیش‌نمایش زنده از ظاهر و اعتبارسنجی ویجت امنیتی</p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#07090e] border border-slate-800 flex flex-col items-center justify-center space-y-2">
+                    <CloudflareTurnstile
+                      theme="dark"
+                      siteKey={turnstileSettings.mode === 'live' ? turnstileSettings.siteKey : undefined}
+                      onVerify={(token) => {
+                        triggerToast('تایید امنیتی با موفقیت انجام شد: ' + token.slice(0, 15) + '...');
+                      }}
+                    />
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      Site Key فعال: {turnstileSettings.mode === 'live' && turnstileSettings.siteKey ? turnstileSettings.siteKey : 'کلید آزمایشی استاندارد کلودفلر (Test Key)'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Submit & Save */}
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={savingSettings}
+                    className="h-11 px-6 rounded-xl bg-[#1877F2] hover:bg-blue-600 disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 active:scale-95 transition-all cursor-pointer shadow-md"
+                  >
+                    <Save size={16} />
+                    <span>{savingSettings ? 'در حال ذخیره تنظیمات...' : 'ذخیره تنظیمات آنتی‌بات کلودفلر'}</span>
+                  </button>
+                </div>
+
+              </form>
+
+            </div>
 
           </div>
         )}

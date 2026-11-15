@@ -7,6 +7,7 @@ import {
   Copy, 
   AlertCircle
 } from 'lucide-react';
+import CloudflareTurnstile from './CloudflareTurnstile';
 import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supabase';
 import { COUNTRIES, CATEGORIES, t } from '../lib/translations';
 
@@ -25,6 +26,14 @@ export default function PostAdModal({
   const [copiedRef, setCopiedRef] = useState(false);
   const [copiedPin, setCopiedPin] = useState(false);
   const [wantVipPromotion, setWantVipPromotion] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem('swedpersiska_turnstile_settings');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return { enabled: true, protectPostAd: true, mode: 'test' };
+  });
 
   // Form fields
   const [adCountry, setAdCountry] = useState(selectedCountry === 'all' ? 'se' : (selectedCountry || 'se'));
@@ -75,6 +84,12 @@ export default function PostAdModal({
 
     if (!contactPhone.trim() && !contactWhatsapp.trim() && !contactEmail.trim() && !contactTelegram.trim()) {
       setErrorMsg('حداقل یک راه تماس (شماره تلفن، واتساپ، تلگرام یا ایمیل) الزامی است.');
+      return;
+    }
+
+    const turnstileRequired = turnstileSettings.enabled !== false && turnstileSettings.protectPostAd !== false;
+    if (turnstileRequired && !turnstileToken) {
+      setErrorMsg('لطفاً تایید امنیتی کلودفلر (من ربات نیستم) را کامل فرمایید.');
       return;
     }
 
@@ -581,6 +596,21 @@ export default function PostAdModal({
                   <span className="text-sm font-extrabold text-blue-700">۹۹ kr</span>
                 </div>
               </label>
+
+              {/* Cloudflare Turnstile Anti-Bot Verification */}
+              {turnstileSettings.enabled !== false && turnstileSettings.protectPostAd !== false && (
+                <div className="pt-2 pb-1 flex flex-col items-center justify-center">
+                  <CloudflareTurnstile
+                    theme="light"
+                    siteKey={turnstileSettings.mode === 'live' ? turnstileSettings.siteKey : undefined}
+                    onVerify={(token) => {
+                      setTurnstileToken(token);
+                      setErrorMsg('');
+                    }}
+                    onExpire={() => setTurnstileToken('')}
+                  />
+                </div>
+              )}
 
               {/* Submit CTA */}
               <div className="pt-2">
