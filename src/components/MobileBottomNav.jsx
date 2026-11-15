@@ -48,7 +48,7 @@ export default function MobileBottomNav({
   const handleCategoryClick = (catId) => {
     onSelectCategory?.(catId);
     setCollectionSheetOpen(false);
-    window.scrollTo({ top: 380, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleGoHome = () => {

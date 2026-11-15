@@ -125,7 +125,16 @@ export default function Navbar({
           </div>
 
           {/* Logo on Left (Clean Nordic Badge) */}
-          <a href="/" className="flex items-center shrink-0" title={siteName}>
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              if (onSelectCategory) onSelectCategory('all');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="flex items-center shrink-0 cursor-pointer"
+            title={siteName}
+          >
             {logoUrl ? (
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-2xs">
                 <img src={logoUrl} alt={siteName} className="h-full w-full object-contain" />
@@ -144,7 +153,15 @@ export default function Navbar({
           
           {/* Logo & Brand */}
           <div className="flex items-center gap-6 shrink-0">
-            <a href="/" className="flex items-center gap-2.5 group shrink-0">
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                if (onSelectCategory) onSelectCategory('all');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2.5 group shrink-0 cursor-pointer"
+            >
               {logoUrl ? (
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-white shadow-xs border border-slate-200 shrink-0">
                   <img src={logoUrl} alt={siteName} className="h-full w-full object-contain" />
