@@ -186,7 +186,7 @@ export default function PostAdModal({
         </div>
 
         {/* Form Body or Success Screen */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
           
           {successData ? (
             /* Success Screen */

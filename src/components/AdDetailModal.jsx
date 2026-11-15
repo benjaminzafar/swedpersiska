@@ -86,8 +86,8 @@ export default function AdDetailModal({ ad, lang = 'fa', onClose }) {
           </div>
         </div>
 
-        {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto overscroll-contain p-5 sm:p-7 space-y-6">
+        {/* Scrollable Content Body with sleek custom scrollbar */}
+        <div className="flex-1 overflow-y-auto overscroll-contain p-5 sm:p-7 space-y-6 custom-scrollbar">
           
           {/* Main Gallery */}
           <div className="space-y-2">
