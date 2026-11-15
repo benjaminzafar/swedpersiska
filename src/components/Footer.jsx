@@ -173,20 +173,6 @@ export default function Footer({
           
           <div className="flex items-center gap-4">
             <span className="hidden md:inline text-slate-400">سوئد • نروژ • دانمارک • فنلاند</span>
-            
-            {/* Standard Login URL in footer */}
-            <a
-              href="?admin=1"
-              onClick={(e) => {
-                e.preventDefault();
-                onOpenAdmin?.();
-              }}
-              className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 transition-colors cursor-pointer text-[11px] font-medium"
-              title="ورود مدیریت سایت"
-            >
-              <Lock size={12} className="text-slate-400" />
-              <span>ورود مدیریت</span>
-            </a>
           </div>
         </div>
 
