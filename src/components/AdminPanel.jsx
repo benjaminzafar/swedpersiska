@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   LayoutDashboard, 
   Layers, 
@@ -75,6 +75,18 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   // Ads state
   const [ads, setAds] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   const [countryFilter, setCountryFilter] = useState('all'); // 'all' | 'se' | 'no' | 'dk' | 'fi'
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'hidden' | 'vip'
@@ -631,111 +643,125 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          DESKTOP SIDEBAR NAVIGATION (Modern Sleek Obsidian)
+          DESKTOP SIDEBAR NAVIGATION (Modern Sleek Floating Obsidian - NT360 Style)
       ======================================================== */}
-      <aside className="hidden lg:flex w-64 shrink-0 bg-[#0e0f14] text-zinc-300 flex-col border-s border-zinc-800/50 select-none transition-colors duration-200">
+      <aside className="hidden lg:flex w-64 shrink-0 my-3 ms-3 me-2 rounded-3xl bg-[#111217] text-zinc-300 flex-col shadow-2xl border border-zinc-800/80 overflow-hidden select-none">
         
         {/* Brand Top Header */}
-        <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-800/50">
+        <div className="pt-5 pb-4 px-4 flex items-center justify-between border-b border-zinc-800/50">
           <div className="flex items-center gap-3">
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-white to-zinc-200 text-zinc-950 font-black text-xs shadow-md shadow-black/20 ring-1 ring-white/10">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-zinc-950 font-black text-xs shadow-md shadow-black/40">
               SP
-              <span className="absolute -bottom-0.5 -end-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-[#0e0f14]" />
             </div>
             <div>
               <span className="font-extrabold text-sm text-white block leading-tight tracking-tight">سوئد پرشیا</span>
-              <span className="text-[10px] text-zinc-400 font-mono tracking-wider">ADMIN CRM</span>
+              <span className="text-[10px] text-zinc-400 font-mono tracking-widest uppercase">ADMIN CRM</span>
             </div>
           </div>
-          <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold">
-            آنلاین
-          </span>
+          <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]" title="آنلاین" />
         </div>
 
         {/* Categorized Modern Navigation Items */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-4">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
           
-          {/* Group 1: Main */}
+          {/* Group 1: پیشخوان (ÖVERSIKT) */}
           <div className="space-y-1">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-3 block">
-              منو
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
+              پیشخوان
             </span>
 
             <button
               type="button"
               onClick={() => handleTabChange('overview')}
-              className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
                 activeTab === 'overview'
-                  ? 'bg-white text-zinc-950 font-bold shadow-md shadow-black/10'
+                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
                   : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <LayoutDashboard size={17} className={activeTab === 'overview' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <LayoutDashboard size={16} className={activeTab === 'overview' ? 'text-zinc-950' : 'text-zinc-400'} />
                 <span>پیشخوان</span>
               </div>
             </button>
-
-            <button
-              type="button"
-              onClick={() => handleTabChange('ads')}
-              className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                activeTab === 'ads'
-                  ? 'bg-white text-zinc-950 font-bold shadow-md shadow-black/10'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Layers size={17} className={activeTab === 'ads' ? 'text-zinc-950' : 'text-zinc-400'} />
-                <span>آگهی‌ها</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
-                activeTab === 'ads' ? 'bg-zinc-100 text-zinc-900 border border-zinc-300' : 'bg-zinc-800 text-zinc-400'
-              }`}>
-                {ads.length}
-              </span>
-            </button>
           </div>
 
-          {/* Group 2: System & Finance */}
-          <div className="space-y-1">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-3 block">
-              سیستم
+          {/* Group 2: آگهی‌ها و مدیریت (FÖRSÄLJNING & ÄRENDEN) */}
+          <div className="space-y-1 pt-1">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
+              آگهی‌ها و مدیریت
             </span>
 
             <button
               type="button"
-              onClick={() => handleTabChange('monetization')}
-              className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                activeTab === 'monetization'
-                  ? 'bg-white text-zinc-950 font-bold shadow-md shadow-black/10'
+              onClick={() => handleTabChange('ads')}
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                activeTab === 'ads'
+                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
                   : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <CreditCard size={17} className={activeTab === 'monetization' ? 'text-zinc-950' : 'text-amber-400'} />
-                <span>درآمد و VIP</span>
+                <Layers size={16} className={activeTab === 'ads' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <span>آگهی‌ها</span>
               </div>
-              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">
-                VIP
+              <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-colors ${
+                activeTab === 'ads' 
+                  ? 'bg-zinc-100 text-zinc-900 border border-zinc-300' 
+                  : 'bg-[#0e2a38] text-cyan-400 border border-cyan-800/60'
+              }`}>
+                {ads.length}
               </span>
             </button>
 
             <button
               type="button"
-              onClick={() => handleTabChange('security')}
-              className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                activeTab === 'security'
-                  ? 'bg-white text-zinc-950 font-bold shadow-md shadow-black/10'
+              onClick={() => handleTabChange('monetization')}
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                activeTab === 'monetization'
+                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
                   : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <ShieldCheck size={17} className={activeTab === 'security' ? 'text-zinc-950' : 'text-emerald-400'} />
+                <CreditCard size={16} className={activeTab === 'monetization' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <span>درآمد و VIP</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-colors ${
+                activeTab === 'monetization'
+                  ? 'bg-zinc-100 text-zinc-900 border border-zinc-300'
+                  : 'bg-[#2b2210] text-amber-300 border border-amber-800/60'
+              }`}>
+                VIP
+              </span>
+            </button>
+          </div>
+
+          {/* Group 3: سیستم و امنیت (SYSTEM & DRIFT) */}
+          <div className="space-y-1 pt-1">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
+              سیستم و امنیت
+            </span>
+
+            <button
+              type="button"
+              onClick={() => handleTabChange('security')}
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                activeTab === 'security'
+                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck size={16} className={activeTab === 'security' ? 'text-zinc-950' : 'text-zinc-400'} />
                 <span>امنیت</span>
               </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                turnstileSettings.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-500'
+              <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors ${
+                activeTab === 'security'
+                  ? 'bg-zinc-100 text-zinc-900 border border-zinc-300'
+                  : turnstileSettings.enabled
+                    ? 'bg-[#0e2a1e] text-emerald-400 border border-emerald-800/60'
+                    : 'bg-zinc-800 text-zinc-500'
               }`}>
                 {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
               </span>
@@ -744,14 +770,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={() => handleTabChange('settings')}
-              className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
                 activeTab === 'settings'
-                  ? 'bg-white text-zinc-950 font-bold shadow-md shadow-black/10'
+                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
                   : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Settings size={17} className={activeTab === 'settings' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <Settings size={16} className={activeTab === 'settings' ? 'text-zinc-950' : 'text-zinc-400'} />
                 <span>تنظیمات</span>
               </div>
             </button>
@@ -759,48 +785,22 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
         </div>
 
-        {/* Modern Sidebar Footer - User Profile & Quick Actions */}
-        <div className="p-3 border-t border-zinc-800/50 space-y-2">
-          {/* Admin Profile Capsule */}
-          <div className="p-2.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center border border-zinc-700/60 shrink-0">
-              AD
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-white truncate">مدیر سیستم</span>
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              </div>
-              <span className="text-[10px] text-zinc-400 font-mono truncate block">swedpersiska@gmail.com</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-1.5">
-            <button
-              type="button"
-              onClick={fetchAdminData}
-              className="h-9 flex items-center justify-center gap-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white text-xs font-semibold border border-white/[0.06] transition-all cursor-pointer active:scale-95"
-              title="بروزرسانی داده‌ها"
-            >
-              <RefreshCw size={13} className={loading ? 'animate-spin text-white' : ''} />
-              <span>بروزرسانی</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="h-9 flex items-center justify-center gap-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white text-xs font-semibold border border-white/[0.06] transition-all cursor-pointer active:scale-95"
-              title="مشاهده سایت"
-            >
-              <ExternalLink size={13} />
-              <span>سایت</span>
-            </button>
-          </div>
+        {/* Modern Sidebar Footer - Exactly 2 Side-by-Side Action Buttons (NT360 Style) */}
+        <div className="p-3 border-t border-zinc-800/50 grid grid-cols-2 gap-2 mt-auto">
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-9 flex items-center justify-center gap-1.5 rounded-xl bg-[#1b1c24] hover:bg-[#252631] text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-800/80 transition-all cursor-pointer active:scale-95"
+            title="مشاهده سایت"
+          >
+            <ExternalLink size={13} className="text-zinc-400" />
+            <span>سایت</span>
+          </button>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="w-full h-9 flex items-center justify-center gap-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-500/20 transition-all cursor-pointer active:scale-95"
+            className="h-9 flex items-center justify-center gap-1.5 rounded-xl bg-[#24141b] hover:bg-[#321a24] text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-900/40 transition-all cursor-pointer active:scale-95"
             title="خروج از حساب"
           >
             <LogOut size={13} />
@@ -811,7 +811,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       </aside>
 
       {/* ========================================================
-          MOBILE SLIDE-IN DRAWER (Modern Obsidian Drawer)
+          MOBILE SLIDE-IN DRAWER (Floating Obsidian Sheet - NT360 Style)
       ======================================================== */}
       {mobileSidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden font-vazir select-none" dir="rtl">
@@ -821,150 +821,158 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             onClick={() => setMobileSidebarOpen(false)}
           />
           
-          {/* Drawer Body - Modern Obsidian Surface */}
-          <div className="relative z-10 w-72 max-w-[85vw] h-full bg-[#0e0f14] text-zinc-200 flex flex-col border-s border-zinc-800/50 shadow-2xl animate-in slide-in-from-right duration-200 ease-out">
+          {/* Drawer Body - Floating Obsidian Sheet */}
+          <div className="relative z-10 w-72 max-w-[85vw] h-[calc(100%-24px)] my-3 ms-3 rounded-3xl bg-[#111217] text-zinc-200 flex flex-col border border-zinc-800/80 shadow-2xl overflow-hidden animate-in slide-in-from-right duration-200 ease-out">
             {/* Drawer Header */}
-            <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-800/50">
+            <div className="pt-5 pb-3 px-4 flex items-center justify-between border-b border-zinc-800/50">
               <div className="flex items-center gap-3">
-                <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-white to-zinc-200 text-zinc-950 font-black text-xs shadow-md ring-1 ring-white/10">
+                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-zinc-950 font-black text-xs shadow-md shadow-black/40">
                   SP
-                  <span className="absolute -bottom-0.5 -end-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-[#0e0f14]" />
                 </div>
                 <div>
                   <span className="font-extrabold text-sm text-white block leading-tight tracking-tight">سوئد پرشیا</span>
-                  <span className="text-[10px] text-zinc-400 font-mono tracking-wider">ADMIN CRM</span>
+                  <span className="text-[10px] text-zinc-400 font-mono tracking-widest uppercase">ADMIN CRM</span>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen(false)}
-                className="h-9 w-9 flex items-center justify-center rounded-xl text-zinc-400 hover:text-white hover:bg-white/[0.06] active:scale-90 transition-all cursor-pointer"
+                className="h-8 w-8 flex items-center justify-center rounded-xl text-zinc-400 hover:text-white hover:bg-white/[0.06] active:scale-90 transition-all cursor-pointer"
                 title="بستن"
               >
                 <X size={18} />
               </button>
             </div>
 
-            {/* Drawer Links - Touch-Friendly 48px targets */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1.5">
-              <button
-                type="button"
-                onClick={() => handleTabChange('overview')}
-                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                  activeTab === 'overview'
-                    ? 'bg-white text-zinc-950 shadow-md shadow-black/10'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/[0.05]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <LayoutDashboard size={18} className={activeTab === 'overview' ? 'text-zinc-950' : 'text-zinc-400'} />
-                  <span>پیشخوان</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleTabChange('ads')}
-                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                  activeTab === 'ads'
-                    ? 'bg-white text-zinc-950 shadow-md shadow-black/10'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/[0.05]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Layers size={18} className={activeTab === 'ads' ? 'text-zinc-950' : 'text-zinc-400'} />
-                  <span>آگهی‌ها</span>
-                </div>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-zinc-800 text-zinc-300">
-                  {ads.length}
+            {/* Drawer Links */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
+              
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
+                  پیشخوان
                 </span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('overview')}
+                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                    activeTab === 'overview'
+                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
+                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <LayoutDashboard size={17} className={activeTab === 'overview' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <span>پیشخوان</span>
+                  </div>
+                </button>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => handleTabChange('monetization')}
-                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                  activeTab === 'monetization'
-                    ? 'bg-white text-zinc-950 shadow-md shadow-black/10'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/[0.05]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <CreditCard size={18} className={activeTab === 'monetization' ? 'text-zinc-950' : 'text-amber-400'} />
-                  <span>درآمد و VIP</span>
-                </div>
-                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">
-                  VIP
+              <div className="space-y-1 pt-1">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
+                  آگهی‌ها و مدیریت
                 </span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('ads')}
+                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                    activeTab === 'ads'
+                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
+                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Layers size={17} className={activeTab === 'ads' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <span>آگهی‌ها</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ${
+                    activeTab === 'ads' ? 'bg-zinc-100 text-zinc-900 border border-zinc-300' : 'bg-[#0e2a38] text-cyan-400 border border-cyan-800/60'
+                  }`}>
+                    {ads.length}
+                  </span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => handleTabChange('security')}
-                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                  activeTab === 'security'
-                    ? 'bg-white text-zinc-950 shadow-md shadow-black/10'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/[0.05]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <ShieldCheck size={18} className={activeTab === 'security' ? 'text-zinc-950' : 'text-emerald-400'} />
-                  <span>امنیت</span>
-                </div>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                  turnstileSettings.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-500'
-                }`}>
-                  {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('monetization')}
+                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                    activeTab === 'monetization'
+                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
+                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <CreditCard size={17} className={activeTab === 'monetization' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <span>درآمد و VIP</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ${
+                    activeTab === 'monetization' ? 'bg-zinc-100 text-zinc-900 border border-zinc-300' : 'bg-[#2b2210] text-amber-300 border border-amber-800/60'
+                  }`}>
+                    VIP
+                  </span>
+                </button>
+              </div>
+
+              <div className="space-y-1 pt-1">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
+                  سیستم و امنیت
                 </span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('security')}
+                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                    activeTab === 'security'
+                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
+                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck size={17} className={activeTab === 'security' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <span>امنیت</span>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                    activeTab === 'security'
+                      ? 'bg-zinc-100 text-zinc-900 border border-zinc-300'
+                      : turnstileSettings.enabled
+                        ? 'bg-[#0e2a1e] text-emerald-400 border border-emerald-800/60'
+                        : 'bg-zinc-800 text-zinc-500'
+                  }`}>
+                    {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
+                  </span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => handleTabChange('settings')}
-                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                  activeTab === 'settings'
-                    ? 'bg-white text-zinc-950 shadow-md shadow-black/10'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/[0.05]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Settings size={18} className={activeTab === 'settings' ? 'text-zinc-950' : 'text-zinc-400'} />
-                  <span>تنظیمات</span>
-                </div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('settings')}
+                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                    activeTab === 'settings'
+                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
+                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Settings size={17} className={activeTab === 'settings' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <span>تنظیمات</span>
+                  </div>
+                </button>
+              </div>
+
             </div>
 
-            {/* Drawer Bottom Actions */}
-            <div className="p-3 border-t border-zinc-800/50 space-y-2">
-              <div className="p-2 rounded-xl bg-white/[0.03] border border-white/[0.06] text-[11px] text-zinc-400 flex items-center justify-between">
-                <span className="truncate">swedpersiska@gmail.com</span>
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => { fetchAdminData(); setMobileSidebarOpen(false); }}
-                  className="h-10 flex items-center justify-center gap-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 text-xs font-bold border border-white/[0.06] active:scale-95 transition-all"
-                >
-                  <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
-                  <span>بروزرسانی</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => { onClose(); setMobileSidebarOpen(false); }}
-                  className="h-10 flex items-center justify-center gap-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 text-xs font-bold border border-white/[0.06] active:scale-95 transition-all"
-                >
-                  <ExternalLink size={13} />
-                  <span>سایت</span>
-                </button>
-              </div>
+            {/* Drawer Bottom Actions - 2 Side-by-Side Buttons */}
+            <div className="p-3 border-t border-zinc-800/50 grid grid-cols-2 gap-2 mt-auto">
+              <button
+                type="button"
+                onClick={() => { onClose(); setMobileSidebarOpen(false); }}
+                className="h-10 flex items-center justify-center gap-1.5 rounded-xl bg-[#1b1c24] hover:bg-[#252631] text-zinc-300 text-xs font-semibold border border-zinc-800/80 active:scale-95 transition-all cursor-pointer"
+              >
+                <ExternalLink size={13} className="text-zinc-400" />
+                <span>سایت</span>
+              </button>
 
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-bold border border-rose-500/20 active:scale-95 transition-all cursor-pointer"
+                className="h-10 flex items-center justify-center gap-1.5 rounded-xl bg-[#24141b] hover:bg-[#321a24] text-rose-300 text-xs font-bold border border-rose-900/40 active:scale-95 transition-all cursor-pointer"
               >
                 <LogOut size={13} />
                 <span>خروج</span>
@@ -975,101 +983,74 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          MAIN CANVAS (Eye-Care Warm Tone & Modern Navbar)
+          MAIN CANVAS (Eye-Care Warm Tone & Modern Navbar - NT360 Style)
       ======================================================== */}
       <main className="flex-1 flex flex-col overflow-hidden">
         
         {/* Canvas Top Bar (Modern Navbar) */}
-        <header className="h-16 shrink-0 bg-[#f4f3ee]/90 backdrop-blur-md border-b border-[#e5e1d7] px-3.5 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20">
-          <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
+        <header className="h-16 shrink-0 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20 bg-[#f4f3ee]">
+          <div className="flex items-center gap-3 min-w-0">
             {/* Tactile Mobile Menu Button */}
             <button
               type="button"
               onClick={() => setMobileSidebarOpen(true)}
-              className="lg:hidden h-10 px-3.5 rounded-xl bg-white border border-[#dedad0] text-zinc-900 shadow-2xs hover:bg-stone-50 active:scale-95 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+              className="lg:hidden h-10 w-10 rounded-2xl bg-white border border-[#dedad0] text-zinc-900 shadow-2xs hover:bg-stone-50 active:scale-95 transition-all flex items-center justify-center shrink-0 cursor-pointer"
               title="منو"
             >
               <Menu size={18} />
-              <span className="text-xs font-bold">منو</span>
             </button>
 
-            {/* Breadcrumb & Section Title */}
-            <div className="min-w-0 flex items-center gap-2">
-              <span className="text-[11px] text-stone-400 font-medium hidden sm:inline">
-                پنل مدیریت /
-              </span>
-              <h1 className="text-base sm:text-lg font-black text-zinc-900 leading-tight truncate">
-                {activeTab === 'overview' && 'پیشخوان'}
-                {activeTab === 'ads' && 'آگهی‌ها'}
-                {activeTab === 'monetization' && 'درآمد و VIP'}
-                {activeTab === 'security' && 'امنیت'}
-                {activeTab === 'settings' && 'تنظیمات'}
-              </h1>
-            </div>
+            {/* Clean Bold Title (NT360 Översikt Style) */}
+            <h1 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight leading-tight truncate">
+              {activeTab === 'overview' && 'پیشخوان'}
+              {activeTab === 'ads' && 'آگهی‌ها'}
+              {activeTab === 'monetization' && 'درآمد و VIP'}
+              {activeTab === 'security' && 'امنیت'}
+              {activeTab === 'settings' && 'تنظیمات'}
+            </h1>
           </div>
 
-          {/* Quick Search & Modern Action Pills */}
-          <div className="flex items-center gap-2">
-            {/* Pill Search Input with Keyboard Shortcut */}
-            <div className="relative hidden md:block w-56 lg:w-64">
+          {/* Quick Search & Modern Action Pills (NT360 Top Right Style) */}
+          <div className="flex items-center gap-2.5">
+            {/* Pill Search Bar with Ctrl+K */}
+            <div className="relative hidden md:block w-64 lg:w-72">
               <Search size={14} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
+                ref={searchInputRef}
                 type="text"
-                placeholder="جستجو..."
+                placeholder="جستجو در پنل... (Ctrl+K)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-9 rounded-full bg-white border border-[#dedad0] ps-9 pe-11 text-xs text-zinc-800 placeholder-stone-400 shadow-2xs focus:border-zinc-900 focus:outline-none transition-all"
+                className="w-full h-10 rounded-full bg-white border border-[#dedad0] ps-9 pe-14 text-xs text-zinc-900 placeholder-stone-400 shadow-2xs focus:border-zinc-800 focus:outline-none transition-all"
               />
-              <kbd className="absolute end-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-stone-100 border border-stone-200 text-[9px] font-mono text-stone-500 font-bold pointer-events-none">
-                ⌘K
+              <kbd className="absolute end-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded-md bg-stone-100 border border-stone-200 text-[9px] font-mono text-stone-500 font-bold pointer-events-none">
+                Ctrl+K
               </kbd>
             </div>
 
-            {/* Notifications / VIP Alert Bell */}
-            <div 
+            {/* Notification Bell with Blue Circular Badge */}
+            <button
+              type="button"
               onClick={() => handleTabChange('ads')}
-              className="relative p-2 rounded-xl bg-white border border-[#e5e1d7] text-stone-600 hover:text-zinc-900 hover:border-stone-400 shadow-2xs cursor-pointer transition-all active:scale-95" 
+              className="relative h-10 w-10 rounded-full bg-white border border-[#dedad0] text-stone-700 hover:text-zinc-950 hover:border-stone-400 shadow-2xs flex items-center justify-center cursor-pointer transition-all active:scale-95" 
               title={`${vipAds} آگهی VIP`}
             >
-              <Bell size={16} />
+              <Bell size={17} />
               {vipAds > 0 && (
-                <span className="absolute -top-1 -end-1 h-4 min-w-4 px-1 rounded-full bg-zinc-900 text-white text-[9px] font-mono font-bold flex items-center justify-center">
+                <span className="absolute -top-1 -end-1 h-5 min-w-5 px-1 rounded-full bg-blue-600 text-white text-[10px] font-mono font-bold flex items-center justify-center shadow-xs">
                   {vipAds}
                 </span>
               )}
-            </div>
+            </button>
 
-            {/* Refresh Data */}
+            {/* Refresh Data Button */}
             <button
               type="button"
               onClick={fetchAdminData}
-              className="hidden sm:flex items-center gap-1.5 h-9 px-3 rounded-xl bg-white border border-[#e5e1d7] text-stone-700 hover:text-zinc-900 text-xs font-bold shadow-2xs cursor-pointer active:scale-95 transition-all"
+              className="h-10 w-10 rounded-full bg-white border border-[#dedad0] text-stone-700 hover:text-zinc-950 shadow-2xs flex items-center justify-center cursor-pointer active:scale-95 transition-all"
               title="بروزرسانی داده‌ها"
             >
-              <RefreshCw size={13} className={loading ? 'animate-spin text-zinc-900' : ''} />
-              <span className="hidden md:inline">بروزرسانی</span>
-            </button>
-
-            {/* View Site */}
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-xl bg-white border border-[#e5e1d7] text-stone-700 hover:text-zinc-900 text-xs font-bold shadow-2xs cursor-pointer active:scale-95 transition-all"
-              title="مشاهده سایت"
-            >
-              <ExternalLink size={13} />
-              <span className="hidden sm:inline">سایت</span>
-            </button>
-
-            {/* Logout */}
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="h-9 px-2.5 sm:px-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 text-xs font-bold shadow-2xs cursor-pointer active:scale-95 transition-all flex items-center gap-1.5"
-              title="خروج از حساب"
-            >
-              <LogOut size={13} />
-              <span className="hidden sm:inline">خروج</span>
+              <RefreshCw size={15} className={loading ? 'animate-spin text-zinc-950' : ''} />
             </button>
           </div>
         </header>
