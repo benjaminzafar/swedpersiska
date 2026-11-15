@@ -397,7 +397,7 @@
       "label": "AdminPanel()",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
-      "source_location": "L21",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "components_adminpanel_adminpanel",
       "community": 2,
@@ -684,6 +684,66 @@
       "norm_label": "manualchunks()"
     },
     {
+      "label": "SKILL.md",
+      "file_type": "document",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "astryx_skill",
+      "community": 10,
+      "norm_label": "skill.md"
+    },
+    {
+      "label": "Astryx Design System & Guidelines (Meta)",
+      "file_type": "document",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "astryx_skill_astryx_design_system_guidelines_meta",
+      "community": 10,
+      "norm_label": "astryx design system & guidelines (meta)"
+    },
+    {
+      "label": "1. Frame-First Layouts",
+      "file_type": "document",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "astryx_skill_1_frame_first_layouts",
+      "community": 10,
+      "norm_label": "1. frame-first layouts"
+    },
+    {
+      "label": "2. Semantic Tokens Over Hardcoded Values",
+      "file_type": "document",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "astryx_skill_2_semantic_tokens_over_hardcoded_values",
+      "community": 10,
+      "norm_label": "2. semantic tokens over hardcoded values"
+    },
+    {
+      "label": "3. High-End Master-Detail CRM UX",
+      "file_type": "document",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "astryx_skill_3_high_end_master_detail_crm_ux",
+      "community": 10,
+      "norm_label": "3. high-end master-detail crm ux"
+    },
+    {
+      "label": "4. Tactile Controls & Action Buttons",
+      "file_type": "document",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L44",
+      "_origin": "ast",
+      "id": "astryx_skill_4_tactile_controls_action_buttons",
+      "community": 10,
+      "norm_label": "4. tactile controls & action buttons"
+    },
+    {
       "label": "README.md",
       "file_type": "document",
       "source_file": "README.md",
@@ -761,9 +821,9 @@
       "source_file": ".oxlintrc.json",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "oxlintrc",
-      "target": "oxlintrc_plugins",
-      "confidence_score": 1.0
+      "target": "oxlintrc_plugins"
     },
     {
       "relation": "contains",
@@ -771,9 +831,9 @@
       "source_file": ".oxlintrc.json",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "oxlintrc",
-      "target": "oxlintrc_rules",
-      "confidence_score": 1.0
+      "target": "oxlintrc_rules"
     },
     {
       "relation": "contains",
@@ -781,9 +841,9 @@
       "source_file": ".oxlintrc.json",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "oxlintrc",
-      "target": "oxlintrc_schema",
-      "confidence_score": 1.0
+      "target": "oxlintrc_schema"
     },
     {
       "relation": "contains",
@@ -791,9 +851,9 @@
       "source_file": ".oxlintrc.json",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "oxlintrc_rules",
-      "target": "oxlintrc_rules_react_only_export_components",
-      "confidence_score": 1.0
+      "target": "oxlintrc_rules_react_only_export_components"
     },
     {
       "relation": "contains",
@@ -801,9 +861,9 @@
       "source_file": ".oxlintrc.json",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "oxlintrc_rules",
-      "target": "oxlintrc_rules_react_rules_of_hooks",
-      "confidence_score": 1.0
+      "target": "oxlintrc_rules_react_rules_of_hooks"
     },
     {
       "relation": "contains",
@@ -811,9 +871,9 @@
       "source_file": "package.json",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package",
-      "target": "package_dependencies",
-      "confidence_score": 1.0
+      "target": "package_dependencies"
     },
     {
       "relation": "contains",
@@ -821,9 +881,9 @@
       "source_file": "package.json",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package",
-      "target": "package_devdependencies",
-      "confidence_score": 1.0
+      "target": "package_devdependencies"
     },
     {
       "relation": "contains",
@@ -831,9 +891,9 @@
       "source_file": "package.json",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package",
-      "target": "package_name",
-      "confidence_score": 1.0
+      "target": "package_name"
     },
     {
       "relation": "contains",
@@ -841,9 +901,9 @@
       "source_file": "package.json",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package",
-      "target": "package_private",
-      "confidence_score": 1.0
+      "target": "package_private"
     },
     {
       "relation": "contains",
@@ -851,9 +911,9 @@
       "source_file": "package.json",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package",
-      "target": "package_scripts",
-      "confidence_score": 1.0
+      "target": "package_scripts"
     },
     {
       "relation": "contains",
@@ -861,9 +921,9 @@
       "source_file": "package.json",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package",
-      "target": "package_type",
-      "confidence_score": 1.0
+      "target": "package_type"
     },
     {
       "relation": "contains",
@@ -871,9 +931,9 @@
       "source_file": "package.json",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package",
-      "target": "package_version",
-      "confidence_score": 1.0
+      "target": "package_version"
     },
     {
       "relation": "contains",
@@ -881,9 +941,9 @@
       "source_file": "package.json",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_build",
-      "confidence_score": 1.0
+      "target": "package_scripts_build"
     },
     {
       "relation": "contains",
@@ -891,9 +951,9 @@
       "source_file": "package.json",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_dev",
-      "confidence_score": 1.0
+      "target": "package_scripts_dev"
     },
     {
       "relation": "contains",
@@ -901,9 +961,9 @@
       "source_file": "package.json",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_lint",
-      "confidence_score": 1.0
+      "target": "package_scripts_lint"
     },
     {
       "relation": "contains",
@@ -911,9 +971,9 @@
       "source_file": "package.json",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_scripts",
-      "target": "package_scripts_preview",
-      "confidence_score": 1.0
+      "target": "package_scripts_preview"
     },
     {
       "relation": "contains",
@@ -921,9 +981,9 @@
       "source_file": "package.json",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_dependencies",
-      "target": "package_dependencies_lucide_react",
-      "confidence_score": 1.0
+      "target": "package_dependencies_lucide_react"
     },
     {
       "relation": "contains",
@@ -931,9 +991,9 @@
       "source_file": "package.json",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_dependencies",
-      "target": "package_dependencies_react",
-      "confidence_score": 1.0
+      "target": "package_dependencies_react"
     },
     {
       "relation": "contains",
@@ -941,9 +1001,9 @@
       "source_file": "package.json",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_dependencies",
-      "target": "package_dependencies_react_dom",
-      "confidence_score": 1.0
+      "target": "package_dependencies_react_dom"
     },
     {
       "relation": "contains",
@@ -951,9 +1011,9 @@
       "source_file": "package.json",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_dependencies",
-      "target": "package_dependencies_supabase_supabase_js",
-      "confidence_score": 1.0
+      "target": "package_dependencies_supabase_supabase_js"
     },
     {
       "relation": "contains",
@@ -961,9 +1021,9 @@
       "source_file": "package.json",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_autoprefixer",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_autoprefixer"
     },
     {
       "relation": "contains",
@@ -971,9 +1031,9 @@
       "source_file": "package.json",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_oxlint",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_oxlint"
     },
     {
       "relation": "contains",
@@ -981,9 +1041,9 @@
       "source_file": "package.json",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_postcss",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_postcss"
     },
     {
       "relation": "contains",
@@ -991,9 +1051,9 @@
       "source_file": "package.json",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_tailwindcss",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_tailwindcss"
     },
     {
       "relation": "contains",
@@ -1001,9 +1061,9 @@
       "source_file": "package.json",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_types_react",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_types_react"
     },
     {
       "relation": "contains",
@@ -1011,9 +1071,9 @@
       "source_file": "package.json",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_types_react_dom",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_types_react_dom"
     },
     {
       "relation": "contains",
@@ -1021,9 +1081,9 @@
       "source_file": "package.json",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_vite",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_vite"
     },
     {
       "relation": "contains",
@@ -1031,9 +1091,9 @@
       "source_file": "package.json",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_devdependencies",
-      "target": "package_devdependencies_vitejs_plugin_react",
-      "confidence_score": 1.0
+      "target": "package_devdependencies_vitejs_plugin_react"
     },
     {
       "relation": "imports_from",
@@ -1042,9 +1102,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "components_adcard",
-      "confidence_score": 1.0
+      "target": "components_adcard"
     },
     {
       "relation": "imports_from",
@@ -1053,9 +1113,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "components_addetailmodal",
-      "confidence_score": 1.0
+      "target": "components_addetailmodal"
     },
     {
       "relation": "imports_from",
@@ -1064,9 +1124,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "components_adminpanel",
-      "confidence_score": 1.0
+      "target": "components_adminpanel"
     },
     {
       "relation": "imports_from",
@@ -1075,9 +1135,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "components_footer",
-      "confidence_score": 1.0
+      "target": "components_footer"
     },
     {
       "relation": "imports_from",
@@ -1086,9 +1146,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "components_manageadmodal",
-      "confidence_score": 1.0
+      "target": "components_manageadmodal"
     },
     {
       "relation": "imports_from",
@@ -1097,9 +1157,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "components_navbar",
-      "confidence_score": 1.0
+      "target": "components_navbar"
     },
     {
       "relation": "imports_from",
@@ -1108,9 +1168,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "components_postadmodal",
-      "confidence_score": 1.0
+      "target": "components_postadmodal"
     },
     {
       "relation": "imports_from",
@@ -1119,9 +1179,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase"
     },
     {
       "relation": "imports",
@@ -1130,9 +1190,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_supabase_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase_supabase"
     },
     {
       "relation": "imports_from",
@@ -1141,9 +1201,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1152,9 +1212,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_translations_categories",
-      "confidence_score": 1.0
+      "target": "lib_translations_categories"
     },
     {
       "relation": "imports",
@@ -1163,9 +1223,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_translations_cities",
-      "confidence_score": 1.0
+      "target": "lib_translations_cities"
     },
     {
       "relation": "imports",
@@ -1174,9 +1234,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_translations_t",
-      "confidence_score": 1.0
+      "target": "lib_translations_t"
     },
     {
       "relation": "contains",
@@ -1184,9 +1244,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "src_app_app",
-      "confidence_score": 1.0
+      "target": "src_app_app"
     },
     {
       "relation": "contains",
@@ -1194,9 +1254,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "src_app_category_icons",
-      "confidence_score": 1.0
+      "target": "src_app_category_icons"
     },
     {
       "relation": "imports_from",
@@ -1205,9 +1265,9 @@
       "source_file": "src/main.jsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_main",
-      "target": "src_app",
-      "confidence_score": 1.0
+      "target": "src_app"
     },
     {
       "relation": "contains",
@@ -1215,9 +1275,9 @@
       "source_file": "src/components/AdCard.jsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adcard",
-      "target": "components_adcard_adcard",
-      "confidence_score": 1.0
+      "target": "components_adcard_adcard"
     },
     {
       "relation": "imports_from",
@@ -1226,9 +1286,9 @@
       "source_file": "src/components/AdCard.jsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adcard",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1237,9 +1297,9 @@
       "source_file": "src/components/AdCard.jsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adcard",
-      "target": "lib_translations_categories",
-      "confidence_score": 1.0
+      "target": "lib_translations_categories"
     },
     {
       "relation": "contains",
@@ -1247,9 +1307,9 @@
       "source_file": "src/components/AdDetailModal.jsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_addetailmodal",
-      "target": "components_addetailmodal_addetailmodal",
-      "confidence_score": 1.0
+      "target": "components_addetailmodal_addetailmodal"
     },
     {
       "relation": "imports_from",
@@ -1258,9 +1318,9 @@
       "source_file": "src/components/AdDetailModal.jsx",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_addetailmodal",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1269,9 +1329,9 @@
       "source_file": "src/components/AdDetailModal.jsx",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_addetailmodal",
-      "target": "lib_translations_categories",
-      "confidence_score": 1.0
+      "target": "lib_translations_categories"
     },
     {
       "relation": "imports",
@@ -1280,9 +1340,9 @@
       "source_file": "src/components/AdDetailModal.jsx",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_addetailmodal",
-      "target": "lib_translations_t",
-      "confidence_score": 1.0
+      "target": "lib_translations_t"
     },
     {
       "relation": "contains",
@@ -1290,9 +1350,9 @@
       "source_file": "src/components/AdminPanel.jsx",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adminpanel",
-      "target": "components_adminpanel_adminpanel",
-      "confidence_score": 1.0
+      "target": "components_adminpanel_adminpanel"
     },
     {
       "relation": "imports_from",
@@ -1301,9 +1361,9 @@
       "source_file": "src/components/AdminPanel.jsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adminpanel",
-      "target": "lib_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase"
     },
     {
       "relation": "imports",
@@ -1312,9 +1372,9 @@
       "source_file": "src/components/AdminPanel.jsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adminpanel",
-      "target": "lib_supabase_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase_supabase"
     },
     {
       "relation": "imports_from",
@@ -1323,9 +1383,9 @@
       "source_file": "src/components/AdminPanel.jsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adminpanel",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1334,9 +1394,9 @@
       "source_file": "src/components/AdminPanel.jsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_adminpanel",
-      "target": "lib_translations_categories",
-      "confidence_score": 1.0
+      "target": "lib_translations_categories"
     },
     {
       "relation": "contains",
@@ -1344,9 +1404,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_footer",
-      "target": "components_footer_currentyear",
-      "confidence_score": 1.0
+      "target": "components_footer_currentyear"
     },
     {
       "relation": "contains",
@@ -1354,9 +1414,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_footer",
-      "target": "components_footer_footer",
-      "confidence_score": 1.0
+      "target": "components_footer_footer"
     },
     {
       "relation": "imports_from",
@@ -1365,9 +1425,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_footer",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1376,9 +1436,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_footer",
-      "target": "lib_translations_categories",
-      "confidence_score": 1.0
+      "target": "lib_translations_categories"
     },
     {
       "relation": "imports",
@@ -1387,9 +1447,9 @@
       "source_file": "src/components/Footer.jsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_footer",
-      "target": "lib_translations_cities",
-      "confidence_score": 1.0
+      "target": "lib_translations_cities"
     },
     {
       "relation": "contains",
@@ -1397,9 +1457,9 @@
       "source_file": "src/components/ManageAdModal.jsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_manageadmodal",
-      "target": "components_manageadmodal_manageadmodal",
-      "confidence_score": 1.0
+      "target": "components_manageadmodal_manageadmodal"
     },
     {
       "relation": "imports_from",
@@ -1408,9 +1468,9 @@
       "source_file": "src/components/ManageAdModal.jsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_manageadmodal",
-      "target": "lib_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase"
     },
     {
       "relation": "imports",
@@ -1419,9 +1479,9 @@
       "source_file": "src/components/ManageAdModal.jsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_manageadmodal",
-      "target": "lib_supabase_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase_supabase"
     },
     {
       "relation": "imports_from",
@@ -1430,9 +1490,9 @@
       "source_file": "src/components/ManageAdModal.jsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_manageadmodal",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1441,9 +1501,9 @@
       "source_file": "src/components/ManageAdModal.jsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_manageadmodal",
-      "target": "lib_translations_t",
-      "confidence_score": 1.0
+      "target": "lib_translations_t"
     },
     {
       "relation": "contains",
@@ -1451,9 +1511,9 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_navbar",
-      "target": "components_navbar_navbar",
-      "confidence_score": 1.0
+      "target": "components_navbar_navbar"
     },
     {
       "relation": "imports_from",
@@ -1462,9 +1522,9 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_navbar",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1473,9 +1533,9 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_navbar",
-      "target": "lib_translations_t",
-      "confidence_score": 1.0
+      "target": "lib_translations_t"
     },
     {
       "relation": "contains",
@@ -1483,9 +1543,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "components_postadmodal_postadmodal",
-      "confidence_score": 1.0
+      "target": "components_postadmodal_postadmodal"
     },
     {
       "relation": "imports_from",
@@ -1494,9 +1554,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase"
     },
     {
       "relation": "imports",
@@ -1505,9 +1565,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_supabase_generatepincode",
-      "confidence_score": 1.0
+      "target": "lib_supabase_generatepincode"
     },
     {
       "relation": "imports",
@@ -1516,9 +1576,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_supabase_generatereferencenumber",
-      "confidence_score": 1.0
+      "target": "lib_supabase_generatereferencenumber"
     },
     {
       "relation": "imports",
@@ -1527,9 +1587,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_supabase_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase_supabase"
     },
     {
       "relation": "imports_from",
@@ -1538,9 +1598,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1549,9 +1609,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_translations_categories",
-      "confidence_score": 1.0
+      "target": "lib_translations_categories"
     },
     {
       "relation": "imports",
@@ -1560,9 +1620,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_translations_cities",
-      "confidence_score": 1.0
+      "target": "lib_translations_cities"
     },
     {
       "relation": "imports",
@@ -1571,9 +1631,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_translations_t",
-      "confidence_score": 1.0
+      "target": "lib_translations_t"
     },
     {
       "relation": "calls",
@@ -1592,9 +1652,9 @@
       "source_file": "src/lib/supabase.js",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_supabase",
-      "target": "lib_supabase_generatepincode",
-      "confidence_score": 1.0
+      "target": "lib_supabase_generatepincode"
     },
     {
       "relation": "contains",
@@ -1602,9 +1662,9 @@
       "source_file": "src/lib/supabase.js",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_supabase",
-      "target": "lib_supabase_generatereferencenumber",
-      "confidence_score": 1.0
+      "target": "lib_supabase_generatereferencenumber"
     },
     {
       "relation": "contains",
@@ -1612,9 +1672,9 @@
       "source_file": "src/lib/supabase.js",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_supabase",
-      "target": "lib_supabase_supabase",
-      "confidence_score": 1.0
+      "target": "lib_supabase_supabase"
     },
     {
       "relation": "contains",
@@ -1622,9 +1682,9 @@
       "source_file": "src/lib/translations.js",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_translations",
-      "target": "lib_translations_categories",
-      "confidence_score": 1.0
+      "target": "lib_translations_categories"
     },
     {
       "relation": "contains",
@@ -1632,9 +1692,9 @@
       "source_file": "src/lib/translations.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_translations",
-      "target": "lib_translations_cities",
-      "confidence_score": 1.0
+      "target": "lib_translations_cities"
     },
     {
       "relation": "contains",
@@ -1642,9 +1702,9 @@
       "source_file": "src/lib/translations.js",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_translations",
-      "target": "lib_translations_t",
-      "confidence_score": 1.0
+      "target": "lib_translations_t"
     },
     {
       "relation": "contains",
@@ -1652,9 +1712,9 @@
       "source_file": "vercel.json",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "vercel",
-      "target": "vercel_buildcommand",
-      "confidence_score": 1.0
+      "target": "vercel_buildcommand"
     },
     {
       "relation": "contains",
@@ -1662,9 +1722,9 @@
       "source_file": "vercel.json",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "vercel",
-      "target": "vercel_cleanurls",
-      "confidence_score": 1.0
+      "target": "vercel_cleanurls"
     },
     {
       "relation": "contains",
@@ -1672,9 +1732,9 @@
       "source_file": "vercel.json",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "vercel",
-      "target": "vercel_framework",
-      "confidence_score": 1.0
+      "target": "vercel_framework"
     },
     {
       "relation": "contains",
@@ -1682,9 +1742,9 @@
       "source_file": "vercel.json",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "vercel",
-      "target": "vercel_headers",
-      "confidence_score": 1.0
+      "target": "vercel_headers"
     },
     {
       "relation": "contains",
@@ -1692,9 +1752,9 @@
       "source_file": "vercel.json",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "vercel",
-      "target": "vercel_outputdirectory",
-      "confidence_score": 1.0
+      "target": "vercel_outputdirectory"
     },
     {
       "relation": "contains",
@@ -1702,9 +1762,9 @@
       "source_file": "vercel.json",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "vercel",
-      "target": "vercel_rewrites",
-      "confidence_score": 1.0
+      "target": "vercel_rewrites"
     },
     {
       "relation": "contains",
@@ -1712,8 +1772,58 @@
       "source_file": "vite.config.js",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "vite_config",
-      "target": "vite_config_manualchunks",
+      "target": "vite_config_manualchunks"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "astryx_skill",
+      "target": "astryx_skill_astryx_design_system_guidelines_meta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "astryx_skill_astryx_design_system_guidelines_meta",
+      "target": "astryx_skill_1_frame_first_layouts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "astryx_skill_astryx_design_system_guidelines_meta",
+      "target": "astryx_skill_2_semantic_tokens_over_hardcoded_values",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "astryx_skill_astryx_design_system_guidelines_meta",
+      "target": "astryx_skill_3_high_end_master_detail_crm_ux",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/skills/astryx/SKILL.md",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "astryx_skill_astryx_design_system_guidelines_meta",
+      "target": "astryx_skill_4_tactile_controls_action_buttons",
       "confidence_score": 1.0
     },
     {
@@ -1722,9 +1832,9 @@
       "source_file": "README.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme",
-      "target": "readme_swedpersiska_\u0633\u0648\u0626\u062f_\u067e\u0631\u0634\u06cc\u0627",
-      "confidence_score": 1.0
+      "target": "readme_swedpersiska_\u0633\u0648\u0626\u062f_\u067e\u0631\u0634\u06cc\u0627"
     },
     {
       "relation": "contains",
@@ -1732,9 +1842,9 @@
       "source_file": "README.md",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_swedpersiska_\u0633\u0648\u0626\u062f_\u067e\u0631\u0634\u06cc\u0627",
-      "target": "readme_databas_supabase",
-      "confidence_score": 1.0
+      "target": "readme_databas_supabase"
     },
     {
       "relation": "contains",
@@ -1742,9 +1852,9 @@
       "source_file": "README.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_swedpersiska_\u0633\u0648\u0626\u062f_\u067e\u0631\u0634\u06cc\u0627",
-      "target": "readme_huvudfunktioner",
-      "confidence_score": 1.0
+      "target": "readme_huvudfunktioner"
     },
     {
       "relation": "contains",
@@ -1752,9 +1862,9 @@
       "source_file": "README.md",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_swedpersiska_\u0633\u0648\u0626\u062f_\u067e\u0631\u0634\u06cc\u0627",
-      "target": "readme_kom_ig\u00e5ng",
-      "confidence_score": 1.0
+      "target": "readme_kom_ig\u00e5ng"
     },
     {
       "relation": "contains",
@@ -1762,9 +1872,9 @@
       "source_file": "README.md",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_kom_ig\u00e5ng",
-      "target": "readme_1_starta_utvecklingsservern",
-      "confidence_score": 1.0
+      "target": "readme_1_starta_utvecklingsservern"
     },
     {
       "relation": "contains",
@@ -1772,9 +1882,9 @@
       "source_file": "README.md",
       "source_location": "L48",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_kom_ig\u00e5ng",
-      "target": "readme_2_bygg_f\u00f6r_produktion",
-      "confidence_score": 1.0
+      "target": "readme_2_bygg_f\u00f6r_produktion"
     }
   ],
   "hyperedges": [],

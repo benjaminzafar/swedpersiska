@@ -1,11 +1,11 @@
 # Graph Report - swedpersiska  (2026-11-15)
 
 ## Corpus Check
-- 18 files · ~12,154 words
+- 19 files · ~13,715 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 75 nodes · 98 edges · 10 communities
+- 81 nodes · 103 edges · 11 communities
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -22,18 +22,19 @@
 - [[_COMMUNITY_Community 4|Community 4]]
 - [[_COMMUNITY_Community 5|Community 5]]
 - [[_COMMUNITY_Community 6|Community 6]]
+- [[_COMMUNITY_Community 10|Community 10]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `CATEGORIES` - 7 edges
 2. `t` - 6 edges
 3. `scripts` - 5 edges
 4. `supabase` - 5 edges
-5. `CITIES` - 4 edges
-6. `SwedPersiska (سوئد پرشیا)` - 4 edges
-7. `rules` - 3 edges
-8. `generatePinCode()` - 3 edges
-9. `🚀 Kom igång` - 3 edges
-10. `PostAdModal()` - 2 edges
+5. `Astryx Design System & Guidelines (Meta)` - 5 edges
+6. `CITIES` - 4 edges
+7. `SwedPersiska (سوئد پرشیا)` - 4 edges
+8. `rules` - 3 edges
+9. `generatePinCode()` - 3 edges
+10. `🚀 Kom igång` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `PostAdModal()` --calls--> `generatePinCode()`  [EXTRACTED]
@@ -42,7 +43,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (10 total, 0 thin omitted)
+## Communities (11 total, 0 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.21
@@ -72,16 +73,20 @@ Nodes (6): buildCommand, cleanUrls, framework, headers, outputDirectory, rewrite
 Cohesion: 0.33
 Nodes (5): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema
 
+### Community 10 - "Community 10"
+Cohesion: 0.33
+Nodes (5): 1. Frame-First Layouts, 2. Semantic Tokens Over Hardcoded Values, 3. High-End Master-Detail CRM UX, 4. Tactile Controls & Action Buttons, Astryx Design System & Guidelines (Meta)
+
 ## Knowledge Gaps
-- **36 isolated node(s):** `$schema`, `plugins`, `react/rules-of-hooks`, `react/only-export-components`, `name` (+31 more)
+- **40 isolated node(s):** `$schema`, `plugins`, `react/rules-of-hooks`, `react/only-export-components`, `name` (+35 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `devDependencies` connect `Community 3` to `Community 1`?**
-  _High betweenness centrality (0.055) - this node is a cross-community bridge._
+  _High betweenness centrality (0.047) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugins`, `react/rules-of-hooks` to the rest of the system?**
-  _36 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _40 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._

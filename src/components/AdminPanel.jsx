@@ -13,7 +13,12 @@ import {
   Home, 
   Save, 
   Menu, 
-  X
+  X,
+  Phone,
+  Mail,
+  Copy,
+  Check,
+  MapPin
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { CATEGORIES } from '../lib/translations';
@@ -24,6 +29,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [adminEmailInput, setAdminEmailInput] = useState('swedpersiska@gmail.com');
   const [adminPassInput, setAdminPassInput] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [_loading, setLoading] = useState(false);
 
   // Active view
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'ads' | 'settings'
@@ -33,6 +39,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [ads, setAds] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'hidden' | 'vip'
+
+  // Master-Detail CRM Selection
+  const [selectedAdId, setSelectedAdId] = useState(null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+  const [copiedPin, setCopiedPin] = useState(false);
+  const [_copiedRef, setCopiedRef] = useState(false);
 
   // Telegram & Settings state
   const [telegramToken, setTelegramToken] = useState('');
@@ -71,7 +84,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setAds(data || []);
+      const fetchedAds = data || [];
+      setAds(fetchedAds);
+      if (fetchedAds.length > 0 && !selectedAdId) {
+        setSelectedAdId(fetchedAds[0].id);
+      }
 
       // Fetch settings
       const { data: setRes } = await supabase
@@ -140,7 +157,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         .eq('id', id);
 
       if (error) throw error;
-      setAds(ads.filter(a => a.id !== id));
+      const updated = ads.filter(a => a.id !== id);
+      setAds(updated);
+      if (selectedAdId === id) {
+        setSelectedAdId(updated.length > 0 ? updated[0].id : null);
+        setMobileDetailOpen(false);
+      }
       if (onRefreshAds) onRefreshAds();
     } catch (err) {
       alert('Kunde inte radera: ' + err.message);
@@ -171,16 +193,42 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }
   };
 
+  // Copy helper
+  const copyText = (text, type) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      if (type === 'pin') {
+        setCopiedPin(true);
+        setTimeout(() => setCopiedPin(false), 2000);
+      } else {
+        setCopiedRef(true);
+        setTimeout(() => setCopiedRef(false), 2000);
+      }
+    }
+  };
+
   // Filtered ads
   const filteredAds = ads.filter(ad => {
     const matchCat = categoryFilter === 'all' || ad.category === categoryFilter;
-    const matchSearch = !searchQuery || 
-      ad.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ad.reference_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ad.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ad.contact_name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
+    const matchStatus = 
+      statusFilter === 'all' ||
+      (statusFilter === 'active' && ad.status === 'active') ||
+      (statusFilter === 'hidden' && ad.status === 'hidden') ||
+      (statusFilter === 'vip' && ad.is_featured);
+
+    const q = searchQuery.toLowerCase().trim();
+    const matchSearch = !q || 
+      ad.title.toLowerCase().includes(q) ||
+      (ad.title_fa && ad.title_fa.toLowerCase().includes(q)) ||
+      ad.reference_number.toLowerCase().includes(q) ||
+      ad.city.toLowerCase().includes(q) ||
+      ad.contact_name.toLowerCase().includes(q);
+
+    return matchCat && matchStatus && matchSearch;
   });
+
+  // Currently selected ad for master-detail
+  const currentSelectedAd = ads.find(a => a.id === selectedAdId) || (filteredAds.length > 0 ? filteredAds[0] : null);
 
   // Overview stats
   const totalAds = ads.length;
@@ -234,7 +282,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
             <button
               type="submit"
-              className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 shadow-md active:scale-95 transition-all"
+              className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 shadow-md active:scale-95 transition-all cursor-pointer"
             >
               Logga in i Admin CRM
             </button>
@@ -243,7 +291,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           <button
             type="button"
             onClick={onClose}
-            className="w-full text-center text-xs text-stone-400 hover:text-stone-200"
+            className="w-full text-center text-xs text-stone-400 hover:text-stone-200 cursor-pointer"
           >
             ← Tillbaka till webbplatsen
           </button>
@@ -252,15 +300,209 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     );
   }
 
+  // Astryx CRM Detail Panel Component (Shared between Desktop Split & Mobile Bottom Sheet)
+  const renderDetailPanel = (ad) => {
+    if (!ad) {
+      return (
+        <div className="h-full flex flex-col items-center justify-center p-8 text-center text-stone-500 space-y-2">
+          <Layers size={32} className="text-stone-600" />
+          <p className="text-xs font-medium">Välj en annons i listan för att inspektera detaljer och hantera ärendet.</p>
+        </div>
+      );
+    }
+
+    const catObj = CATEGORIES.find(c => c.id === ad.category);
+    const catName = catObj ? catObj.sv : ad.category;
+    const coverImage = (ad.images && ad.images.length > 0 && ad.images[0])
+      ? ad.images[0]
+      : 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=800&q=80';
+
+    return (
+      <div className="flex flex-col h-full justify-between space-y-5">
+        
+        {/* Top Header & Photo */}
+        <div className="space-y-4">
+          
+          {/* Header Bar */}
+          <div className="flex items-center justify-between pb-3 border-b border-stone-800">
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs font-extrabold px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300 border border-emerald-800/70">
+                <bdi>{ad.reference_number}</bdi>
+              </span>
+              <span className="text-[11px] font-semibold text-stone-400">
+                {catName}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                ad.is_featured 
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' 
+                  : 'bg-stone-800 text-stone-400'
+              }`}>
+                {ad.is_featured ? 'VIP' : 'Standard'}
+              </span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                ad.status === 'active'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+              }`}>
+                {ad.status === 'active' ? 'Aktiv' : 'Dold'}
+              </span>
+            </div>
+          </div>
+
+          {/* Photo */}
+          <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-stone-900 border border-stone-800">
+            <img 
+              src={coverImage} 
+              alt={ad.title} 
+              className="w-full h-full object-cover" 
+            />
+            <div className="absolute bottom-2 start-2 flex items-center gap-1 rounded bg-black/75 px-2 py-0.5 text-[10.5px] text-stone-200 backdrop-blur-xs">
+              <MapPin size={11} className="text-emerald-400" />
+              <span>{ad.city}{ad.area ? ` • ${ad.area}` : ''}</span>
+            </div>
+          </div>
+
+          {/* Title & Price */}
+          <div className="space-y-1">
+            <div className="flex items-baseline justify-between gap-2">
+              <h3 className="text-sm font-extrabold text-white leading-snug line-clamp-2">
+                {ad.title}
+              </h3>
+              <span className="text-sm font-black text-emerald-400 whitespace-nowrap tabular-nums">
+                <bdi>{ad.price ? `${Number(ad.price).toLocaleString('sv-SE')} ${ad.price_type || 'kr'}` : 'Enligt ök'}</bdi>
+              </span>
+            </div>
+            {ad.title_fa && (
+              <p className="text-xs text-stone-400 line-clamp-1" dir="rtl">
+                {ad.title_fa}
+              </p>
+            )}
+          </div>
+
+          {/* Description */}
+          <div className="rounded-xl bg-[#0d0f14] p-3 border border-stone-800/80 text-xs text-stone-300 leading-relaxed max-h-36 overflow-y-auto">
+            {ad.description}
+          </div>
+
+          {/* Security PIN Code Box */}
+          <div className="flex items-center justify-between rounded-xl bg-amber-950/20 border border-amber-900/40 p-2.5">
+            <div>
+              <span className="block text-[9.5px] font-bold uppercase tracking-wider text-amber-400/80">Hemlig PIN-kod (användare)</span>
+              <span className="font-mono text-sm font-black text-amber-300 tracking-wider">
+                <bdi>{ad.pin_code}</bdi>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => copyText(ad.pin_code, 'pin')}
+              className="flex items-center gap-1 px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-bold border border-amber-500/40 active:scale-95 transition-all cursor-pointer"
+            >
+              {copiedPin ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+              <span>{copiedPin ? 'Kopierad' : 'Kopiera PIN'}</span>
+            </button>
+          </div>
+
+          {/* Contact Details */}
+          <div className="space-y-1.5 pt-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Kontaktuppgifter</span>
+            <div className="rounded-xl bg-[#0d0f14] p-3 border border-stone-800/80 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-stone-400">Kontaktperson:</span>
+                <span className="font-bold text-white">{ad.contact_name}</span>
+              </div>
+              {ad.contact_phone && (
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-400">Telefon:</span>
+                  <a href={`tel:${ad.contact_phone}`} className="font-semibold text-emerald-400 hover:underline flex items-center gap-1">
+                    <Phone size={12} />
+                    <bdi>{ad.contact_phone}</bdi>
+                  </a>
+                </div>
+              )}
+              {ad.contact_email && (
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-400">E-post:</span>
+                  <a href={`mailto:${ad.contact_email}`} className="font-semibold text-stone-200 hover:underline flex items-center gap-1 truncate max-w-[180px]">
+                    <Mail size={12} />
+                    <span>{ad.contact_email}</span>
+                  </a>
+                </div>
+              )}
+              {ad.contact_telegram && (
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-400">Telegram:</span>
+                  <a href={`https://t.me/${ad.contact_telegram.replace('@', '')}`} target="_blank" rel="noreferrer" className="font-semibold text-sky-400 hover:underline flex items-center gap-1">
+                    <Send size={12} />
+                    <span>{ad.contact_telegram}</span>
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Instant CRM Moderation Action Buttons (42px tactile touch targets) */}
+        <div className="space-y-2 pt-4 border-t border-stone-800">
+          <div className="grid grid-cols-2 gap-2">
+            
+            {/* VIP Toggle */}
+            <button
+              type="button"
+              onClick={() => toggleFeatured(ad)}
+              className={`flex items-center justify-center gap-1.5 h-11 rounded-xl text-xs font-bold active:scale-[0.98] transition-all cursor-pointer ${
+                ad.is_featured
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
+                  : 'bg-stone-800 text-stone-300 hover:text-white hover:bg-stone-700 border border-stone-700'
+              }`}
+            >
+              <Sparkles size={14} className={ad.is_featured ? 'text-amber-400' : 'text-stone-400'} />
+              <span>{ad.is_featured ? 'Ta bort VIP' : 'Gör till VIP'}</span>
+            </button>
+
+            {/* Active / Hidden Toggle */}
+            <button
+              type="button"
+              onClick={() => toggleStatus(ad)}
+              className={`flex items-center justify-center gap-1.5 h-11 rounded-xl text-xs font-bold active:scale-[0.98] transition-all cursor-pointer ${
+                ad.status === 'active'
+                  ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800 hover:bg-emerald-950/60'
+                  : 'bg-amber-950/40 text-amber-300 border border-amber-800 hover:bg-amber-950/60'
+              }`}
+            >
+              <CheckCircle size={14} className={ad.status === 'active' ? 'text-emerald-400' : 'text-amber-400'} />
+              <span>{ad.status === 'active' ? 'Gör dold' : 'Aktivera'}</span>
+            </button>
+
+          </div>
+
+          {/* Delete Ad Button */}
+          <button
+            type="button"
+            onClick={() => deleteAdAdmin(ad.id)}
+            className="w-full flex items-center justify-center gap-1.5 h-10 rounded-xl bg-rose-950/20 text-rose-400 hover:bg-rose-950/50 hover:text-rose-200 border border-rose-900/40 active:scale-[0.98] transition-all text-xs font-bold cursor-pointer"
+          >
+            <Trash2 size={14} />
+            <span>Radera annons permanent</span>
+          </button>
+        </div>
+
+      </div>
+    );
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex bg-[#0c0e12] text-stone-100 overflow-hidden font-sans">
       
-      {/* Sidebar (Desktop Astryx Luxury Dark Theme) */}
-      <aside className="hidden lg:flex w-64 flex-col justify-between border-r border-stone-800/80 bg-[#11141a] p-4 select-none shrink-0">
-        <div className="space-y-6">
+      {/* Sidebar (Desktop Astryx Luxury Dark Frame) */}
+      <aside className="hidden lg:flex w-64 flex-col justify-between border-r border-stone-800/80 bg-[#11141a] p-4 select-none shrink-0 h-full">
+        <div className="space-y-6 flex flex-col min-h-0">
           
           {/* Brand header */}
-          <div className="flex items-center gap-3 px-2">
+          <div className="flex items-center gap-3 px-2 shrink-0">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-amber-500 text-white font-extrabold text-sm shadow-md font-mono">
               SP
             </div>
@@ -270,12 +512,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
           </div>
 
-          {/* Navigation Items */}
-          <nav className="space-y-1">
+          {/* Navigation Items (smooth scroll without bugs) */}
+          <nav className="space-y-1.5 overflow-y-auto overscroll-contain no-scrollbar">
             <button
               type="button"
               onClick={() => setActiveTab('overview')}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'overview'
                   ? 'bg-white text-stone-950 font-bold shadow-sm'
                   : 'text-stone-400 hover:bg-white/5 hover:text-white'
@@ -288,7 +530,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={() => setActiveTab('ads')}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'ads'
                   ? 'bg-white text-stone-950 font-bold shadow-sm'
                   : 'text-stone-400 hover:bg-white/5 hover:text-white'
@@ -306,7 +548,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'settings'
                   ? 'bg-white text-stone-950 font-bold shadow-sm'
                   : 'text-stone-400 hover:bg-white/5 hover:text-white'
@@ -319,13 +561,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
         </div>
 
-        {/* 2x2 Bottom actions matching NT360 design */}
-        <div className="border-t border-stone-800/80 pt-3">
+        {/* 2x2 Bottom actions matching compact NT360 design */}
+        <div className="border-t border-stone-800/80 pt-3 shrink-0">
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[11px] font-semibold text-stone-300 bg-white/5 hover:bg-white/10 hover:text-white border border-stone-800 active:scale-95 transition-all text-center"
+              className="flex items-center justify-center gap-1.5 h-10 rounded-xl px-2 text-[11px] font-semibold text-stone-300 bg-white/5 hover:bg-white/10 hover:text-white border border-stone-800 active:scale-95 transition-all text-center cursor-pointer"
               title="Tillbaka till sajten"
             >
               <Home size={14} className="text-emerald-400 shrink-0" />
@@ -335,7 +577,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={() => setIsAuthenticated(false)}
-              className="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[11px] font-semibold text-rose-300 bg-rose-950/25 hover:bg-rose-950/45 border border-rose-900/40 active:scale-95 transition-all text-center"
+              className="flex items-center justify-center gap-1.5 h-10 rounded-xl px-2 text-[11px] font-semibold text-rose-300 bg-rose-950/25 hover:bg-rose-950/45 border border-rose-900/40 active:scale-95 transition-all text-center cursor-pointer"
               title="Logga ut"
             >
               <LogOut size={14} className="shrink-0" />
@@ -355,11 +597,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/5"
+              className="lg:hidden p-2 rounded-xl text-stone-400 hover:text-white hover:bg-white/5 cursor-pointer"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <h2 className="text-base font-extrabold text-white">
+            <h2 className="text-sm sm:text-base font-extrabold text-white">
               {activeTab === 'overview' && 'Översikt & Aktuella nyckeltal'}
               {activeTab === 'ads' && `Hantera Annonser (${filteredAds.length} st)`}
               {activeTab === 'settings' && 'Inställningar & Telegram-aviseringar'}
@@ -370,55 +612,80 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={fetchAdminData}
-              className="px-3 py-1.5 rounded-xl bg-white/5 text-xs font-semibold text-stone-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all"
+              className="px-3 py-1.5 rounded-xl bg-white/5 text-xs font-semibold text-stone-300 hover:text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
             >
               ↻ Uppdatera
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-1.5 rounded-xl bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-700 active:scale-95 transition-all"
+              className="px-3 py-1.5 rounded-xl bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-700 active:scale-95 transition-all cursor-pointer"
             >
-              Tillbaka till sajten
+              Tillbaka
             </button>
           </div>
         </header>
 
-        {/* Mobile menu dropdown */}
+        {/* Mobile menu dropdown with 2x2 design */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-[#141820] border-b border-stone-800 p-4 space-y-2">
-            <button
-              onClick={() => { setActiveTab('overview'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded-lg text-xs font-semibold text-stone-300 hover:bg-white/5"
-            >
-              Översikt
-            </button>
-            <button
-              onClick={() => { setActiveTab('ads'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded-lg text-xs font-semibold text-stone-300 hover:bg-white/5"
-            >
-              Annonser ({ads.length})
-            </button>
-            <button
-              onClick={() => { setActiveTab('settings'); setMobileMenuOpen(false); }}
-              className="w-full text-left p-2 rounded-lg text-xs font-semibold text-stone-300 hover:bg-white/5"
-            >
-              Inställningar & Telegram
-            </button>
+          <div className="lg:hidden bg-[#141820] border-b border-stone-800 p-4 space-y-3 animate-in slide-in-from-top-2 duration-150">
+            <div className="space-y-1">
+              <button
+                onClick={() => { setActiveTab('overview'); setMobileMenuOpen(false); }}
+                className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  activeTab === 'overview' ? 'bg-white text-stone-950 font-bold' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                Översikt & Statistik
+              </button>
+              <button
+                onClick={() => { setActiveTab('ads'); setMobileMenuOpen(false); }}
+                className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  activeTab === 'ads' ? 'bg-white text-stone-950 font-bold' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                Alla Annonser ({ads.length})
+              </button>
+              <button
+                onClick={() => { setActiveTab('settings'); setMobileMenuOpen(false); }}
+                className={`w-full text-left p-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  activeTab === 'settings' ? 'bg-white text-stone-950 font-bold' : 'text-stone-300 hover:bg-white/5'
+                }`}
+              >
+                Inställningar & Telegram
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-800">
+              <button
+                onClick={onClose}
+                className="flex items-center justify-center gap-1.5 h-10 rounded-xl bg-white/5 border border-stone-800 text-stone-200 text-xs font-semibold"
+              >
+                <Home size={14} className="text-emerald-400" />
+                <span>Sajten</span>
+              </button>
+              <button
+                onClick={() => setIsAuthenticated(false)}
+                className="flex items-center justify-center gap-1.5 h-10 rounded-xl bg-rose-950/20 border border-rose-900/40 text-rose-300 text-xs font-semibold"
+              >
+                <LogOut size={14} />
+                <span>Logga ut</span>
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Scrollable Tab Views */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        {/* View Container */}
+        <div className="flex-1 flex min-h-0 overflow-hidden">
           
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
-            <div className="space-y-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
               
               {/* KPI Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
                 <div className="rounded-2xl border border-stone-800 bg-[#141820] p-4.5 space-y-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">Totalt antal annonser</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">Totalt annonser</span>
                   <p className="text-2xl font-black text-white">{totalAds}</p>
                 </div>
 
@@ -444,17 +711,24 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <h3 className="text-sm font-bold text-white">Senast inkomna annonser</h3>
                   <button
                     onClick={() => setActiveTab('ads')}
-                    className="text-xs font-bold text-emerald-400 hover:underline"
+                    className="text-xs font-bold text-emerald-400 hover:underline cursor-pointer"
                   >
-                    Visa alla →
+                    Gå till hantera annonser →
                   </button>
                 </div>
 
                 <div className="divide-y divide-stone-800">
-                  {ads.slice(0, 5).map(ad => (
-                    <div key={ad.id} className="py-3 flex items-center justify-between gap-3 text-xs">
+                  {ads.slice(0, 6).map(ad => (
+                    <div 
+                      key={ad.id} 
+                      onClick={() => {
+                        setSelectedAdId(ad.id);
+                        setActiveTab('ads');
+                      }}
+                      className="py-3 flex items-center justify-between gap-3 text-xs hover:bg-white/[0.02] p-2 rounded-xl transition-colors cursor-pointer"
+                    >
                       <div className="min-w-0">
-                        <span className="font-mono text-[10px] text-stone-400 block">{ad.reference_number}</span>
+                        <span className="font-mono text-[10px] text-emerald-400 block"><bdi>{ad.reference_number}</bdi></span>
                         <p className="font-bold text-stone-200 truncate">{ad.title}</p>
                         <span className="text-[11px] text-stone-400">{ad.city} • {ad.category}</span>
                       </div>
@@ -464,12 +738,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         }`}>
                           {ad.is_featured ? 'VIP' : 'Standard'}
                         </span>
-                        <button
-                          onClick={() => deleteAdAdmin(ad.id)}
-                          className="p-1 rounded text-stone-400 hover:text-rose-400"
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        <span className="text-xs text-stone-400 font-bold">
+                          Inspektera →
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -479,131 +750,190 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
           )}
 
-          {/* TAB 2: ADS MANAGEMENT */}
+          {/* TAB 2: ADS MANAGEMENT (Astryx Master-Detail Split CRM View) */}
           {activeTab === 'ads' && (
-            <div className="space-y-4">
+            <div className="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
               
-              {/* Search & Filter Bar */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1">
-                  <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-500" />
-                  <input
-                    type="text"
-                    placeholder="Sök på referensnummer, rubrik, stad eller säljare..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-xl border border-stone-800 bg-[#141820] pl-10 pr-4 py-2.5 text-xs text-white placeholder-stone-500 focus:border-emerald-500 focus:outline-none"
-                  />
+              {/* MASTER LIST (Left Panel) */}
+              <div className="flex-1 flex flex-col min-w-0 p-4 sm:p-5 overflow-hidden space-y-3.5">
+                
+                {/* Search & Status Filters */}
+                <div className="flex flex-col sm:flex-row gap-2.5 shrink-0">
+                  <div className="relative flex-1">
+                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-500" />
+                    <input
+                      type="text"
+                      placeholder="Sök referens, titel, stad eller kontakt..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full h-10 rounded-xl border border-stone-800 bg-[#141820] pl-10 pr-4 text-xs text-white placeholder-stone-500 focus:border-emerald-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className="h-10 rounded-xl border border-stone-800 bg-[#141820] px-3 text-xs text-stone-200 focus:border-emerald-500 focus:outline-none"
+                  >
+                    <option value="all">Alla kategorier</option>
+                    {CATEGORIES.filter(c => c.id !== 'all').map(c => (
+                      <option key={c.id} value={c.id}>{c.sv}</option>
+                    ))}
+                  </select>
+
+                  <div className="flex items-center rounded-xl bg-[#141820] p-1 border border-stone-800 text-xs">
+                    <button
+                      onClick={() => setStatusFilter('all')}
+                      className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${statusFilter === 'all' ? 'bg-stone-800 text-white' : 'text-stone-400'}`}
+                    >
+                      Alla
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter('active')}
+                      className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${statusFilter === 'active' ? 'bg-emerald-600 text-white' : 'text-stone-400'}`}
+                    >
+                      Aktiva
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter('vip')}
+                      className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${statusFilter === 'vip' ? 'bg-amber-600 text-white' : 'text-stone-400'}`}
+                    >
+                      VIP
+                    </button>
+                    <button
+                      onClick={() => setStatusFilter('hidden')}
+                      className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${statusFilter === 'hidden' ? 'bg-rose-900 text-white' : 'text-stone-400'}`}
+                    >
+                      Dolda
+                    </button>
+                  </div>
                 </div>
 
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="rounded-xl border border-stone-800 bg-[#141820] px-3 py-2.5 text-xs text-stone-200 focus:border-emerald-500 focus:outline-none"
-                >
-                  <option value="all">Alla kategorier</option>
-                  {CATEGORIES.filter(c => c.id !== 'all').map(c => (
-                    <option key={c.id} value={c.id}>{c.sv}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Ads Table */}
-              <div className="rounded-2xl border border-stone-800 bg-[#141820] overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-stone-300">
-                    <thead className="border-b border-stone-800 bg-[#11141a] text-[10.5px] font-bold uppercase tracking-wider text-stone-400">
-                      <tr>
-                        <th className="px-4 py-3">Ref & Datum</th>
-                        <th className="px-4 py-3">Rubrik & Kategori</th>
-                        <th className="px-4 py-3">Stad & Pris</th>
-                        <th className="px-4 py-3">PIN</th>
-                        <th className="px-4 py-3">Kontakt</th>
-                        <th className="px-4 py-3 text-right">Åtgärder</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-800/60">
-                      {filteredAds.map(ad => (
-                        <tr key={ad.id} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="px-4 py-3 font-mono">
-                            <span className="font-semibold text-emerald-400 block"><bdi>{ad.reference_number}</bdi></span>
-                            <span className="text-[10px] text-stone-500">{new Date(ad.created_at).toLocaleDateString('sv-SE')}</span>
-                          </td>
-
-                          <td className="px-4 py-3 max-w-xs">
-                            <p className="font-semibold text-stone-200 truncate">{ad.title}</p>
-                            <span className="text-[10px] text-stone-400 block">{ad.category}</span>
-                          </td>
-
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            <span className="text-stone-300 block">{ad.city}</span>
-                            <span className="text-[11px] font-semibold text-emerald-400 tabular-nums">
-                              <bdi>{ad.price ? `${ad.price} ${ad.price_type}` : 'Enligt ök'}</bdi>
-                            </span>
-                          </td>
-
-                          <td className="px-4 py-3 font-mono text-amber-300 font-semibold">
-                            <bdi>{ad.pin_code}</bdi>
-                          </td>
-
-                          <td className="px-4 py-3">
-                            <span className="font-semibold text-stone-200 block">{ad.contact_name}</span>
-                            <span className="text-[10px] text-stone-400">{ad.contact_phone || ad.contact_email}</span>
-                          </td>
-
-                          <td className="px-4 py-3 text-right whitespace-nowrap">
-                            <div className="flex items-center justify-end gap-1.5">
-                              {/* Toggle VIP */}
-                              <button
-                                type="button"
-                                onClick={() => toggleFeatured(ad)}
-                                className={`p-1.5 rounded-lg border text-xs font-bold active:scale-95 transition-all ${
-                                  ad.is_featured
-                                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                                    : 'bg-stone-800 text-stone-400 border-stone-700 hover:text-white'
-                                }`}
-                                title={ad.is_featured ? 'Ta bort VIP' : 'Gör till VIP'}
-                              >
-                                <Sparkles size={13} />
-                              </button>
-
-                              {/* Toggle Active / Hidden */}
-                              <button
-                                type="button"
-                                onClick={() => toggleStatus(ad)}
-                                className={`px-2 py-1 rounded-lg border text-[11px] font-bold active:scale-95 transition-all ${
-                                  ad.status === 'active'
-                                    ? 'bg-emerald-950/40 text-emerald-300 border-emerald-800'
-                                    : 'bg-stone-800 text-stone-400 border-stone-700'
-                                }`}
-                              >
-                                {ad.status === 'active' ? 'Aktiv' : 'Dold'}
-                              </button>
-
-                              {/* Delete */}
-                              <button
-                                type="button"
-                                onClick={() => deleteAdAdmin(ad.id)}
-                                className="p-1.5 rounded-lg bg-rose-950/30 text-rose-400 hover:bg-rose-950/60 border border-rose-900/40 active:scale-95 transition-all"
-                                title="Radera permanent"
-                              >
-                                <Trash2 size={13} />
-                              </button>
-                            </div>
-                          </td>
+                {/* Master Table */}
+                <div className="flex-1 rounded-2xl border border-stone-800 bg-[#141820] overflow-hidden flex flex-col min-h-0">
+                  <div className="overflow-y-auto flex-1">
+                    <table className="w-full text-left text-xs text-stone-300">
+                      <thead className="sticky top-0 z-10 border-b border-stone-800 bg-[#11141a] text-[10.5px] font-bold uppercase tracking-wider text-stone-400">
+                        <tr>
+                          <th className="px-3.5 py-3">Ref & Datum</th>
+                          <th className="px-3.5 py-3">Rubrik & Kategori</th>
+                          <th className="px-3.5 py-3">Stad & Pris</th>
+                          <th className="px-3.5 py-3">Status</th>
+                          <th className="px-3.5 py-3 text-right">PIN</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-stone-800/60">
+                        {filteredAds.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="py-12 text-center text-stone-500">
+                              Inga annonser matchar filtret.
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredAds.map(ad => {
+                            const isSelected = ad.id === currentSelectedAd?.id;
+                            return (
+                              <tr
+                                key={ad.id}
+                                onClick={() => {
+                                  setSelectedAdId(ad.id);
+                                  setMobileDetailOpen(true);
+                                }}
+                                className={`transition-all duration-150 cursor-pointer select-none ${
+                                  isSelected
+                                    ? 'bg-emerald-500/10 border-l-4 border-l-emerald-500 text-white'
+                                    : 'hover:bg-white/[0.03] border-l-4 border-l-transparent'
+                                }`}
+                              >
+                                <td className="px-3.5 py-3 font-mono">
+                                  <span className={`font-extrabold block ${isSelected ? 'text-emerald-300' : 'text-emerald-400'}`}>
+                                    <bdi>{ad.reference_number}</bdi>
+                                  </span>
+                                  <span className="text-[10px] text-stone-500">
+                                    {new Date(ad.created_at).toLocaleDateString('sv-SE')}
+                                  </span>
+                                </td>
+
+                                <td className="px-3.5 py-3 max-w-[190px]">
+                                  <p className="font-semibold text-stone-100 truncate">{ad.title}</p>
+                                  <span className="text-[10px] text-stone-400 block">{ad.category}</span>
+                                </td>
+
+                                <td className="px-3.5 py-3 whitespace-nowrap">
+                                  <span className="text-stone-300 block">{ad.city}</span>
+                                  <span className="text-[11px] font-semibold text-emerald-400 tabular-nums">
+                                    <bdi>{ad.price ? `${Number(ad.price).toLocaleString('sv-SE')} ${ad.price_type || 'kr'}` : 'Enligt ök'}</bdi>
+                                  </span>
+                                </td>
+
+                                <td className="px-3.5 py-3 whitespace-nowrap">
+                                  <div className="flex items-center gap-1.5">
+                                    {ad.is_featured && (
+                                      <span className="px-1.5 py-0.5 rounded text-[9.5px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                        VIP
+                                      </span>
+                                    )}
+                                    <span className={`px-1.5 py-0.5 rounded text-[9.5px] font-bold ${
+                                      ad.status === 'active'
+                                        ? 'bg-emerald-500/20 text-emerald-300'
+                                        : 'bg-rose-500/20 text-rose-300'
+                                    }`}>
+                                      {ad.status === 'active' ? 'Aktiv' : 'Dold'}
+                                    </span>
+                                  </div>
+                                </td>
+
+                                <td className="px-3.5 py-3 text-right font-mono font-bold text-amber-300">
+                                  <bdi>{ad.pin_code}</bdi>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+
               </div>
+
+              {/* DETAIL INSPECTOR (Desktop Attached Right Panel) */}
+              <div className="hidden lg:flex w-[390px] xl:w-[420px] shrink-0 border-l border-stone-800/80 bg-[#11141a] p-5 flex-col justify-between overflow-y-auto animate-in fade-in-50 slide-in-from-right-4 duration-200">
+                {renderDetailPanel(currentSelectedAd)}
+              </div>
+
+              {/* Mobile Bottom-Sheet Drawer for Selected Ad */}
+              {mobileDetailOpen && currentSelectedAd && (
+                <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden">
+                  <div 
+                    className="fixed inset-0 bg-black/75 backdrop-blur-xs"
+                    onClick={() => setMobileDetailOpen(false)}
+                  />
+                  <div className="relative w-full max-h-[85vh] bg-[#11141a] rounded-t-[28px] border-t border-stone-800 p-5 overflow-y-auto z-10 animate-in slide-in-from-bottom duration-250">
+                    {/* Top Grab Handle Pill */}
+                    <div className="w-12 h-1.5 bg-stone-700 rounded-full mx-auto mb-4" />
+                    
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">Ärendedetaljer</span>
+                      <button 
+                        onClick={() => setMobileDetailOpen(false)}
+                        className="p-1 rounded-lg text-stone-400 hover:text-white"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+
+                    {renderDetailPanel(currentSelectedAd)}
+                  </div>
+                </div>
+              )}
 
             </div>
           )}
 
           {/* TAB 3: SETTINGS & TELEGRAM */}
           {activeTab === 'settings' && (
-            <div className="max-w-2xl space-y-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-w-2xl">
               
               {/* Telegram Integration Card */}
               <div className="rounded-2xl border border-stone-800 bg-[#141820] p-6 space-y-5">
@@ -614,7 +944,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <div>
                     <h3 className="text-sm font-extrabold text-white">Telegram Aviseringar</h3>
                     <p className="text-xs text-stone-400">
-                      Få omedelbara meddelanden i din Telegram-kanal/grupp varje gång någon lägger upp en ny annons!
+                      Få omedelbara meddelanden i din Telegram-kanal varje gång någon lägger upp en ny annons!
                     </p>
                   </div>
                 </div>
@@ -633,7 +963,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       type="checkbox"
                       checked={telegramEnabled}
                       onChange={(e) => setTelegramEnabled(e.target.checked)}
-                      className="h-4 w-4 rounded border-stone-700 bg-stone-900 text-emerald-600 focus:ring-emerald-500"
+                      className="h-4 w-4 rounded border-stone-700 bg-stone-900 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                     />
                   </div>
 
@@ -665,7 +995,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
                   <button
                     type="submit"
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all"
+                    className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer"
                   >
                     <Save size={15} />
                     <span>Spara Telegram-konfiguration</span>
