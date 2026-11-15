@@ -256,15 +256,21 @@ export default function App() {
         </div>
       )}
 
-      {/* Hero Section - Meta.com clean light canvas & typography */}
-      <section className="bg-white border-b border-slate-200/70 pt-8 sm:pt-10 pb-10 sm:pb-12 px-3 sm:px-6 lg:px-8 w-full overflow-hidden">
+      {/* Hero Section - Soft Nordic Clean Canvas */}
+      <section className="bg-gradient-to-b from-slate-50 via-white to-slate-50/40 border-b border-slate-200/60 pt-6 sm:pt-10 pb-8 sm:pb-12 px-3 sm:px-6 lg:px-8 w-full overflow-hidden">
         <div className="max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
           
+          {/* Subtle Nordic Pill Tag */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/80 text-blue-700 text-[11px] font-bold border border-blue-100 shadow-2xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
+            <span>پرتال نیازمندی‌های ایرانیان در سراسر اسکاندیناوی</span>
+          </div>
+
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-snug sm:leading-tight px-1 break-words">
             {heroHeading}
           </h1>
 
-          <p className="text-xs sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed px-2">
+          <p className="text-xs sm:text-base text-slate-500 max-w-xl mx-auto leading-relaxed px-2">
             {heroSubheading}
           </p>
 
