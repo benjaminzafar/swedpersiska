@@ -467,7 +467,7 @@
       "label": "Navbar()",
       "file_type": "code",
       "source_file": "src/components/Navbar.jsx",
-      "source_location": "L12",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "components_navbar_navbar",
       "community": 0,
@@ -1782,9 +1782,9 @@
       "source_file": ".agents/skills/astryx/SKILL.md",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "astryx_skill",
-      "target": "astryx_skill_astryx_design_system_guidelines_meta",
-      "confidence_score": 1.0
+      "target": "astryx_skill_astryx_design_system_guidelines_meta"
     },
     {
       "relation": "contains",
@@ -1792,9 +1792,9 @@
       "source_file": ".agents/skills/astryx/SKILL.md",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "astryx_skill_astryx_design_system_guidelines_meta",
-      "target": "astryx_skill_1_frame_first_layouts",
-      "confidence_score": 1.0
+      "target": "astryx_skill_1_frame_first_layouts"
     },
     {
       "relation": "contains",
@@ -1802,9 +1802,9 @@
       "source_file": ".agents/skills/astryx/SKILL.md",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "astryx_skill_astryx_design_system_guidelines_meta",
-      "target": "astryx_skill_2_semantic_tokens_over_hardcoded_values",
-      "confidence_score": 1.0
+      "target": "astryx_skill_2_semantic_tokens_over_hardcoded_values"
     },
     {
       "relation": "contains",
@@ -1812,9 +1812,9 @@
       "source_file": ".agents/skills/astryx/SKILL.md",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "astryx_skill_astryx_design_system_guidelines_meta",
-      "target": "astryx_skill_3_high_end_master_detail_crm_ux",
-      "confidence_score": 1.0
+      "target": "astryx_skill_3_high_end_master_detail_crm_ux"
     },
     {
       "relation": "contains",
@@ -1822,9 +1822,9 @@
       "source_file": ".agents/skills/astryx/SKILL.md",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "astryx_skill_astryx_design_system_guidelines_meta",
-      "target": "astryx_skill_4_tactile_controls_action_buttons",
-      "confidence_score": 1.0
+      "target": "astryx_skill_4_tactile_controls_action_buttons"
     },
     {
       "relation": "contains",

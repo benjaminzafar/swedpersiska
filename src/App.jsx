@@ -65,6 +65,14 @@ export default function App() {
     setTimeout(() => setToastMsg(''), 4000);
   };
 
+  // Auto-detect ?admin=1 in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('admin') === '1' || params.get('admin') === 'true') {
+      setAdminOpen(true);
+    }
+  }, []);
+
   // Sync dir attribute on body for Persian RTL / Swedish LTR
   useEffect(() => {
     document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
@@ -129,13 +137,16 @@ export default function App() {
   return (
     <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 ${lang === 'fa' ? 'font-vazir' : ''}`}>
       
-      {/* Top Navbar */}
+      {/* Top Navbar (Astryx Super Modern Nav, Clean customer experience) */}
       <Navbar
         lang={lang}
         setLang={setLang}
         onOpenPostAd={() => setPostAdOpen(true)}
         onOpenManageAd={() => setManageAdOpen(true)}
-        onOpenAdmin={() => setAdminOpen(true)}
+        onSelectCategory={(catId) => {
+          setSelectedCategory(catId);
+          window.scrollTo({ top: 380, behavior: 'smooth' });
+        }}
       />
 
       {/* Floating Toast Notification */}
@@ -389,6 +400,7 @@ export default function App() {
           setSelectedCity(cityId);
           window.scrollTo({ top: 380, behavior: 'smooth' });
         }}
+        onOpenAdmin={() => setAdminOpen(true)}
       />
 
       {/* MODAL 1: Ad Detail */}

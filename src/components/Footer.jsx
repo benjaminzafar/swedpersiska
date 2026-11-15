@@ -1,10 +1,10 @@
 import React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Lock } from 'lucide-react';
 import { CITIES, CATEGORIES } from '../lib/translations';
 
 const currentYear = new Date().getFullYear();
 
-export default function Footer({ lang, onSelectCategory, onSelectCity }) {
+export default function Footer({ lang, onSelectCategory, onSelectCity, onOpenAdmin }) {
   return (
     <footer className="border-t border-stone-200 bg-white pt-12 pb-8 text-stone-600 text-xs select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -15,8 +15,8 @@ export default function Footer({ lang, onSelectCategory, onSelectCity }) {
           {/* Brand & mission */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-amber-600 text-white font-extrabold text-xs">
-                SP
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs">
+                <span className="font-mono text-emerald-400">SP</span>
               </div>
               <span className="font-extrabold text-base text-slate-900 tracking-tight">SwedPersiska</span>
             </div>
@@ -38,7 +38,7 @@ export default function Footer({ lang, onSelectCategory, onSelectCity }) {
                   <button
                     type="button"
                     onClick={() => onSelectCategory(cat.id)}
-                    className="hover:text-emerald-700 hover:underline transition-colors text-left"
+                    className="hover:text-emerald-700 hover:underline transition-colors text-left cursor-pointer"
                   >
                     {lang === 'fa' ? cat.fa : cat.sv}
                   </button>
@@ -58,7 +58,7 @@ export default function Footer({ lang, onSelectCategory, onSelectCity }) {
                   <button
                     type="button"
                     onClick={() => onSelectCity(city.id)}
-                    className="hover:text-emerald-700 hover:underline transition-colors text-left"
+                    className="hover:text-emerald-700 hover:underline transition-colors text-left cursor-pointer"
                   >
                     {lang === 'fa' ? city.fa : city.sv}
                   </button>
@@ -87,13 +87,26 @@ export default function Footer({ lang, onSelectCategory, onSelectCity }) {
 
         </div>
 
-        {/* Bottom bar */}
+        {/* Bottom bar with discreet Admin access */}
         <div className="border-t border-stone-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-stone-400">
           <div>
             © {currentYear} SwedPersiska.se • سوئد پرشیا
           </div>
-          <div className="flex items-center gap-1">
+          
+          <div className="flex items-center gap-4">
             <span>Byggd för den iranska och persisktalande gemenskapen i Sverige</span>
+            
+            {onOpenAdmin && (
+              <button
+                type="button"
+                onClick={onOpenAdmin}
+                className="flex items-center gap-1 text-stone-400 hover:text-stone-600 transition-colors cursor-pointer text-[10.5px]"
+                title="Administratörsinloggning"
+              >
+                <Lock size={11} />
+                <span>Admin</span>
+              </button>
+            )}
           </div>
         </div>
 
