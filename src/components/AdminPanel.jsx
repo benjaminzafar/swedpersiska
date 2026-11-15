@@ -631,65 +631,69 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          DESKTOP SIDEBAR NAVIGATION (Hidden on mobile)
+          DESKTOP SIDEBAR NAVIGATION (Astryx Frame-First Layout)
       ======================================================== */}
-      <aside className="hidden lg:flex w-64 shrink-0 bg-[#111217] text-zinc-300 flex-col border-s border-zinc-800/80">
+      <aside className="hidden lg:flex w-64 shrink-0 bg-[#111217] text-zinc-300 flex-col border-s border-zinc-800/80 select-none">
         
-        {/* Brand Top */}
+        {/* Brand Top Header with Live Online Indicator */}
         <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-800/80">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-zinc-950 font-black text-xs shadow-xs">
+            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white text-zinc-950 font-black text-xs shadow-xs">
               SP
+              <span className="absolute -bottom-0.5 -end-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-[#111217]" title="سیستم متصل و آنلاین" />
             </div>
             <div>
               <span className="font-extrabold text-sm text-white block leading-tight">سوئد پرشیا</span>
-              <span className="text-[10px] text-zinc-400 font-mono tracking-wider">ADMIN CRM</span>
+              <span className="text-[10px] text-zinc-400 font-mono tracking-wider">ADMIN CRM v3.0</span>
             </div>
           </div>
+          <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold">
+            آنلاین
+          </span>
         </div>
 
-        {/* Navigation Groups */}
+        {/* Navigation Groups - Astryx Soft & Tactile Menu */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-4">
           
           {/* Group 1: Overview */}
           <div className="space-y-1">
-            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider px-3 block">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-3 block">
               پیشخوان و آمار
             </span>
             
             <button
               type="button"
               onClick={() => handleTabChange('overview')}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
                 activeTab === 'overview'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60 font-semibold'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <LayoutDashboard size={15} />
-                <span>داشبورد و آمار</span>
+                <LayoutDashboard size={16} className={activeTab === 'overview' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <span>داشبورد و پیشخوان</span>
               </div>
             </button>
           </div>
 
           {/* Group 2: Moderation */}
           <div className="space-y-1">
-            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider px-3 block">
-              آگهی‌ها و CRM
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-3 block">
+              دیده‌بانی و مدیریت
             </span>
 
             <button
               type="button"
               onClick={() => handleTabChange('ads')}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
                 activeTab === 'ads'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60 font-semibold'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Layers size={15} />
+                <Layers size={16} className={activeTab === 'ads' ? 'text-zinc-950' : 'text-zinc-400'} />
                 <span>مدیریت آگهی‌ها</span>
               </div>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
@@ -702,21 +706,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
           {/* Group 3: Monetization */}
           <div className="space-y-1">
-            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider px-3 block">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-3 block">
               مالی و درآمدزایی
             </span>
 
             <button
               type="button"
               onClick={() => handleTabChange('monetization')}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
                 activeTab === 'monetization'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60 font-semibold'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <CreditCard size={15} />
+                <CreditCard size={16} className={activeTab === 'monetization' ? 'text-zinc-950' : 'text-amber-400'} />
                 <span>درگاه Stripe و VIP</span>
               </div>
               <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">
@@ -727,21 +731,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
           {/* Group 4: Security & System */}
           <div className="space-y-1">
-            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider px-3 block">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-3 block">
               امنیت و تنظیمات
             </span>
 
             <button
               type="button"
               onClick={() => handleTabChange('security')}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
                 activeTab === 'security'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60 font-semibold'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <ShieldCheck size={15} />
+                <ShieldCheck size={16} className={activeTab === 'security' ? 'text-zinc-950' : 'text-emerald-400'} />
                 <span>آنتی‌بات Turnstile</span>
               </div>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -754,47 +758,56 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={() => handleTabChange('settings')}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
                 activeTab === 'settings'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60 font-semibold'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Settings size={15} />
-                <span>لوگو و سئوی ۴ کشور</span>
+                <Settings size={16} className={activeTab === 'settings' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <span>برندینگ و سئوی ۴ کشور</span>
               </div>
             </button>
           </div>
 
         </div>
 
-        {/* Sidebar Bottom Actions */}
-        <div className="p-3 border-t border-zinc-800/80 space-y-1.5">
-          <button
-            type="button"
-            onClick={fetchAdminData}
-            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-800 transition-all cursor-pointer"
-          >
-            <RefreshCw size={13} className={loading ? 'animate-spin text-white' : ''} />
-            <span>بروزرسانی داده‌ها</span>
-          </button>
+        {/* Sidebar Bottom Actions & Admin Profile */}
+        <div className="p-3 border-t border-zinc-800/80 space-y-2">
+          {/* Admin Email Capsule */}
+          <div className="px-3 py-2 rounded-xl bg-zinc-900/60 border border-zinc-800 text-[11px] text-zinc-400 flex items-center justify-between">
+            <span className="truncate">swedpersiska@gmail.com</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
+          </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-700/60 transition-all cursor-pointer"
-            title="مشاهده سایت اصلی"
-          >
-            <ExternalLink size={13} />
-            <span>مشاهده سایت اصلی</span>
-          </button>
+          <div className="grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              onClick={fetchAdminData}
+              className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-800 transition-all cursor-pointer active:scale-95"
+              title="بروزرسانی زنده داده‌ها"
+            >
+              <RefreshCw size={13} className={loading ? 'animate-spin text-white' : ''} />
+              <span>تازه سازی</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-800 transition-all cursor-pointer active:scale-95"
+              title="مشاهده سایت اصلی"
+            >
+              <ExternalLink size={13} />
+              <span>سایت</span>
+            </button>
+          </div>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-900/50 transition-all cursor-pointer"
-            title="خروج کامل از حساب مدیریت"
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-900/50 transition-all cursor-pointer active:scale-95"
+            title="خروج از حساب مدیریت"
           >
             <LogOut size={13} />
             <span>خروج از حساب</span>
@@ -804,62 +817,75 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       </aside>
 
       {/* ========================================================
-          MOBILE SLIDE-IN DRAWER (Only when opened via menu)
+          MOBILE SLIDE-IN DRAWER (Astryx Smooth & Fast Gesture)
       ======================================================== */}
       {mobileSidebarOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden font-vazir" dir="rtl">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-50 lg:hidden font-vazir select-none" dir="rtl">
+          {/* Backdrop with soft blur and quick touch-dismiss */}
           <div 
-            className="fixed inset-0 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
             onClick={() => setMobileSidebarOpen(false)}
           />
           
-          {/* Drawer Body */}
-          <div className="relative z-10 w-72 max-w-[85vw] h-full bg-[#111217] text-zinc-200 flex flex-col border-s border-zinc-800 shadow-2xl animate-in slide-in-from-right duration-250">
+          {/* Drawer Body - Soft Slide and High Contrast Obsidian */}
+          <div className="relative z-10 w-80 max-w-[85vw] h-full bg-[#111217] text-zinc-200 flex flex-col border-s border-zinc-800 shadow-2xl animate-in slide-in-from-right duration-200 ease-out">
             {/* Drawer Header */}
-            <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-800">
+            <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-800/80">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-zinc-950 font-black text-xs">
+                <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white text-zinc-950 font-black text-xs shadow-xs">
                   SP
+                  <span className="absolute -bottom-0.5 -end-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-[#111217]" />
                 </div>
                 <div>
                   <span className="font-extrabold text-sm text-white block leading-tight">سوئد پرشیا</span>
-                  <span className="text-[10px] text-zinc-400 font-mono">ADMIN CRM</span>
+                  <span className="text-[10px] text-zinc-400 font-mono tracking-wider">منوی مدیریت</span>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen(false)}
-                className="p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800"
+                className="h-10 w-10 flex items-center justify-center rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800/80 active:scale-90 transition-all cursor-pointer"
+                title="بستن منو"
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
 
-            {/* Drawer Links */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            {/* Drawer Links - 48px Tactile Touch Targets */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+              <div className="px-3 pt-1 pb-1">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+                  بخش‌های اصلی پنل
+                </span>
+              </div>
+
               <button
                 type="button"
                 onClick={() => handleTabChange('overview')}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'overview' ? 'bg-white text-zinc-950 shadow-xs' : 'text-zinc-400 hover:text-white'
+                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                  activeTab === 'overview'
+                    ? 'bg-white text-zinc-950 shadow-xs'
+                    : 'text-zinc-300 hover:text-white hover:bg-zinc-850'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <LayoutDashboard size={16} />
-                  <span>داشبورد و آمار</span>
+                <div className="flex items-center gap-3">
+                  <LayoutDashboard size={18} className={activeTab === 'overview' ? 'text-zinc-950' : 'text-zinc-400'} />
+                  <span>داشبورد و پیشخوان</span>
                 </div>
+                <span className="text-[10px] text-zinc-500 font-mono">01</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleTabChange('ads')}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'ads' ? 'bg-white text-zinc-950 shadow-xs' : 'text-zinc-400 hover:text-white'
+                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                  activeTab === 'ads'
+                    ? 'bg-white text-zinc-950 shadow-xs'
+                    : 'text-zinc-300 hover:text-white hover:bg-zinc-850'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <Layers size={16} />
+                <div className="flex items-center gap-3">
+                  <Layers size={18} className={activeTab === 'ads' ? 'text-zinc-950' : 'text-zinc-400'} />
                   <span>مدیریت آگهی‌ها</span>
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-zinc-800 text-zinc-300">
@@ -870,12 +896,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => handleTabChange('monetization')}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'monetization' ? 'bg-white text-zinc-950 shadow-xs' : 'text-zinc-400 hover:text-white'
+                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                  activeTab === 'monetization'
+                    ? 'bg-white text-zinc-950 shadow-xs'
+                    : 'text-zinc-300 hover:text-white hover:bg-zinc-850'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <CreditCard size={16} />
+                <div className="flex items-center gap-3">
+                  <CreditCard size={18} className={activeTab === 'monetization' ? 'text-zinc-950' : 'text-amber-400'} />
                   <span>درگاه Stripe و VIP</span>
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-300 font-bold">
@@ -886,45 +914,71 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => handleTabChange('security')}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'security' ? 'bg-white text-zinc-950 shadow-xs' : 'text-zinc-400 hover:text-white'
+                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                  activeTab === 'security'
+                    ? 'bg-white text-zinc-950 shadow-xs'
+                    : 'text-zinc-300 hover:text-white hover:bg-zinc-850'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <ShieldCheck size={16} />
+                <div className="flex items-center gap-3">
+                  <ShieldCheck size={18} className={activeTab === 'security' ? 'text-zinc-950' : 'text-emerald-400'} />
                   <span>آنتی‌بات Turnstile</span>
                 </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  turnstileSettings.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-500'
+                }`}>
+                  {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
+                </span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleTabChange('settings')}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all ${
-                  activeTab === 'settings' ? 'bg-white text-zinc-950 shadow-xs' : 'text-zinc-400 hover:text-white'
+                className={`w-full h-12 flex items-center justify-between px-4 rounded-xl text-xs font-bold transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                  activeTab === 'settings'
+                    ? 'bg-white text-zinc-950 shadow-xs'
+                    : 'text-zinc-300 hover:text-white hover:bg-zinc-850'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <Settings size={16} />
-                  <span>لوگو و سئوی ۴ کشور</span>
+                <div className="flex items-center gap-3">
+                  <Settings size={18} className={activeTab === 'settings' ? 'text-zinc-950' : 'text-zinc-400'} />
+                  <span>برندینگ و سئوی ۴ کشور</span>
                 </div>
+                <span className="text-[10px] text-zinc-500 font-mono">05</span>
               </button>
             </div>
 
             {/* Drawer Bottom Actions */}
-            <div className="p-3 border-t border-zinc-800 space-y-2">
-              <button
-                type="button"
-                onClick={() => { onClose(); setMobileSidebarOpen(false); }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-zinc-800 text-zinc-200 text-xs font-bold"
-              >
-                <ExternalLink size={14} />
-                <span>مشاهده سایت اصلی</span>
-              </button>
+            <div className="p-4 border-t border-zinc-800/80 space-y-2">
+              <div className="px-3 py-2 rounded-xl bg-zinc-900/60 border border-zinc-800 text-[11px] text-zinc-400 flex items-center justify-between">
+                <span className="truncate">swedpersiska@gmail.com</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => { fetchAdminData(); setMobileSidebarOpen(false); }}
+                  className="h-11 flex items-center justify-center gap-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 text-xs font-bold border border-zinc-800 active:scale-95 transition-all"
+                >
+                  <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+                  <span>بروزرسانی</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { onClose(); setMobileSidebarOpen(false); }}
+                  className="h-11 flex items-center justify-center gap-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold active:scale-95 transition-all"
+                >
+                  <ExternalLink size={14} />
+                  <span>سایت اصلی</span>
+                </button>
+              </div>
 
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-950/60 text-rose-300 text-xs font-bold border border-rose-900/60"
+                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 text-xs font-bold border border-rose-900/50 active:scale-95 transition-all cursor-pointer"
               >
                 <LogOut size={14} />
                 <span>خروج از حساب مدیریت</span>
@@ -935,53 +989,70 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          MAIN CANVAS (Eye-Care Warm Tone)
+          MAIN CANVAS (Eye-Care Warm Tone & Astryx Navbar)
       ======================================================== */}
-      <main className="flex-1 flex flex-col overflow-hidden pb-16 lg:pb-0">
+      <main className="flex-1 flex flex-col overflow-hidden">
         
-        {/* Canvas Top Bar */}
+        {/* Canvas Top Bar (Navbar) */}
         <header className="h-16 shrink-0 bg-[#f4f3ee] border-b border-[#e5e1d7] px-3.5 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
+            {/* Prominent Tactile Mobile Menu Button */}
             <button
               type="button"
               onClick={() => setMobileSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-xl bg-white border border-[#e5e1d7] text-zinc-700 shadow-2xs cursor-pointer shrink-0"
+              className="lg:hidden h-10 px-3 rounded-xl bg-white border border-[#dedad0] text-zinc-900 shadow-2xs hover:bg-stone-50 active:scale-95 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
               title="منوی مدیریت"
             >
               <Menu size={18} />
+              <span className="text-xs font-bold">منو</span>
             </button>
 
             <div className="min-w-0">
-              <h1 className="text-sm sm:text-lg font-black text-zinc-900 leading-tight truncate">
-                {activeTab === 'overview' && 'داشبورد و آمار'}
-                {activeTab === 'ads' && 'مدیریت آگهی‌ها'}
-                {activeTab === 'monetization' && 'درگاه Stripe و VIP'}
-                {activeTab === 'security' && 'فایروال و آنتی‌بات'}
-                {activeTab === 'settings' && 'برندینگ و سئو'}
-              </h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-sm sm:text-base lg:text-lg font-black text-zinc-900 leading-tight truncate">
+                  {activeTab === 'overview' && 'پیشخوان و آمار جامع'}
+                  {activeTab === 'ads' && 'مدیریت و دیده‌بانی آگهی‌ها'}
+                  {activeTab === 'monetization' && 'درگاه درآمدزایی و VIP'}
+                  {activeTab === 'security' && 'امنیت فایروال و آنتی‌بات'}
+                  {activeTab === 'settings' && 'تنظیمات برندینگ و سئو'}
+                </h1>
+                <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-md bg-[#e5e1d7]/60 text-stone-600 text-[10px] font-mono font-bold">
+                  ADMIN
+                </span>
+              </div>
               <p className="text-[10px] sm:text-[11px] text-stone-500 hidden sm:block truncate">
-                پرتال جامع نیازمندی‌های فارسی‌زبانان اسکاندیناوی
+                پرتال جامع نیازمندی‌های فارسی‌زبانان در ۴ کشور اسکاندیناوی
               </p>
             </div>
           </div>
 
           {/* Quick Search & Actions */}
           <div className="flex items-center gap-2">
-            <div className="relative hidden md:block w-64">
+            <div className="relative hidden md:block w-60 lg:w-64">
               <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
                 type="text"
                 placeholder="جستجو در پنل... (Ctrl+K)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-9 rounded-full bg-white border border-[#e2ded5] ps-8 pe-3 text-xs text-zinc-800 placeholder-stone-400 shadow-2xs focus:border-zinc-800 focus:outline-none"
+                className="w-full h-9 rounded-full bg-white border border-[#e2ded5] ps-8 pe-3 text-xs text-zinc-800 placeholder-stone-400 shadow-2xs focus:border-zinc-800 focus:outline-none transition-all"
               />
             </div>
 
             <button
               type="button"
+              onClick={fetchAdminData}
+              className="hidden sm:flex items-center gap-1.5 h-9 px-3 rounded-xl bg-white border border-[#e5e1d7] text-stone-700 hover:text-zinc-900 text-xs font-bold shadow-2xs cursor-pointer active:scale-95 transition-all"
+              title="تازه سازی اطلاعات"
+            >
+              <RefreshCw size={13} className={loading ? 'animate-spin text-zinc-900' : ''} />
+              <span className="hidden md:inline">بروزرسانی</span>
+            </button>
+
+            <button
+              type="button"
               onClick={onClose}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#e5e1d7] text-stone-700 hover:text-zinc-900 text-xs font-bold shadow-2xs cursor-pointer transition-all"
+              className="flex items-center gap-1.5 h-9 px-3 rounded-xl bg-white border border-[#e5e1d7] text-stone-700 hover:text-zinc-900 text-xs font-bold shadow-2xs cursor-pointer active:scale-95 transition-all"
               title="مشاهده سایت بدون خروج"
             >
               <ExternalLink size={13} />
@@ -991,10 +1062,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={handleLogout}
-              className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 text-xs font-bold shadow-2xs cursor-pointer transition-all"
+              className="h-9 px-2.5 sm:px-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 text-xs font-bold shadow-2xs cursor-pointer active:scale-95 transition-all flex items-center gap-1.5"
               title="خروج از حساب"
             >
               <LogOut size={14} />
+              <span className="hidden sm:inline">خروج</span>
             </button>
           </div>
         </header>
@@ -2264,69 +2336,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           </div>
         </div>
       )}
-
-      {/* Mobile Bottom Tab Navigation Bar (Native-App Feel) */}
-      <nav className="fixed bottom-0 inset-x-0 h-16 bg-[#111217] border-t border-zinc-800/90 z-30 lg:hidden flex items-center justify-around px-2 font-vazir select-none shadow-2xl" dir="rtl">
-        <button
-          type="button"
-          onClick={() => handleTabChange('overview')}
-          className={`flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-xl transition-all cursor-pointer ${
-            activeTab === 'overview' ? 'text-white font-black' : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          <LayoutDashboard size={18} className={activeTab === 'overview' ? 'text-white' : 'text-zinc-400'} />
-          <span className="text-[10px]">داشبورد</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange('ads')}
-          className={`flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-xl transition-all relative cursor-pointer ${
-            activeTab === 'ads' ? 'text-white font-black' : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          <div className="relative">
-            <Layers size={18} className={activeTab === 'ads' ? 'text-white' : 'text-zinc-400'} />
-            <span className="absolute -top-1 -end-2.5 h-3.5 px-1 rounded-full bg-zinc-800 border border-zinc-700 text-[9px] font-mono font-bold text-zinc-300">
-              {ads.length}
-            </span>
-          </div>
-          <span className="text-[10px]">آگهی‌ها</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange('monetization')}
-          className={`flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-xl transition-all cursor-pointer ${
-            activeTab === 'monetization' ? 'text-amber-400 font-black' : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          <CreditCard size={18} className={activeTab === 'monetization' ? 'text-amber-400' : 'text-zinc-400'} />
-          <span className="text-[10px]">درآمد VIP</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange('security')}
-          className={`flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-xl transition-all cursor-pointer ${
-            activeTab === 'security' ? 'text-emerald-400 font-black' : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          <ShieldCheck size={18} className={activeTab === 'security' ? 'text-emerald-400' : 'text-zinc-400'} />
-          <span className="text-[10px]">امنیت</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange('settings')}
-          className={`flex flex-col items-center justify-center gap-1 py-1 px-2.5 rounded-xl transition-all cursor-pointer ${
-            activeTab === 'settings' ? 'text-white font-black' : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          <Settings size={18} className={activeTab === 'settings' ? 'text-white' : 'text-zinc-400'} />
-          <span className="text-[10px]">تنظیمات</span>
-        </button>
-      </nav>
 
     </div>
   );
