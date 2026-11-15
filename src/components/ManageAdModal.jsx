@@ -153,7 +153,7 @@ export default function ManageAdModal({ lang = 'fa', onClose, onDeleted, onUpdat
       <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-stone-200/80 overflow-hidden flex flex-col max-h-[92vh] z-10 animate-in zoom-in-95 duration-150">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100 bg-stone-50/80 shrink-0">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-stone-100 bg-stone-50/80 shrink-0">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 text-amber-800">
               <KeyRound size={18} />
@@ -178,7 +178,7 @@ export default function ManageAdModal({ lang = 'fa', onClose, onDeleted, onUpdat
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar">
           
           {deleteSuccess ? (
             /* Delete Completed Screen */

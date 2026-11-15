@@ -58,31 +58,26 @@ export default function Navbar({
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 select-none font-vazir" dir="rtl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-1.5 sm:gap-6">
           
           {/* Logo & Brand (Clean, no country/language selector) */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            <a href="/" className="flex items-center gap-2.5 group">
+          <div className="flex items-center gap-2 sm:gap-6 shrink-0">
+            <a href="/" className="flex items-center gap-2 group shrink-0">
               {logoUrl ? (
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-white shadow-xs border border-slate-200">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl overflow-hidden bg-white shadow-xs border border-slate-200 shrink-0">
                   <img src={logoUrl} alt={siteName} className="h-full w-full object-contain" />
                 </div>
               ) : (
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-xs border border-slate-800 transition-all duration-150 group-hover:scale-105 active:scale-95">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-xs border border-slate-800 transition-all duration-150 group-hover:scale-105 active:scale-95 shrink-0">
                   <span className="font-mono text-emerald-400 font-black">SP</span>
                 </div>
               )}
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold text-[17px] tracking-tight text-slate-950 group-hover:text-blue-600 transition-colors">
-                    {siteName}
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-400 font-semibold hidden sm:inline">
-                    SwedPersiska
-                  </span>
-                </div>
-                <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
+              <div className="flex flex-col min-w-0">
+                <span className="font-extrabold text-[15px] sm:text-[17px] tracking-tight text-slate-950 group-hover:text-blue-600 transition-colors truncate max-w-[95px] sm:max-w-none">
+                  {siteName}
+                </span>
+                <span className="text-[10px] text-slate-500 font-medium hidden sm:inline">
                   نیازمندی‌های ایرانیان اسکاندیناوی
                 </span>
               </div>
@@ -219,32 +214,32 @@ export default function Navbar({
           </div>
 
           {/* Mobile Right Controls */}
-          <div className="flex md:hidden items-center gap-1.5">
+          <div className="flex md:hidden items-center gap-1 sm:gap-1.5 shrink-0">
             {/* Mobile Country Selector with Globe icon */}
             <button
               type="button"
               onClick={onOpenCountryModal}
-              className="flex items-center gap-1 h-9 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 text-xs font-semibold active:scale-95 cursor-pointer"
+              className="flex items-center gap-1 h-8 sm:h-9 px-2 sm:px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 text-[11px] sm:text-xs font-semibold active:scale-95 cursor-pointer shrink-0"
               title="انتخاب کشور"
             >
-              <Globe size={13} className="text-slate-500" />
-              <span>انتخاب کشور</span>
+              <Globe size={13} className="text-slate-500 shrink-0" />
+              <span>کشور</span>
             </button>
 
             {/* Mobile Single Button: "آگهی" with "+" */}
-            <div className="relative" ref={mobileAdMenuRef}>
+            <div className="relative shrink-0" ref={mobileAdMenuRef}>
               <button
                 type="button"
                 onClick={() => setMobileAdDropdownOpen(!mobileAdDropdownOpen)}
-                className="flex items-center gap-1.5 h-9 px-3 rounded-full bg-[#1877F2] text-white text-xs font-bold shadow-xs active:scale-95 cursor-pointer"
+                className="flex items-center gap-1 h-8 sm:h-9 px-2.5 sm:px-3 rounded-full bg-[#1877F2] text-white text-[11px] sm:text-xs font-bold shadow-xs active:scale-95 cursor-pointer shrink-0"
               >
-                <Plus size={15} strokeWidth={2.5} />
+                <Plus size={14} strokeWidth={2.5} className="shrink-0" />
                 <span>آگهی</span>
-                <ChevronDown size={13} className={`transition-transform duration-200 text-white/80 ${mobileAdDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={12} className={`transition-transform duration-200 text-white/80 shrink-0 ${mobileAdDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {mobileAdDropdownOpen && (
-                <div className="absolute end-0 top-full mt-2 w-56 rounded-2xl bg-white border border-slate-200 shadow-[0_12px_36px_rgba(0,0,0,0.15)] p-2 z-50 animate-in fade-in-50 zoom-in-95 duration-150">
+                <div className="absolute start-0 sm:end-0 top-full mt-2 w-52 sm:w-56 rounded-2xl bg-white border border-slate-200 shadow-[0_12px_36px_rgba(0,0,0,0.15)] p-2 z-50 animate-in fade-in-50 zoom-in-95 duration-150">
                   <div className="space-y-1">
                     <button
                       type="button"
@@ -254,7 +249,7 @@ export default function Navbar({
                       }}
                       className="w-full flex items-center gap-2.5 p-2 rounded-xl text-right text-xs font-semibold text-slate-800 hover:bg-blue-50 cursor-pointer"
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-100 text-[#1877F2]">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-100 text-[#1877F2] shrink-0">
                         <Plus size={15} strokeWidth={2.5} />
                       </div>
                       <div>
@@ -271,7 +266,7 @@ export default function Navbar({
                       }}
                       className="w-full flex items-center gap-2.5 p-2 rounded-xl text-right text-xs font-semibold text-slate-800 hover:bg-slate-50 cursor-pointer"
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-700">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-700 shrink-0">
                         <KeyRound size={14} />
                       </div>
                       <div>
@@ -288,10 +283,10 @@ export default function Navbar({
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="p-1.5 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95"
+              className="p-1.5 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 shrink-0"
               aria-label="منو"
             >
-              <Menu size={20} />
+              <Menu size={19} />
             </button>
 
           </div>

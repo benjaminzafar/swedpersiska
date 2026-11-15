@@ -5,7 +5,8 @@ import {
   PlusCircle, 
   CheckCircle2, 
   RefreshCw,
-  X
+  X,
+  ChevronDown
 } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -212,7 +213,7 @@ export default function App() {
   const featuredAds = filteredAds.filter(a => a.is_featured);
 
   return (
-    <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 ${lang === 'fa' ? 'font-vazir' : ''}`}>
+    <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 overflow-x-hidden w-full max-w-full ${lang === 'fa' ? 'font-vazir' : ''}`}>
       
       {/* Geolocation Scandinavian Detection Pop-Up Modal */}
       <CountryBanner
@@ -247,28 +248,28 @@ export default function App() {
       )}
 
       {/* Hero Section - Meta.com clean light canvas & typography */}
-      <section className="bg-white border-b border-slate-200/70 pt-10 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center space-y-4">
+      <section className="bg-white border-b border-slate-200/70 pt-8 sm:pt-10 pb-10 sm:pb-12 px-3 sm:px-6 lg:px-8 w-full overflow-hidden">
+        <div className="max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
           
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-snug sm:leading-tight px-1 break-words">
             {heroHeading}
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed px-2">
             {heroSubheading}
           </p>
 
           {/* Meta Floating Search Capsule */}
-          <div className="pt-2">
-            <div className="bg-white rounded-full p-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-slate-200/90 hover:border-slate-300 max-w-2xl mx-auto flex flex-col sm:flex-row gap-1.5 transition-all">
+          <div className="pt-2 px-1">
+            <div className="bg-white rounded-2xl sm:rounded-full p-2 sm:p-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-slate-200/90 hover:border-slate-300 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 sm:gap-1.5 transition-all">
               
               {/* City Dropdown */}
-              <div className="relative sm:w-48 shrink-0">
-                <MapPin size={15} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <div className="relative w-full sm:w-48 shrink-0">
+                <MapPin size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
-                  className="w-full h-11 rounded-full bg-slate-50 hover:bg-slate-100 ps-9 pe-4 text-xs font-semibold text-slate-800 border-0 focus:ring-1 focus:ring-slate-300 cursor-pointer"
+                  className="w-full h-11 rounded-xl sm:rounded-full bg-slate-50 hover:bg-slate-100 ps-8 pe-8 text-xs font-semibold text-slate-800 border border-slate-200/60 sm:border-0 focus:ring-1 focus:ring-slate-300 cursor-pointer appearance-none text-right"
                 >
                   {availableCities.map(c => (
                     <option key={c.id} value={c.id}>
@@ -276,24 +277,25 @@ export default function App() {
                     </option>
                   ))}
                 </select>
+                <ChevronDown size={14} className="absolute end-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
 
               {/* Keyword Input */}
-              <div className="relative flex-1">
-                <Search size={15} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <div className="relative w-full flex-1">
+                <Search size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 <input
                   type="text"
                   placeholder={currentT.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-11 rounded-full bg-transparent ps-9 pe-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none"
+                  className="w-full h-11 rounded-xl sm:rounded-full bg-slate-50 sm:bg-transparent border border-slate-200/60 sm:border-0 ps-8 pe-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 sm:focus:ring-0 focus:ring-slate-300 text-right"
                 />
               </div>
 
               {/* CTA Button (Meta Blue) */}
               <button
                 type="button"
-                className="h-11 px-6 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
+                className="w-full sm:w-auto h-11 px-6 rounded-xl sm:rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-xs"
               >
                 <Search size={14} />
                 <span>{currentT.searchBtn}</span>
@@ -308,21 +310,21 @@ export default function App() {
       
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 overflow-hidden">
         
         {/* VIP / Featured Section */}
         {featuredAds.length > 0 && (
-          <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+          <section className="space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                 {currentT.featuredAds}
               </h2>
-              <span className="text-xs font-medium text-slate-500">
+              <span className="text-[11px] sm:text-xs font-medium text-slate-500">
                 {featuredAds.length} {lang === 'fa' ? 'آگهی' : 'annonser'}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
               {featuredAds.map(ad => (
                 <AdCard
                   key={ad.id}
@@ -336,10 +338,10 @@ export default function App() {
         )}
 
         {/* Regular Stream / All Ads */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+        <section className="space-y-3 sm:space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                 {currentT.recentAds}
               </h2>
               {selectedCategory !== 'all' && (
@@ -408,7 +410,7 @@ export default function App() {
             </div>
           ) : (
             /* Ads Grid */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
               {filteredAds.map(ad => (
                 <AdCard
                   key={ad.id}
