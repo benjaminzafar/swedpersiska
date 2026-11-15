@@ -320,27 +320,17 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_app",
-      "community": 0,
+      "community": 11,
       "norm_label": "app.jsx"
-    },
-    {
-      "label": "CATEGORY_ICONS",
-      "file_type": "code",
-      "source_file": "src/App.jsx",
-      "source_location": "L30",
-      "_origin": "ast",
-      "id": "src_app_category_icons",
-      "community": 0,
-      "norm_label": "category_icons"
     },
     {
       "label": "App()",
       "file_type": "code",
       "source_file": "src/App.jsx",
-      "source_location": "L42",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "src_app_app",
-      "community": 0,
+      "community": 11,
       "norm_label": "app()"
     },
     {
@@ -350,7 +340,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_adcard",
-      "community": 13,
+      "community": 11,
       "norm_label": "adcard.jsx"
     },
     {
@@ -360,7 +350,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "components_adcard_adcard",
-      "community": 13,
+      "community": 11,
       "norm_label": "adcard()"
     },
     {
@@ -370,7 +360,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_addetailmodal",
-      "community": 12,
+      "community": 11,
       "norm_label": "addetailmodal.jsx"
     },
     {
@@ -380,7 +370,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "components_addetailmodal_addetailmodal",
-      "community": 12,
+      "community": 11,
       "norm_label": "addetailmodal()"
     },
     {
@@ -430,7 +420,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_footer",
-      "community": 14,
+      "community": 11,
       "norm_label": "footer.jsx"
     },
     {
@@ -440,7 +430,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "components_footer_currentyear",
-      "community": 14,
+      "community": 11,
       "norm_label": "currentyear"
     },
     {
@@ -450,7 +440,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "components_footer_footer",
-      "community": 14,
+      "community": 11,
       "norm_label": "footer()"
     },
     {
@@ -460,7 +450,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_manageadmodal",
-      "community": 12,
+      "community": 2,
       "norm_label": "manageadmodal.jsx"
     },
     {
@@ -470,7 +460,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "components_manageadmodal_manageadmodal",
-      "community": 12,
+      "community": 2,
       "norm_label": "manageadmodal()"
     },
     {
@@ -580,7 +570,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "lib_translations_categories",
-      "community": 13,
+      "community": 11,
       "norm_label": "categories"
     },
     {
@@ -590,7 +580,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "lib_translations_t",
-      "community": 12,
+      "community": 11,
       "norm_label": "t"
     },
     {
@@ -600,7 +590,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_main",
-      "community": 0,
+      "community": 11,
       "norm_label": "main.jsx"
     },
     {
@@ -1280,16 +1270,6 @@
       "target": "src_app_app"
     },
     {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/App.jsx",
-      "source_location": "L29",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_app",
-      "target": "src_app_category_icons"
-    },
-    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -1962,5 +1942,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "ef6bedf38b0a5d49767a5ff2ec7a0c348d39eac1"
+  "built_at_commit": "df8d797f941c1166533d3d9331bebd0f958d57f6"
 }

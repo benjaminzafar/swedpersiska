@@ -2,18 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   MapPin, 
-  Sparkles, 
   PlusCircle, 
-  Home,
-  Utensils,
-  Briefcase,
-  GraduationCap,
-  ShoppingBag,
-  Car,
-  Calendar,
-  Tag,
-  CheckCircle2,
-  RefreshCw
+  CheckCircle2, 
+  RefreshCw,
+  X
 } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -26,18 +18,7 @@ import AdminPanel from './components/AdminPanel';
 import { supabase } from './lib/supabase';
 import { COUNTRIES, CATEGORIES, t } from './lib/translations';
 
-// Icon mapper for categories
-const CATEGORY_ICONS = {
-  Sparkles: Sparkles,
-  Home: Home,
-  Utensils: Utensils,
-  Briefcase: Briefcase,
-  GraduationCap: GraduationCap,
-  ShoppingBag: ShoppingBag,
-  Car: Car,
-  Calendar: Calendar,
-  Tag: Tag,
-};
+
 
 export default function App() {
   const lang = 'fa'; // Complete Persian Language
@@ -272,33 +253,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Category Pills Bar (Meta.com Rounded-full Pills) */}
-      <section className="bg-white/95 backdrop-blur-md border-b border-slate-200/70 sticky top-16 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            {CATEGORIES.map(cat => {
-              const IconComp = CATEGORY_ICONS[cat.icon] || Tag;
-              const isSelected = selectedCategory === cat.id;
-
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 active:scale-95 cursor-pointer ${
-                    isSelected
-                      ? 'bg-slate-900 text-white shadow-xs'
-                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80'
-                  }`}
-                >
-                  <IconComp size={14} className={isSelected ? 'text-blue-400' : 'text-slate-500'} />
-                  <span>{lang === 'fa' ? cat.fa : cat.sv}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -331,9 +286,24 @@ export default function App() {
         {/* Regular Stream / All Ads */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-              {currentT.recentAds}
-            </h2>
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+                {currentT.recentAds}
+              </h2>
+              {selectedCategory !== 'all' && (
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
+                  <span>{CATEGORIES.find(c => c.id === selectedCategory)?.fa}</span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategory('all')}
+                    className="hover:text-blue-900 p-0.5 cursor-pointer"
+                    title="حذف فیلتر دسته"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Clear filters if active */}
             {(selectedCategory !== 'all' || selectedCity !== 'all' || searchQuery) && (
