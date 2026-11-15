@@ -353,23 +353,17 @@ export default function App() {
           {selectedCategory === 'all' && (
         <section className="relative overflow-hidden bg-[#07090e] border-b border-slate-800/80 pt-6 sm:pt-14 pb-7 sm:pb-16 px-4 sm:px-6 lg:px-8 w-full animate-in fade-in duration-200">
           
-          {/* Dynamic Darkened Architectural Cityscape Backdrop - NO white smudges */}
+          {/* Dynamic Architectural Cityscape Backdrop */}
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
             <img
               key={activeHero.image}
               src={activeHero.image}
               alt={activeHero.cityFa}
-              className="w-full h-full object-cover object-center opacity-25 filter brightness-75 contrast-125 transition-all duration-700 ease-out"
+              className="w-full h-full object-cover object-center opacity-45 filter brightness-95 contrast-105 transition-all duration-700 ease-out"
             />
-            {/* Deep Dark Vignette - 100% black/dark for maximum crisp readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#07090e]/80 via-transparent to-[#07090e]" />
-            <div className="absolute inset-0 bg-radial from-transparent via-[#07090e]/40 to-[#07090e]/90" />
-          </div>
-
-          {/* Discreet City Landmark Badge (Corner credit on Desktop) */}
-          <div className="hidden sm:inline-flex absolute bottom-4 end-5 z-10 items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/85 backdrop-blur-md text-white/90 text-[11px] font-medium border border-slate-700/80 shadow-sm">
-            <MapPin size={11} className="text-blue-400 shrink-0" />
-            <span>{activeHero.cityFa}</span>
+            {/* Balanced Dark Vignette for contrast while keeping image bright and clear */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#07090e]/75 via-[#07090e]/30 to-[#07090e]/80" />
+            <div className="absolute inset-0 bg-radial from-transparent via-[#07090e]/20 to-[#07090e]/75" />
           </div>
 
           <div className="relative z-10 max-w-4xl mx-auto text-center space-y-2.5 sm:space-y-3.5">
