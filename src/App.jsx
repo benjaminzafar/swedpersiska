@@ -17,13 +17,14 @@ import {
 } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import CountryBanner from './components/CountryBanner';
 import AdCard from './components/AdCard';
 import AdDetailModal from './components/AdDetailModal';
 import PostAdModal from './components/PostAdModal';
 import ManageAdModal from './components/ManageAdModal';
 import AdminPanel from './components/AdminPanel';
 import { supabase } from './lib/supabase';
-import { CITIES, CATEGORIES, t } from './lib/translations';
+import { COUNTRIES, CATEGORIES, t } from './lib/translations';
 
 // Icon mapper for categories
 const CATEGORY_ICONS = {
@@ -47,9 +48,18 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   // Filters
+  const [selectedCountry, setSelectedCountry] = useState(() => {
+    return localStorage.getItem('scandi_country_selected') || 'se';
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
+
+  const handleCountryChange = (c) => {
+    setSelectedCountry(c);
+    setSelectedCity('all');
+    localStorage.setItem('scandi_country_selected', c);
+  };
 
   // Modals
   const [activeAdDetail, setActiveAdDetail] = useState(null);
@@ -116,8 +126,41 @@ export default function App() {
       });
   };
 
+  // Active country details
+  const currentCountryObj = COUNTRIES.find(c => c.id === selectedCountry) || COUNTRIES[0];
+
+  // Dynamic available cities for current country
+  const availableCities = selectedCountry === 'all'
+    ? [
+        { id: 'all', fa: 'تمام شهرهای اسکاندیناوی' },
+        ...COUNTRIES.flatMap(c => c.cities.filter(city => city.id !== 'all').map(city => ({
+          id: city.id,
+          fa: `${city.fa} (${c.flag})`
+        })))
+      ]
+    : currentCountryObj.cities;
+
+  // Dynamic Hero Titles based on selected country
+  let heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در سوئد 🇸🇪';
+  let heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های ایرانیان در استکهلم، یوتبوری، مالمو و سراسر سوئد.';
+
+  if (selectedCountry === 'all') {
+    heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در سراسر اسکاندیناوی';
+    heroSubheading = 'جامع‌ترین بازارچه آنلاین ایرانیان مقیم سوئد 🇸🇪، نروژ 🇳🇴، دانمارک 🇩🇰 و فنلاند 🇫🇮. ثبت رایگان آگهی با کد پیگیری اختصاصی.';
+  } else if (selectedCountry === 'no') {
+    heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در نروژ 🇳🇴';
+    heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های ایرانیان در اسلو، برگن، تروندهایم و سراسر نروژ.';
+  } else if (selectedCountry === 'dk') {
+    heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در دانمارک 🇩🇰';
+    heroSubheading = 'جامع‌ترین پرتال فارسی‌زبانان در کپنهاگ، آرهوس، اودنسه و سراسر دانمارک.';
+  } else if (selectedCountry === 'fi') {
+    heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در فنلاند 🇫🇮';
+    heroSubheading = 'جامع‌ترین بازارچه و پرتال نیازمندی‌های ایرانیان در هلسینکی، اسپو، تامپره و سراسر فنلاند.';
+  }
+
   // Filter ads
   const filteredAds = ads.filter(ad => {
+    const matchCountry = selectedCountry === 'all' || ad.country === selectedCountry || (!ad.country && selectedCountry === 'se');
     const matchCat = selectedCategory === 'all' || ad.category === selectedCategory;
     const matchCity = selectedCity === 'all' || ad.city === selectedCity;
     const q = searchQuery.toLowerCase().trim();
@@ -129,7 +172,7 @@ export default function App() {
       (ad.area && ad.area.toLowerCase().includes(q)) ||
       ad.reference_number.toLowerCase().includes(q);
 
-    return matchCat && matchCity && matchSearch;
+    return matchCountry && matchCat && matchCity && matchSearch;
   });
 
   // Featured ads subset
@@ -138,8 +181,16 @@ export default function App() {
   return (
     <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 ${lang === 'fa' ? 'font-vazir' : ''}`}>
       
-      {/* Top Navbar (100% Persian, Meta Style with Dropdown Menus) */}
+      {/* Geolocation Scandinavian Detection Banner */}
+      <CountryBanner
+        selectedCountry={selectedCountry}
+        onSelectCountry={handleCountryChange}
+      />
+
+      {/* Top Navbar (100% Persian, Meta Style with Dropdown Menus & Country Switcher) */}
       <Navbar
+        selectedCountry={selectedCountry}
+        onSelectCountry={handleCountryChange}
         onOpenPostAd={(catId) => {
           setPostAdCategory(catId || 'bostad');
           setPostAdOpen(true);
@@ -164,11 +215,11 @@ export default function App() {
         <div className="max-w-4xl mx-auto text-center space-y-4">
           
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">
-            {currentT.heroHeading}
+            {heroHeading}
           </h1>
 
           <p className="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
-            {currentT.heroSubheading}
+            {heroSubheading}
           </p>
 
           {/* Meta Floating Search Capsule */}
@@ -176,16 +227,16 @@ export default function App() {
             <div className="bg-white rounded-full p-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-slate-200/90 hover:border-slate-300 max-w-2xl mx-auto flex flex-col sm:flex-row gap-1.5 transition-all">
               
               {/* City Dropdown */}
-              <div className="relative sm:w-44 shrink-0">
+              <div className="relative sm:w-48 shrink-0">
                 <MapPin size={15} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
                   className="w-full h-11 rounded-full bg-slate-50 hover:bg-slate-100 ps-9 pe-4 text-xs font-semibold text-slate-800 border-0 focus:ring-1 focus:ring-slate-300 cursor-pointer"
                 >
-                  {CITIES.map(c => (
+                  {availableCities.map(c => (
                     <option key={c.id} value={c.id}>
-                      {lang === 'fa' ? c.fa : c.sv}
+                      {c.fa}
                     </option>
                   ))}
                 </select>
@@ -375,6 +426,7 @@ export default function App() {
         <PostAdModal
           lang={lang}
           initialCategory={postAdCategory}
+          selectedCountry={selectedCountry}
           onClose={() => setPostAdOpen(false)}
           onCreated={(newAd) => {
             fetchAds();

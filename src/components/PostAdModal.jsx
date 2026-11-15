@@ -8,10 +8,16 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supabase';
-import { CITIES, CATEGORIES, t } from '../lib/translations';
+import { COUNTRIES, CATEGORIES, t } from '../lib/translations';
 
-export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', onClose, onCreated }) {
-  const currentT = t[lang] || t.fa;
+export default function PostAdModal({ 
+  lang = 'fa', 
+  initialCategory = 'bostad', 
+  selectedCountry = 'se',
+  onClose, 
+  onCreated 
+}) {
+  const currentT = t.fa;
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -20,13 +26,19 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
   const [copiedPin, setCopiedPin] = useState(false);
 
   // Form fields
+  const [adCountry, setAdCountry] = useState(selectedCountry === 'all' ? 'se' : (selectedCountry || 'se'));
   const [category, setCategory] = useState(initialCategory || 'bostad');
-  const [city, setCity] = useState('Stockholm');
+  const [city, setCity] = useState(() => {
+    const defaultCountry = COUNTRIES.find(c => c.id === (selectedCountry === 'all' ? 'se' : selectedCountry)) || COUNTRIES[0];
+    return defaultCountry.cities.find(c => c.id !== 'all')?.id || 'Stockholm';
+  });
   const [area, setArea] = useState('');
   const [title, setTitle] = useState('');
-  const [titleFa, setTitleFa] = useState('');
   const [price, setPrice] = useState('');
-  const [priceType, setPriceType] = useState('kr');
+  const [priceType, setPriceType] = useState(() => {
+    const defaultCountry = COUNTRIES.find(c => c.id === (selectedCountry === 'all' ? 'se' : selectedCountry)) || COUNTRIES[0];
+    return defaultCountry.currency || 'kr';
+  });
   const [description, setDescription] = useState('');
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
@@ -36,6 +48,8 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
   const [imageUrl, setImageUrl] = useState('');
   const [imagesList, setImagesList] = useState([]);
   const [pinCode, setPinCode] = useState(generatePinCode());
+
+  const currentCountryObj = COUNTRIES.find(c => c.id === adCountry) || COUNTRIES[0];
 
   // Add image to list
   const addImage = () => {
@@ -54,26 +68,26 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
     setErrorMsg('');
 
     if (!title.trim() || !description.trim() || !contactName.trim()) {
-      setErrorMsg(lang === 'fa' ? 'لطفا عنوان، توضیحات و نام تماس را پر کنید.' : 'Vänligen fyll i titel, beskrivning och kontaktperson.');
+      setErrorMsg('لطفاً عنوان، توضیحات و نام تماس‌گیرنده را وارد فرمایید.');
       return;
     }
 
     if (!contactPhone.trim() && !contactWhatsapp.trim() && !contactEmail.trim() && !contactTelegram.trim()) {
-      setErrorMsg(lang === 'fa' ? 'حداقل یکی از راه‌های ارتباطی (تلفن، واتساپ، ایمیل یا تلگرام) را وارد کنید.' : 'Ange minst en kontaktväg (telefon, WhatsApp, e-post eller Telegram).');
+      setErrorMsg('حداقل یک راه تماس (شماره تلفن، واتساپ، تلگرام یا ایمیل) الزامی است.');
       return;
-    }
-
-    const refNum = generateReferenceNumber();
-    const finalPin = pinCode.trim() || generatePinCode();
-
-    const allImages = [...imagesList];
-    if (imageUrl.trim() && !allImages.includes(imageUrl.trim())) {
-      allImages.push(imageUrl.trim());
     }
 
     setLoading(true);
 
     try {
+      const refNum = generateReferenceNumber();
+      const finalPin = pinCode.trim() || generatePinCode();
+
+      const allImages = [...imagesList];
+      if (imageUrl.trim()) {
+        allImages.push(imageUrl.trim());
+      }
+
       const { data, error } = await supabase
         .from('swedpersiska_ads')
         .insert([
@@ -81,8 +95,9 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
             reference_number: refNum,
             pin_code: finalPin,
             title: title.trim(),
-            title_fa: titleFa.trim() || null,
+            title_fa: titleFa.trim() || title.trim(),
             category,
+            country: adCountry,
             city,
             area: area.trim() || null,
             price: price ? parseFloat(price) : null,
@@ -115,7 +130,7 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
       }
     } catch (err) {
       console.error('Error posting ad:', err);
-      setErrorMsg(err.message || 'Ett fel uppstod vid publicering.');
+      setErrorMsg(err.message || 'خطا در ثبت آگهی. لطفاً دوباره تلاش فرمایید.');
     } finally {
       setLoading(false);
     }
@@ -135,7 +150,7 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto font-vazir" dir="rtl">
       {/* Blurred Backdrop */}
       <div 
         className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
@@ -143,20 +158,20 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
       />
 
       {/* Modal Card */}
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-stone-200/80 overflow-hidden flex flex-col max-h-[92vh] z-10 animate-in zoom-in-95 duration-150">
+      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] z-10 animate-in zoom-in-95 duration-150">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100 bg-stone-50/80 shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800">
-              <PlusCircle size={18} />
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/80 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <PlusCircle size={20} />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-stone-900">
+              <h2 className="text-base font-extrabold text-slate-900">
                 {currentT.postAdBtn}
               </h2>
-              <span className="text-[11px] font-medium text-stone-500">
-                {lang === 'fa' ? 'ثبت آگهی رایگان همراه با کد اختصاصی' : 'Gratis annonsering med unikt referensnummer'}
+              <span className="text-[11px] font-medium text-slate-500">
+                انتشار رایگان در کشورهای حوزه اسکاندیناوی
               </span>
             </div>
           </div>
@@ -164,7 +179,7 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-stone-400 hover:text-stone-800 hover:bg-stone-200/60 active:scale-95 transition-all"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-200/60 active:scale-95 transition-all cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -174,38 +189,38 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
         <div className="flex-1 overflow-y-auto p-6">
           
           {successData ? (
-            /* Celebration Success Screen - Unslopped quiet craft */
+            /* Success Screen */
             <div className="py-6 text-center space-y-5">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
-                <Check size={24} />
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <Check size={28} strokeWidth={2.5} />
               </div>
 
               <div className="space-y-1">
-                <h3 className="text-xl font-bold text-stone-900">
+                <h3 className="text-lg font-bold text-slate-900">
                   {currentT.adCreatedSuccess}
                 </h3>
-                <p className="text-xs text-stone-500 max-w-sm mx-auto leading-relaxed">
+                <p className="text-xs text-slate-500 max-w-md mx-auto">
                   {currentT.saveYourCredentials}
                 </p>
               </div>
 
-              {/* Reference & PIN Box */}
-              <div className="max-w-sm mx-auto rounded-xl border border-stone-200 bg-stone-50/70 p-4 space-y-3 text-start">
+              {/* Secret Credentials Box */}
+              <div className="max-w-md mx-auto rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3 text-right">
                 
                 {/* Reference Number */}
-                <div className="flex items-center justify-between bg-white rounded-lg p-2.5 border border-stone-200">
+                <div className="flex items-center justify-between bg-white rounded-xl p-3 border border-slate-200">
                   <div>
-                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-stone-400">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       {currentT.referenceNo}
                     </span>
-                    <span className="font-mono text-base font-bold text-stone-900 tracking-wider">
+                    <span className="font-mono text-base font-black text-slate-900 tracking-wider">
                       <bdi>{successData.referenceNumber}</bdi>
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => copyToClipboard(successData.referenceNumber, 'ref')}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold active:scale-95 transition-all border border-stone-200"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold active:scale-95 transition-all border border-slate-200 cursor-pointer"
                   >
                     {copiedRef ? <Check size={13} className="text-emerald-700" /> : <Copy size={13} />}
                     <span>{copiedRef ? currentT.copied : currentT.copyRef}</span>
@@ -213,31 +228,29 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
                 </div>
 
                 {/* Secret PIN */}
-                <div className="flex items-center justify-between bg-white rounded-lg p-2.5 border border-stone-200">
+                <div className="flex items-center justify-between bg-white rounded-xl p-3 border border-slate-200">
                   <div>
-                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-stone-400">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       {currentT.pinCode}
                     </span>
-                    <span className="font-mono text-base font-bold text-stone-900 tracking-wider">
+                    <span className="font-mono text-base font-black text-amber-600 tracking-widest">
                       <bdi>{successData.pinCode}</bdi>
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => copyToClipboard(successData.pinCode, 'pin')}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold active:scale-95 transition-all border border-stone-200"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold active:scale-95 transition-all border border-slate-200 cursor-pointer"
                   >
                     {copiedPin ? <Check size={13} className="text-emerald-700" /> : <Copy size={13} />}
                     <span>{copiedPin ? currentT.copied : currentT.copyPin}</span>
                   </button>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-stone-500 pt-1">
-                  <KeyRound size={14} className="shrink-0 text-stone-400" />
+                <div className="flex items-center gap-2 text-xs text-slate-500 pt-1">
+                  <KeyRound size={14} className="shrink-0 text-amber-600" />
                   <span>
-                    {lang === 'fa' 
-                      ? 'با این دو مشخصه می‌توانید در هر زمان آگهی خود را ویرایش یا حذف کنید.'
-                      : 'Använd dessa uppgifter under "Hantera annons" för att uppdatera eller ta bort annonsen.'}
+                    با این دو مشخصه می‌توانید در هر زمان آگهی خود را ویرایش یا حذف نمایید.
                   </span>
                 </div>
               </div>
@@ -245,183 +258,191 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2 rounded-lg bg-stone-900 hover:bg-black text-white font-semibold text-xs active:scale-95 transition-all"
+                className="px-6 py-2.5 rounded-full bg-slate-900 text-white font-bold text-xs hover:bg-black active:scale-95 transition-all cursor-pointer"
               >
                 {currentT.close}
               </button>
             </div>
           ) : (
-            /* Creation Form */
-            <form onSubmit={handleSubmit} className="space-y-5">
+            /* Post Ad Form */
+            <form onSubmit={handleSubmit} className="space-y-4">
               
               {errorMsg && (
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-800">
-                  <AlertCircle size={16} className="shrink-0" />
+                <div className="flex items-center gap-2 rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-800 font-semibold">
+                  <AlertCircle size={15} className="shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
               )}
 
-              {/* Category & City row */}
+              {/* 1. Country Selection in Scandinavia */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  کشور محل آگهی در حوزه اسکاندیناوی *
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {COUNTRIES.map(c => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => {
+                        setAdCountry(c.id);
+                        const firstCity = c.cities.find(city => city.id !== 'all')?.id || '';
+                        setCity(firstCity);
+                        setPriceType(c.currency);
+                      }}
+                      className={`flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                        adCountry === c.id
+                          ? 'bg-blue-50 text-blue-700 border-blue-400 shadow-2xs font-extrabold'
+                          : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="text-base">{c.flag}</span>
+                      <span>{c.nameFa}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Category & City row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1">
-                    {lang === 'fa' ? 'دسته‌بندی آگهی' : 'Kategori *'}
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    دسته‌بندی آگهی *
                   </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-xs font-medium text-slate-900 focus:border-blue-600 focus:outline-none"
                   >
                     {CATEGORIES.filter(c => c.id !== 'all').map(c => (
                       <option key={c.id} value={c.id}>
-                        {lang === 'fa' ? c.fa : c.sv}
+                        {c.fa}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1">
-                    {lang === 'fa' ? 'شهر / استان' : 'Stad i Sverige *'}
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    شهر در {currentCountryObj.nameFa} *
                   </label>
                   <select
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-xs font-medium text-slate-900 focus:border-blue-600 focus:outline-none"
                   >
-                    {CITIES.filter(c => c.id !== 'all').map(c => (
+                    {currentCountryObj.cities.filter(c => c.id !== 'all').map(c => (
                       <option key={c.id} value={c.id}>
-                        {lang === 'fa' ? c.fa : c.sv}
+                        {c.fa} ({c.id})
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              {/* Area / Område */}
+              {/* Area */}
               <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1">
-                  {lang === 'fa' ? 'محله یا منطقه (اختیاری)' : 'Område / stadsdel (valfritt)'}
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  محله یا منطقه (اختیاری)
                 </label>
                 <input
                   type="text"
-                  placeholder={lang === 'fa' ? 'مثال: کیستا، سلنتونا، مایورنا...' : 'T.ex. Kista, Sollentuna, Majorna...'}
+                  placeholder="مثال: کیستا، سنتروم، مایورستوئن، نربرو..."
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:border-blue-600 focus:outline-none"
                 />
               </div>
 
-              {/* Title (Svenska) */}
+              {/* Title */}
               <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1">
-                  {lang === 'fa' ? 'عنوان آگهی (سوئدی یا فارسی) *' : 'Annonsrubrik *'}
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  عنوان آگهی *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder={lang === 'fa' ? 'عنوان واضح آگهی خود را بنویسید' : 'En tydlig och intressant rubrik'}
+                  placeholder="مثال: اجاره آپارتمان ۲ خوابه نوساز مبله..."
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:border-blue-600 focus:outline-none"
                 />
               </div>
 
-              {/* Optional Title in Persian */}
-              <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1">
-                  {lang === 'fa' ? 'عنوان به فارسی (اختیاری جهت نمایش دوزبانه)' : 'Farsi-rubrik (valfritt för persisk visning)'}
-                </label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  placeholder="عنوان فارسی برای هم‌زبانان"
-                  value={titleFa}
-                  onChange={(e) => setTitleFa(e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
-                />
-              </div>
-
-              {/* Price & Price Type */}
-              <div className="grid grid-cols-2 gap-3.5">
-                <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1">
-                    {lang === 'fa' ? 'قیمت / اجاره' : 'Pris / hyra'}
+              {/* Price & Currency */}
+              <div className="grid grid-cols-3 gap-2.5">
+                <div className="col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    قیمت (اختیاری)
                   </label>
                   <input
                     type="number"
-                    placeholder="12000"
+                    placeholder="مثال: 12000 (خالی = توافقی)"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:border-blue-600 focus:outline-none"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1">
-                    {lang === 'fa' ? 'واحد قیمت' : 'Pristyp'}
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    واحد پول
                   </label>
-                  <select
+                  <input
+                    type="text"
                     value={priceType}
                     onChange={(e) => setPriceType(e.target.value)}
-                    className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
-                  >
-                    <option value="kr">kr (fast pris)</option>
-                    <option value="kr/mån">kr/mån (hyra)</option>
-                    <option value="kr/tim">kr/timme</option>
-                    <option value="Gratis">Gratis / رایگان</option>
-                    <option value="Offereras">Offereras / توافقی</option>
-                  </select>
+                    placeholder={currentCountryObj.currency}
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:border-blue-600 focus:outline-none"
+                  />
                 </div>
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1">
-                  {lang === 'fa' ? 'توضیحات کامل آگهی *' : 'Beskrivning *'}
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  توضیحات کامل آگهی *
                 </label>
                 <textarea
                   rows={4}
                   required
-                  placeholder={lang === 'fa' ? 'اطلاعات کامل، مشخصات، شرایط تحویل یا بازدید را ذکر کنید...' : 'Beskriv varan, bostaden, tjänsten eller jobbet utförligt...'}
+                  placeholder="مشخصات کامل ملک، خدمات، ساعات کار، شرایط یا توضیحات مربوطه را بنویسید..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 bg-white p-3 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600 leading-relaxed"
+                  className="w-full rounded-xl border border-slate-300 bg-white p-3 text-xs font-medium text-slate-900 focus:border-blue-600 focus:outline-none leading-relaxed"
                 />
               </div>
 
-              {/* Photos URL list */}
-              <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1">
-                  {lang === 'fa' ? 'لینک عکس (اختیاری)' : 'Bild-URL (valfritt)'}
+              {/* Photos */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700">
+                  تصویر آگهی (لینک اینترنتی عکس)
                 </label>
                 <div className="flex gap-2">
                   <input
                     type="url"
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="https://... آدرس اینترنتی تصویر را وارد کنید"
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
-                    className="flex-1 rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs font-medium text-stone-900 focus:border-emerald-600 focus:outline-none"
+                    className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-600 focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={addImage}
-                    className="px-3.5 py-2 rounded-xl bg-stone-100 text-stone-700 text-xs font-bold hover:bg-stone-200 active:scale-95 transition-all"
+                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold active:scale-95 transition-all cursor-pointer"
                   >
-                    + Lägg till
+                    افزودن
                   </button>
                 </div>
 
-                {/* Added images chips */}
                 {imagesList.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {imagesList.map((url, i) => (
-                      <div key={i} className="flex items-center gap-1.5 bg-stone-100 rounded-lg pl-2 pr-1 py-1 text-[11px] text-stone-600 border border-stone-200">
-                        <span className="truncate max-w-[140px]">{url}</span>
+                  <div className="flex gap-2 overflow-x-auto py-1">
+                    {imagesList.map((url, idx) => (
+                      <div key={idx} className="relative h-16 w-16 rounded-xl overflow-hidden border border-slate-200 shrink-0">
+                        <img src={url} alt={`پیش‌نمایش ${idx}`} className="h-full w-full object-cover" />
                         <button
                           type="button"
-                          onClick={() => removeImage(i)}
-                          className="p-0.5 hover:text-rose-600"
+                          onClick={() => removeImage(idx)}
+                          className="absolute top-1 end-1 rounded-full bg-black/75 p-0.5 text-white hover:bg-red-600"
                         >
                           <X size={12} />
                         </button>
@@ -431,77 +452,81 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
                 )}
               </div>
 
-              {/* Contact Information */}
-              <div className="rounded-2xl border border-stone-200 bg-stone-50/60 p-4 space-y-3">
-                <span className="block text-xs font-bold text-stone-900">
-                  {lang === 'fa' ? 'اطلاعات تماس آگهی‌دهنده' : 'Kontaktuppgifter'}
+              {/* Contact Info Header */}
+              <div className="pt-2 border-t border-slate-100">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                  اطلاعات تماس آگهی‌دهنده
                 </span>
-
+                
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-medium text-stone-500 mb-1">
-                      {lang === 'fa' ? 'نام و نام خانوادگی *' : 'Ditt namn *'}
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      نام و نام خانوادگی *
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="T.ex. Reza eller Sara"
+                      placeholder="نام شما"
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
-                      className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs text-stone-900 focus:border-emerald-600 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-600 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-medium text-stone-500 mb-1">
-                      Telefon / موبایل
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      شماره تماس
                     </label>
                     <input
                       type="tel"
-                      placeholder="+46701234567"
+                      placeholder="مثال: 0731234567 یا 091234567"
                       value={contactPhone}
                       onChange={(e) => setContactPhone(e.target.value)}
-                      className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs text-stone-900 focus:border-emerald-600 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-600 focus:outline-none font-mono text-left"
+                      dir="ltr"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-medium text-stone-500 mb-1">
-                      WhatsApp / واتساپ
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      شماره واتساپ
                     </label>
                     <input
                       type="tel"
-                      placeholder="+46701234567"
+                      placeholder="مثال: +46731234567"
                       value={contactWhatsapp}
                       onChange={(e) => setContactWhatsapp(e.target.value)}
-                      className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs text-stone-900 focus:border-emerald-600 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-600 focus:outline-none font-mono text-left"
+                      dir="ltr"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-medium text-stone-500 mb-1">
-                      Telegram / تلگرام (användarnamn)
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      آیدی تلگرام
                     </label>
                     <input
                       type="text"
-                      placeholder="@mittkonto"
+                      placeholder="username@ یا آیدی تلگرام"
                       value={contactTelegram}
                       onChange={(e) => setContactTelegram(e.target.value)}
-                      className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs text-stone-900 focus:border-emerald-600 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-600 focus:outline-none text-left"
+                      dir="ltr"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-medium text-stone-500 mb-1">
-                    E-postadress
+                <div className="mt-3">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    ایمیل
                   </label>
                   <input
                     type="email"
                     placeholder="namn@exempel.se"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    className="w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs text-stone-900 focus:border-emerald-600 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-600 focus:outline-none text-left"
+                    dir="ltr"
                   />
                 </div>
               </div>
@@ -512,7 +537,7 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
                   <div className="flex items-center gap-2">
                     <KeyRound size={16} className="text-amber-700" />
                     <span className="text-xs font-bold text-amber-950">
-                      {lang === 'fa' ? 'رمز ۴ رقمی برای حذف یا ویرایش آگهی' : 'Välj 4-siffrig PIN-kod för hantering/borttagning'}
+                      رمز ۴ رقمی برای حذف یا ویرایش آگهی
                     </span>
                   </div>
                 </div>
@@ -526,9 +551,7 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
                     className="w-28 rounded-xl border border-amber-300 bg-white px-3 py-2 text-center font-mono text-base font-extrabold tracking-widest text-amber-950 focus:border-amber-600 focus:outline-none"
                   />
                   <span className="text-[11px] text-amber-800 leading-tight">
-                    {lang === 'fa' 
-                      ? 'این رمز پیش‌فرض تولید شده است یا می‌توانید عدد دلخواه ۴ رقمی بگذارید.'
-                      : 'Automatgenererad kod som du kan ändra. Spara koden för att kunna ta bort annonsen senare.'}
+                    این کد پیش‌فرض تولید شده است یا می‌توانید عدد ۴ رقمی دلخواه بگذارید.
                   </span>
                 </div>
               </div>
@@ -542,7 +565,7 @@ export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', o
                 >
                   <PlusCircle size={16} />
                   <span>
-                    {loading ? (lang === 'fa' ? 'در حال ثبت...' : 'Publicerar...') : currentT.postAdBtn}
+                    {loading ? 'در حال ثبت و ذخیره...' : currentT.postAdBtn}
                   </span>
                 </button>
               </div>

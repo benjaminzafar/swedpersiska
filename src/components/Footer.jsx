@@ -1,10 +1,20 @@
 import React from 'react';
 import { ShieldCheck, Lock } from 'lucide-react';
-import { CITIES, CATEGORIES } from '../lib/translations';
+import { CATEGORIES } from '../lib/translations';
 
 const currentYear = new Date().getFullYear();
 
 export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) {
+  // Scandinavian cities preview
+  const scandiCities = [
+    { name: 'استکهلم 🇸🇪', id: 'Stockholm' },
+    { name: 'اسلو 🇳🇴', id: 'Oslo' },
+    { name: 'کپنهاگ 🇩🇰', id: 'Copenhagen' },
+    { name: 'یوتبوری 🇸🇪', id: 'Göteborg' },
+    { name: 'مالمو 🇸🇪', id: 'Malmö' },
+    { name: 'هلسینکی 🇫🇮', id: 'Helsinki' },
+  ];
+
   return (
     <footer className="border-t border-slate-200/80 bg-white pt-12 pb-8 text-slate-600 text-xs select-none font-vazir" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -21,7 +31,7 @@ export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) 
               <span className="font-extrabold text-base text-slate-900 tracking-tight">سوئد پرشیا</span>
             </div>
             <p className="text-slate-500 leading-relaxed text-xs">
-              پلتفرم جامع و رایگان نیازمندی‌ها، رهن و اجاره مسکن، رستوران‌های ایرانی، استخدام و مشاغل برای جامعه ایرانیان و فارسی‌زبانان مقیم سوئد.
+              پلتفرم جامع و رایگان نیازمندی‌ها، رهن و اجاره مسکن، رستوران‌های ایرانی، استخدام و مشاغل برای جامعه ایرانیان و فارسی‌زبانان مقیم سوئد، نروژ، دانمارک و فنلاند.
             </p>
           </div>
 
@@ -45,20 +55,20 @@ export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) 
             </ul>
           </div>
 
-          {/* Major Cities */}
+          {/* Major Scandinavian Cities */}
           <div>
             <h4 className="font-bold text-slate-900 mb-3 text-xs uppercase tracking-wider">
-              شهرهای سوئد
+              شهرهای اسکاندیناوی
             </h4>
             <ul className="space-y-2">
-              {CITIES.slice(1, 6).map(city => (
+              {scandiCities.map(city => (
                 <li key={city.id}>
                   <button
                     type="button"
                     onClick={() => onSelectCity(city.id)}
                     className="hover:text-blue-600 transition-colors text-right cursor-pointer"
                   >
-                    {city.fa}
+                    {city.name}
                   </button>
                 </li>
               ))}
@@ -90,7 +100,7 @@ export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) 
           </div>
           
           <div className="flex items-center gap-4">
-            <span>سامانه نیازمندی‌های ایرانیان در سوئد</span>
+            <span>سامانه نیازمندی‌های ایرانیان در سراسر اسکاندیناوی (🇸🇪 سوئد • 🇳🇴 نروژ • 🇩🇰 دانمارک • 🇫🇮 فنلاند)</span>
             
             {onOpenAdmin && (
               <button

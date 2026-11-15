@@ -327,7 +327,7 @@
       "label": "CATEGORY_ICONS",
       "file_type": "code",
       "source_file": "src/App.jsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "src_app_category_icons",
       "community": 0,
@@ -337,7 +337,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "src/App.jsx",
-      "source_location": "L41",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "src_app_app",
       "community": 0,
@@ -350,7 +350,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_adcard",
-      "community": 0,
+      "community": 13,
       "norm_label": "adcard.jsx"
     },
     {
@@ -360,7 +360,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "components_adcard_adcard",
-      "community": 0,
+      "community": 13,
       "norm_label": "adcard()"
     },
     {
@@ -370,7 +370,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_addetailmodal",
-      "community": 0,
+      "community": 12,
       "norm_label": "addetailmodal.jsx"
     },
     {
@@ -380,7 +380,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "components_addetailmodal_addetailmodal",
-      "community": 0,
+      "community": 12,
       "norm_label": "addetailmodal()"
     },
     {
@@ -404,13 +404,33 @@
       "norm_label": "adminpanel()"
     },
     {
+      "label": "CountryBanner.jsx",
+      "file_type": "code",
+      "source_file": "src/components/CountryBanner.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "components_countrybanner",
+      "community": 11,
+      "norm_label": "countrybanner.jsx"
+    },
+    {
+      "label": "CountryBanner()",
+      "file_type": "code",
+      "source_file": "src/components/CountryBanner.jsx",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "components_countrybanner_countrybanner",
+      "community": 11,
+      "norm_label": "countrybanner()"
+    },
+    {
       "label": "Footer.jsx",
       "file_type": "code",
       "source_file": "src/components/Footer.jsx",
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_footer",
-      "community": 0,
+      "community": 14,
       "norm_label": "footer.jsx"
     },
     {
@@ -420,7 +440,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "components_footer_currentyear",
-      "community": 0,
+      "community": 14,
       "norm_label": "currentyear"
     },
     {
@@ -430,7 +450,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "components_footer_footer",
-      "community": 0,
+      "community": 14,
       "norm_label": "footer()"
     },
     {
@@ -440,7 +460,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_manageadmodal",
-      "community": 2,
+      "community": 12,
       "norm_label": "manageadmodal.jsx"
     },
     {
@@ -450,7 +470,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "components_manageadmodal_manageadmodal",
-      "community": 2,
+      "community": 12,
       "norm_label": "manageadmodal()"
     },
     {
@@ -460,17 +480,17 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_navbar",
-      "community": 0,
+      "community": 11,
       "norm_label": "navbar.jsx"
     },
     {
       "label": "Navbar()",
       "file_type": "code",
       "source_file": "src/components/Navbar.jsx",
-      "source_location": "L23",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "components_navbar_navbar",
-      "community": 0,
+      "community": 11,
       "norm_label": "navbar()"
     },
     {
@@ -540,37 +560,37 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_translations",
-      "community": 0,
+      "community": 11,
       "norm_label": "translations.js"
     },
     {
-      "label": "CITIES",
+      "label": "COUNTRIES",
       "file_type": "code",
       "source_file": "src/lib/translations.js",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "lib_translations_cities",
-      "community": 0,
-      "norm_label": "cities"
+      "id": "lib_translations_countries",
+      "community": 11,
+      "norm_label": "countries"
     },
     {
       "label": "CATEGORIES",
       "file_type": "code",
       "source_file": "src/lib/translations.js",
-      "source_location": "L14",
+      "source_location": "L78",
       "_origin": "ast",
       "id": "lib_translations_categories",
-      "community": 0,
+      "community": 13,
       "norm_label": "categories"
     },
     {
       "label": "t",
       "file_type": "code",
       "source_file": "src/lib/translations.js",
-      "source_location": "L26",
+      "source_location": "L90",
       "_origin": "ast",
       "id": "lib_translations_t",
-      "community": 0,
+      "community": 12,
       "norm_label": "t"
     },
     {
@@ -1133,6 +1153,17 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/App.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "components_countrybanner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
       "source_location": "L19",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -1221,11 +1252,11 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/App.jsx",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_translations_cities"
+      "target": "lib_translations_countries",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -1401,6 +1432,38 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/components/CountryBanner.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "components_countrybanner",
+      "target": "components_countrybanner_countrybanner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/CountryBanner.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "components_countrybanner",
+      "target": "lib_translations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/CountryBanner.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "components_countrybanner",
+      "target": "lib_translations_countries",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/components/Footer.jsx",
       "source_location": "L5",
       "weight": 1.0,
@@ -1439,17 +1502,6 @@
       "confidence_score": 1.0,
       "source": "components_footer",
       "target": "lib_translations_categories"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/Footer.jsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "components_footer",
-      "target": "lib_translations_cities"
     },
     {
       "relation": "contains",
@@ -1533,8 +1585,19 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_navbar",
-      "target": "lib_translations_categories",
+      "target": "lib_translations_categories"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/Navbar.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "components_navbar",
+      "target": "lib_translations_countries",
       "confidence_score": 1.0
     },
     {
@@ -1629,11 +1692,11 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/PostAdModal.jsx",
-      "source_location": "L12",
+      "source_location": "L11",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_translations_cities"
+      "target": "lib_translations_countries",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -1703,9 +1766,9 @@
       "source_file": "src/lib/translations.js",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "lib_translations",
-      "target": "lib_translations_cities"
+      "target": "lib_translations_countries",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1899,5 +1962,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "03060746ff7297662808b6c8f5114f6625aab398"
+  "built_at_commit": "9d2d1914b4139bee3077e850a800089f23e6357f"
 }
