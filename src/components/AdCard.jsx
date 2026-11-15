@@ -2,31 +2,6 @@ import React from 'react';
 import { MapPin, Eye, Clock } from 'lucide-react';
 import { CATEGORIES } from '../lib/translations';
 
-// City Persian Display Mapping to avoid RTL ellipsis corruption (e.g. "...holm")
-const CITY_FA_MAP = {
-  'Stockholm': 'استکهلم',
-  'Göteborg': 'گوتنبرگ',
-  'Goteborg': 'گوتنبرگ',
-  'Malmö': 'مالمو',
-  'Malmo': 'مالمو',
-  'Uppsala': 'اوپسالا',
-  'Västerås': 'وستروس',
-  'Örebro': 'اوربرو',
-  'Linköping': 'لینشوپینگ',
-  'Helsingborg': 'هلسینگبوری',
-  'Jönköping': 'یونشوپینگ',
-  'Oslo': 'اسلو',
-  'Bergen': 'برگن',
-  'Trondheim': 'تروندهایم',
-  'Stavanger': 'استاوانگر',
-  'København': 'کپنهاگ',
-  'Copenhagen': 'کپنهاگ',
-  'Aarhus': 'آرهوس',
-  'Helsinki': 'هلسینکی',
-  'Espoo': 'اسپو',
-  'Tampere': 'تامپره'
-};
-
 export default function AdCard({ ad, lang, onSelect }) {
   const catObj = CATEGORIES.find(c => c.id === ad.category);
   const catName = catObj ? (lang === 'fa' ? catObj.fa : catObj.sv) : ad.category;
@@ -45,71 +20,72 @@ export default function AdCard({ ad, lang, onSelect }) {
     day: 'numeric'
   });
 
-  const cityDisplay = CITY_FA_MAP[ad.city] || ad.city;
-
   return (
     <article
       onClick={() => onSelect(ad)}
-      className="group relative flex flex-col bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-200 cursor-pointer overflow-hidden active:scale-[0.99]"
+      className="group relative flex flex-col bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:border-slate-300 transition-all duration-200 cursor-pointer overflow-hidden active:scale-[0.99]"
     >
       {/* Thumbnail */}
       <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full overflow-hidden bg-slate-100">
         <img
           src={coverImage}
           alt={ad.title}
-          className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+          className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
           loading="lazy"
         />
 
-        {/* Featured badge */}
+        {/* Featured pill (Meta Blue "ویژه") */}
         {ad.is_featured && (
-          <div className="absolute top-1.5 start-1.5 sm:top-2 sm:start-2 rounded-md bg-blue-600 text-white px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold shadow-xs">
+          <div className="absolute top-1.5 start-1.5 sm:top-2 sm:start-2 rounded-lg bg-[#1877F2] text-white px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-bold shadow-2xs">
             {lang === 'fa' ? 'ویژه' : 'Utvald'}
           </div>
         )}
 
         {/* Category Pill */}
-        <div className="absolute top-1.5 end-1.5 sm:top-2 sm:end-2 rounded-md bg-white/95 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-slate-700 shadow-2xs border border-slate-200/80 backdrop-blur-xs">
+        <div className="absolute top-1.5 end-1.5 sm:top-2.5 sm:end-2.5 rounded-full bg-white/95 px-1.5 sm:px-2.5 py-0.5 text-[9px] sm:text-[10.5px] font-semibold text-slate-700 shadow-2xs border border-slate-200/70 backdrop-blur-xs max-w-[85px] sm:max-w-none truncate">
           {catName}
         </div>
 
-        {/* City Badge - Clean, compact, never corrupted by LTR/RTL ellipsis */}
-        <div className="absolute bottom-1.5 start-1.5 sm:bottom-2 sm:start-2 flex items-center gap-1 rounded-md bg-slate-950/75 px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-[10.5px] font-semibold text-white backdrop-blur-xs">
-          <MapPin size={9} className="text-blue-400 shrink-0" />
-          <span>{cityDisplay}</span>
+        {/* City Pill */}
+        <div className="absolute bottom-1.5 start-1.5 sm:bottom-2.5 sm:start-2.5 flex items-center gap-0.5 sm:gap-1 rounded-full bg-slate-950/80 px-2 sm:px-2.5 py-0.5 text-[9.5px] sm:text-[11px] font-medium text-slate-200 backdrop-blur-xs max-w-[90%] truncate">
+          <MapPin size={10} className="text-blue-400 shrink-0" />
+          <span className="truncate">{ad.city}{ad.area ? ` • ${ad.area}` : ''}</span>
         </div>
       </div>
 
       {/* Body details */}
-      <div className="flex flex-1 flex-col p-2.5 sm:p-3.5 justify-between space-y-1.5 sm:space-y-2">
-        <div className="space-y-1">
-          {/* Price */}
-          <div className="flex items-center justify-between">
-            <span className="text-[13px] sm:text-[16px] font-black text-slate-950 tabular-nums tracking-tight">
+      <div className="flex flex-1 flex-col p-2.5 sm:p-4 justify-between space-y-2 sm:space-y-3">
+        <div className="space-y-1 sm:space-y-1.5">
+          {/* Price & Reference */}
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-[13px] sm:text-[17px] font-extrabold text-slate-950 tabular-nums tracking-tight truncate">
               <bdi>{displayPrice}</bdi>
+            </span>
+            <span className="text-[8.5px] sm:text-[10px] font-mono text-slate-400 font-semibold uppercase shrink-0">
+              <bdi>{ad.reference_number}</bdi>
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="text-[11.5px] sm:text-[13.5px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug min-h-[32px] sm:min-h-[38px]">
+          <h3 className="text-[12px] sm:text-[14px] font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
             {lang === 'fa' && ad.title_fa ? ad.title_fa : ad.title}
           </h3>
 
-          {/* Description - Hidden on mobile 2x2 to keep cards ultra-clean and uniform */}
-          <p className="hidden sm:block text-[11.5px] text-slate-500 line-clamp-2 leading-relaxed">
+          {/* Description */}
+          <p className="text-[11px] sm:text-[12px] text-slate-500 line-clamp-1 sm:line-clamp-2 leading-relaxed">
             {ad.description}
           </p>
         </div>
 
-        {/* Footer info: Location + Date + Views */}
-        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[9.5px] sm:text-[11px] text-slate-400 tabular-nums font-medium">
-          <div className="flex items-center gap-1">
+        {/* Footer info */}
+        <div className="pt-2 sm:pt-2.5 border-t border-slate-100 flex items-center justify-between text-[9.5px] sm:text-[11px] text-slate-400 tabular-nums">
+          <div className="flex items-center gap-0.5 sm:gap-1 font-medium truncate">
             <Clock size={10} className="shrink-0" />
-            <span>{dateStr}</span>
+            <span className="truncate">{dateStr}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 sm:gap-1 font-medium shrink-0">
             <Eye size={10} className="shrink-0" />
-            <span>{ad.views_count || 1}</span>
+            <span>{ad.views_count || 1} {lang === 'fa' ? 'بازدید' : 'visningar'}</span>
           </div>
         </div>
       </div>

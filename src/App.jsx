@@ -178,6 +178,32 @@ export default function App() {
   // Dynamic available cities for current country
   const availableCities = currentCountryObj.cities;
 
+  // Dynamic Hero Architectural Cityscape Backgrounds
+  const HERO_BACKGROUNDS = {
+    se: {
+      image: '/images/cities/stockholm.jpg',
+      cityFa: 'استکهلم، سوئد',
+      cityEn: 'Stockholm, Sweden'
+    },
+    no: {
+      image: '/images/cities/oslo.jpg',
+      cityFa: 'اسلو، نروژ',
+      cityEn: 'Oslo, Norway'
+    },
+    dk: {
+      image: '/images/cities/copenhagen.jpg',
+      cityFa: 'کپنهاگ، دانمارک',
+      cityEn: 'Copenhagen, Denmark'
+    },
+    fi: {
+      image: '/images/cities/helsinki.jpg',
+      cityFa: 'هلسینکی، فنلاند',
+      cityEn: 'Helsinki, Finland'
+    }
+  };
+
+  const activeHero = HERO_BACKGROUNDS[selectedCountry] || HERO_BACKGROUNDS.se;
+
   // Dynamic Hero Titles based on selected country
   let heroHeading = 'مسکن، رستوران‌ها و خدمات فارسی‌زبانان در سوئد';
   let heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های فارسی‌زبانان در استکهلم، یوتبوری، مالمو و سراسر سوئد.';
@@ -256,27 +282,47 @@ export default function App() {
         </div>
       )}
 
-      {/* Desktop Hero Section - Pure Nordic Clean Canvas */}
-      <section className="hidden md:block bg-gradient-to-b from-slate-50 via-white to-slate-50/50 border-b border-slate-200/70 pt-8 pb-10 px-6 lg:px-8 w-full">
-        <div className="max-w-4xl mx-auto text-center space-y-3.5">
+      {/* Hero Section - Sleek Deep Dark Luxury Canvas */}
+      <section className="relative overflow-hidden bg-[#07090e] border-b border-slate-800/80 pt-6 sm:pt-14 pb-7 sm:pb-16 px-4 sm:px-6 lg:px-8 w-full">
+        
+        {/* Dynamic Darkened Architectural Cityscape Backdrop - NO white smudges */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+          <img
+            key={activeHero.image}
+            src={activeHero.image}
+            alt={activeHero.cityFa}
+            className="w-full h-full object-cover object-center opacity-25 filter brightness-75 contrast-125 transition-all duration-700 ease-out"
+          />
+          {/* Deep Dark Vignette - 100% black/dark for maximum crisp readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#07090e]/80 via-transparent to-[#07090e]" />
+          <div className="absolute inset-0 bg-radial from-transparent via-[#07090e]/40 to-[#07090e]/90" />
+        </div>
+
+        {/* Discreet City Landmark Badge (Corner credit on Desktop) */}
+        <div className="hidden sm:inline-flex absolute bottom-4 end-5 z-10 items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/85 backdrop-blur-md text-white/90 text-[11px] font-medium border border-slate-700/80 shadow-sm">
+          <MapPin size={11} className="text-blue-400 shrink-0" />
+          <span>{activeHero.cityFa}</span>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-2.5 sm:space-y-3.5">
           
-          {/* Subtle Nordic Pill Tag */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-100 shadow-2xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
+          {/* Nordic Pill Tag */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 backdrop-blur-md text-blue-400 text-[10.5px] sm:text-[11px] font-bold border border-blue-500/20 shadow-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
             <span>پرتال نیازمندی‌های فارسی‌زبانان در سراسر اسکاندیناوی</span>
           </div>
 
-          <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-slate-900 leading-tight">
+          <h1 className="text-xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-snug sm:leading-tight px-1 break-words">
             {heroHeading}
           </h1>
 
-          <p className="text-sm text-slate-500 max-w-xl mx-auto leading-relaxed font-medium">
+          <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed px-2 font-normal">
             {heroSubheading}
           </p>
 
-          {/* Desktop Floating Search Capsule */}
-          <div className="pt-2">
-            <div className="bg-white rounded-full p-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-slate-200/90 hover:border-slate-300 max-w-2xl mx-auto flex items-center gap-1.5 transition-all">
+          {/* Meta Floating Search Capsule (Desktop Only) */}
+          <div className="pt-2 px-1 hidden md:block">
+            <div className="bg-white/95 backdrop-blur-md rounded-full p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.35)] border border-white/20 max-w-2xl mx-auto flex flex-row gap-1.5 transition-all">
               
               {/* City Dropdown */}
               <div className="relative w-48 shrink-0">
@@ -307,7 +353,7 @@ export default function App() {
                 />
               </div>
 
-              {/* Search Button */}
+              {/* CTA Button (Meta Blue) */}
               <button
                 type="button"
                 className="h-11 px-6 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0 cursor-pointer shadow-xs"
@@ -322,24 +368,23 @@ export default function App() {
         </div>
       </section>
 
-      {/* Mobile Fast Category Strip & Country Badge - Peak Mobile UX */}
-      <div className="md:hidden bg-white border-b border-slate-100">
-        {/* Horizontal Category Scroll Bar */}
-        <div className="px-3 py-2.5 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1.5">
+      {/* Horizontal Sticky Category Strip - Exactly matching user screenshot */}
+      <div className="sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 py-2 sm:py-2.5 px-3 sm:px-6 shadow-2xs">
+        <div className="max-w-7xl mx-auto flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar scroll-smooth">
           {CATEGORIES.map(cat => {
             const isActive = selectedCategory === cat.id;
             return (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
                 type="button"
-                className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer flex items-center gap-1 ${
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    ? 'bg-[#1877F2] text-white shadow-xs'
+                    : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 hover:text-slate-950'
                 }`}
               >
-                <span>{cat.fa}</span>
+                {cat.fa}
               </button>
             );
           })}
@@ -349,21 +394,21 @@ export default function App() {
       
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-2.5 sm:px-6 lg:px-8 py-3 sm:py-8 space-y-4 sm:space-y-8 overflow-hidden">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 overflow-hidden">
         
         {/* VIP / Featured Section */}
         {featuredAds.length > 0 && (
-          <section className="space-y-2.5 sm:space-y-4">
+          <section className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between px-1">
-              <h2 className="text-sm sm:text-lg font-bold text-slate-900 tracking-tight">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                 {currentT.featuredAds}
               </h2>
-              <span className="text-[10px] sm:text-xs font-medium text-slate-500">
+              <span className="text-[11px] sm:text-xs font-medium text-slate-500">
                 {featuredAds.length} {lang === 'fa' ? 'آگهی' : 'annonser'}
               </span>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
               {featuredAds.map(ad => (
                 <AdCard
                   key={ad.id}
@@ -417,9 +462,9 @@ export default function App() {
 
           {loading ? (
             /* Loading skeletons */
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
               {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="h-52 sm:h-64 rounded-xl sm:rounded-2xl bg-stone-200/60 animate-pulse" />
+                <div key={i} className="h-56 sm:h-64 rounded-xl sm:rounded-2xl bg-stone-200/60 animate-pulse" />
               ))}
             </div>
           ) : filteredAds.length === 0 ? (
@@ -449,7 +494,7 @@ export default function App() {
             </div>
           ) : (
             /* Ads Grid */
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
               {filteredAds.map(ad => (
                 <AdCard
                   key={ad.id}
