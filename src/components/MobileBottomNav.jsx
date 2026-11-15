@@ -62,9 +62,9 @@ export default function MobileBottomNav({
 
   return (
     <>
-      {/* 1. Fixed Mobile Bottom Navigation Bar */}
+      {/* 1. Sleek Compact Mobile Bottom Navigation Bar */}
       <nav 
-        className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 pt-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] font-vazir select-none"
+        className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-3px_16px_rgba(0,0,0,0.05)] px-2 pt-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] font-vazir select-none"
         dir="rtl"
         aria-label="منوی دسترسی موبایل"
       >
@@ -74,36 +74,36 @@ export default function MobileBottomNav({
           <button
             type="button"
             onClick={handleGoHome}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all cursor-pointer ${
+            className={`flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-xl transition-all cursor-pointer ${
               isHomeActive 
                 ? 'text-[#1877F2] font-black' 
                 : 'text-slate-500 hover:text-slate-900 font-medium'
             }`}
           >
-            <div className={`p-1 rounded-xl transition-all ${isHomeActive ? 'bg-blue-50 text-[#1877F2]' : ''}`}>
-              <Home size={20} strokeWidth={isHomeActive ? 2.5 : 2} />
+            <div className={`p-0.5 rounded-lg transition-all ${isHomeActive ? 'text-[#1877F2]' : ''}`}>
+              <Home size={18} strokeWidth={isHomeActive ? 2.5 : 2} />
             </div>
-            <span className="text-[10.5px]">خانه</span>
+            <span className="text-[9.5px]">خانه</span>
           </button>
 
           {/* Tab 2: کالکشن‌ها (Collections / Categories) */}
           <button
             type="button"
             onClick={() => setCollectionSheetOpen(true)}
-            className={`relative flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition-all cursor-pointer ${
+            className={`relative flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-xl transition-all cursor-pointer ${
               isCollectionActive 
                 ? 'text-[#1877F2] font-black' 
                 : 'text-slate-500 hover:text-slate-900 font-medium'
             }`}
           >
-            <div className={`p-1 rounded-xl transition-all ${isCollectionActive ? 'bg-blue-50 text-[#1877F2]' : ''}`}>
-              <LayoutGrid size={20} strokeWidth={isCollectionActive ? 2.5 : 2} />
+            <div className={`p-0.5 rounded-lg transition-all ${isCollectionActive ? 'text-[#1877F2]' : ''}`}>
+              <LayoutGrid size={18} strokeWidth={isCollectionActive ? 2.5 : 2} />
             </div>
-            <span className="text-[10.5px]">کالکشن‌ها</span>
+            <span className="text-[9.5px]">کالکشن‌ها</span>
 
             {/* Active Category Indicator Dot */}
             {selectedCategory !== 'all' && (
-              <span className="absolute top-1 end-3 h-2 w-2 rounded-full bg-blue-600 ring-2 ring-white" />
+              <span className="absolute top-0.5 end-2.5 h-1.5 w-1.5 rounded-full bg-blue-600 ring-2 ring-white" />
             )}
           </button>
 
@@ -111,26 +111,26 @@ export default function MobileBottomNav({
           <button
             type="button"
             onClick={onOpenPostAd}
-            className="flex flex-col items-center gap-1 -mt-4 py-1 px-2 group cursor-pointer"
+            className="flex flex-col items-center gap-0.5 -mt-2 py-0.5 px-2 group cursor-pointer"
             title="ثبت رایگان آگهی"
           >
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1877F2] text-white shadow-md shadow-blue-500/25 group-active:scale-95 transition-all">
-              <Plus size={22} strokeWidth={2.7} />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-sm shadow-blue-500/25 group-active:scale-95 transition-all">
+              <Plus size={19} strokeWidth={2.7} />
             </div>
-            <span className="text-[10.5px] font-bold text-slate-800">ثبت آگهی</span>
+            <span className="text-[9.5px] font-bold text-slate-800">ثبت آگهی</span>
           </button>
 
           {/* Tab 4: انتخاب کشور (Country Selector) */}
           <button
             type="button"
             onClick={onOpenCountryModal}
-            className="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl text-slate-500 hover:text-slate-900 font-medium transition-all cursor-pointer"
+            className="flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-xl text-slate-500 hover:text-slate-900 font-medium transition-all cursor-pointer"
             title="تغییر کشور"
           >
-            <div className="p-1 rounded-xl">
-              <Globe size={20} className="text-slate-600" />
+            <div className="p-0.5 rounded-lg">
+              <Globe size={18} className="text-slate-600" />
             </div>
-            <span className="text-[10.5px] font-semibold text-slate-700">
+            <span className="text-[9.5px] font-semibold text-slate-700">
               {currentCountryObj.nameFa}
             </span>
           </button>
@@ -139,13 +139,13 @@ export default function MobileBottomNav({
           <button
             type="button"
             onClick={onOpenManageAd}
-            className="flex flex-col items-center gap-1 py-1 px-3 rounded-2xl text-slate-500 hover:text-slate-900 font-medium transition-all cursor-pointer"
+            className="flex flex-col items-center gap-0.5 py-0.5 px-2.5 rounded-xl text-slate-500 hover:text-slate-900 font-medium transition-all cursor-pointer"
             title="مدیریت یا حذف آگهی با پین کد"
           >
-            <div className="p-1 rounded-xl">
-              <KeyRound size={19} className="text-amber-600" />
+            <div className="p-0.5 rounded-lg">
+              <KeyRound size={17} className="text-amber-600" />
             </div>
-            <span className="text-[10.5px]">مدیریت</span>
+            <span className="text-[9.5px]">مدیریت</span>
           </button>
 
         </div>

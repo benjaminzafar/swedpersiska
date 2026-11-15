@@ -67,31 +67,31 @@ export default function Navbar({
       <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
         
         {/* MOBILE VIEW: Fixed Nav with Logo + Search & Select City Capsule */}
-        <div className="flex md:hidden h-14 items-center gap-2">
+        <div className="flex md:hidden h-16 items-center gap-2.5">
           {/* Logo */}
           <a href="/" className="flex items-center shrink-0" title={siteName}>
             {logoUrl ? (
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-white shadow-2xs border border-slate-200">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden bg-white shadow-xs border border-slate-200">
                 <img src={logoUrl} alt={siteName} className="h-full w-full object-contain" />
               </div>
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-2xs border border-slate-800 transition-transform active:scale-95">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-xs border border-slate-800 transition-transform active:scale-95">
                 <span className="font-mono text-emerald-400 font-black">SP</span>
               </div>
             )}
           </a>
 
-          {/* Integrated City Selector & Search Capsule */}
-          <div className="flex-1 flex items-center h-10 rounded-full bg-slate-100 border border-slate-200/80 px-2 gap-1.5 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all shadow-2xs min-w-0">
+          {/* Integrated City Selector & Search Capsule (Slightly taller & prominent) */}
+          <div className="flex-1 flex items-center h-11 sm:h-12 rounded-full bg-slate-100/95 border border-slate-200 px-2.5 gap-2 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all shadow-xs min-w-0">
             
             {/* City Selector Pill with native select overlay */}
             <div className="relative shrink-0 flex items-center">
-              <div className="flex items-center gap-1 ps-2 pe-1.5 py-1 rounded-full bg-white text-slate-800 text-[11px] font-bold border border-slate-200/80 shadow-2xs">
-                <MapPin size={11} className="text-[#1877F2] shrink-0" />
-                <span className="truncate max-w-[65px]">
+              <div className="flex items-center gap-1.5 ps-2.5 pe-2 py-1.5 rounded-full bg-white text-slate-800 text-[11.5px] font-bold border border-slate-200/90 shadow-2xs">
+                <MapPin size={12} className="text-[#1877F2] shrink-0" />
+                <span className="truncate max-w-[68px]">
                   {cityLabel}
                 </span>
-                <ChevronDown size={11} className="text-slate-400 shrink-0" />
+                <ChevronDown size={12} className="text-slate-400 shrink-0" />
               </div>
 
               {/* Invisible native select over pill */}
@@ -110,17 +110,17 @@ export default function Navbar({
             </div>
 
             {/* Vertical separator */}
-            <div className="h-4 w-px bg-slate-300/80 shrink-0" />
+            <div className="h-5 w-px bg-slate-300/80 shrink-0" />
 
             {/* Search Input */}
             <div className="relative flex-1 flex items-center min-w-0">
-              <Search size={14} className="text-slate-400 shrink-0 pointer-events-none me-1" />
+              <Search size={15} className="text-slate-400 shrink-0 pointer-events-none me-1" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange?.(e.target.value)}
                 placeholder="جستجو در نیازمندی‌ها..."
-                className="w-full h-8 bg-transparent text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none min-w-0"
+                className="w-full h-9 bg-transparent text-[13px] text-slate-900 placeholder:text-slate-400 focus:outline-none min-w-0"
               />
               {searchQuery && (
                 <button
@@ -129,7 +129,7 @@ export default function Navbar({
                   className="p-1 rounded-full text-slate-400 hover:text-slate-700 active:scale-95 shrink-0"
                   aria-label="پاک کردن متن جستجو"
                 >
-                  <X size={12} />
+                  <X size={13} />
                 </button>
               )}
             </div>

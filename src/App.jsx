@@ -246,7 +246,7 @@ export default function App() {
       />
 
       {/* Spacer for Fixed Top Navbar */}
-      <div className="h-14 md:h-16 shrink-0" aria-hidden="true" />
+      <div className="h-16 md:h-16 shrink-0" aria-hidden="true" />
 
       {/* Floating Toast Notification */}
       {toastMsg && (
