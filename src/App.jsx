@@ -178,6 +178,32 @@ export default function App() {
   // Dynamic available cities for current country
   const availableCities = currentCountryObj.cities;
 
+  // Dynamic Hero Architectural Cityscape Backgrounds
+  const HERO_BACKGROUNDS = {
+    se: {
+      image: '/images/cities/stockholm.jpg',
+      cityFa: 'استکهلم، سوئد',
+      cityEn: 'Stockholm, Sweden'
+    },
+    no: {
+      image: '/images/cities/oslo.jpg',
+      cityFa: 'اسلو، نروژ',
+      cityEn: 'Oslo, Norway'
+    },
+    dk: {
+      image: '/images/cities/copenhagen.jpg',
+      cityFa: 'کپنهاگ، دانمارک',
+      cityEn: 'Copenhagen, Denmark'
+    },
+    fi: {
+      image: '/images/cities/helsinki.jpg',
+      cityFa: 'هلسینکی، فنلاند',
+      cityEn: 'Helsinki, Finland'
+    }
+  };
+
+  const activeHero = HERO_BACKGROUNDS[selectedCountry] || HERO_BACKGROUNDS.se;
+
   // Dynamic Hero Titles based on selected country
   let heroHeading = 'مسکن، رستوران‌ها و خدمات فارسی‌زبانان در سوئد';
   let heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های فارسی‌زبانان در استکهلم، یوتبوری، مالمو و سراسر سوئد.';
@@ -256,27 +282,64 @@ export default function App() {
         </div>
       )}
 
-      {/* Hero Section - Soft Nordic Clean Canvas */}
-      <section className="bg-gradient-to-b from-slate-50 via-white to-slate-50/40 border-b border-slate-200/60 pt-6 sm:pt-10 pb-8 sm:pb-12 px-3 sm:px-6 lg:px-8 w-full overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
+      {/* Hero Section - Soft Nordic Photographic Canvas */}
+      <section className="relative overflow-hidden border-b border-slate-200/70 pt-7 sm:pt-11 pb-9 sm:pb-13 px-3 sm:px-6 lg:px-8 w-full bg-slate-900">
+        
+        {/* Dynamic Architectural Country Cityscape Background */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+          <img
+            key={activeHero.image}
+            src={activeHero.image}
+            alt={activeHero.cityFa}
+            className="w-full h-full object-cover object-center scale-105 transition-all duration-700 ease-out"
+          />
+          {/* Gentle Nordic Frosted Scrim Overlay - Soft, non-harsh, human-friendly contrast */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/94 via-white/88 to-[#f8fafc]" />
+          <div className="absolute inset-0 bg-radial from-transparent via-white/30 to-white/70" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
           
-          {/* Subtle Nordic Pill Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/80 text-blue-700 text-[11px] font-bold border border-blue-100 shadow-2xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
-            <span>پرتال نیازمندی‌های فارسی‌زبانان در سراسر اسکاندیناوی</span>
+          {/* Country Quick Switcher Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+            {COUNTRIES.map(c => {
+              const isActive = c.id === selectedCountry;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => handleCountryChange(c.id)}
+                  type="button"
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-xs scale-105'
+                      : 'bg-white/85 hover:bg-white text-slate-700 border border-slate-200/80 backdrop-blur-xs'
+                  }`}
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full ${isActive ? 'bg-white animate-pulse' : 'bg-slate-400'}`} />
+                  <span>{c.fa}</span>
+                </button>
+              );
+            })}
           </div>
 
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-snug sm:leading-tight px-1 break-words">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-950 leading-snug sm:leading-tight px-1 break-words">
             {heroHeading}
           </h1>
 
-          <p className="text-xs sm:text-base text-slate-500 max-w-xl mx-auto leading-relaxed px-2">
+          <p className="text-xs sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed px-2 font-medium">
             {heroSubheading}
           </p>
 
+          {/* Current City Landmark Tag */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-slate-600 text-[11px] font-semibold border border-slate-200/80 shadow-2xs">
+            <MapPin size={12} className="text-blue-600 shrink-0" />
+            <span>چشم‌انداز اختصاصی:</span>
+            <span className="text-slate-900 font-bold">{activeHero.cityFa}</span>
+          </div>
+
           {/* Meta Floating Search Capsule (Desktop) */}
           <div className="pt-2 px-1 hidden md:block">
-            <div className="bg-white rounded-2xl sm:rounded-full p-2 sm:p-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-slate-200/90 hover:border-slate-300 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 sm:gap-1.5 transition-all">
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-full p-2 sm:p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-slate-200 hover:border-slate-300 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 sm:gap-1.5 transition-all">
               
               {/* City Dropdown */}
               <div className="relative w-full sm:w-48 shrink-0">
