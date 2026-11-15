@@ -1,11 +1,11 @@
 # Graph Report - swedpersiska  (2026-11-15)
 
 ## Corpus Check
-- 19 files · ~13,611 words
+- 19 files · ~14,326 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 81 nodes · 103 edges · 11 communities
+- 81 nodes · 104 edges · 11 communities
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -25,7 +25,7 @@
 - [[_COMMUNITY_Community 10|Community 10]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `CATEGORIES` - 7 edges
+1. `CATEGORIES` - 8 edges
 2. `t` - 6 edges
 3. `scripts` - 5 edges
 4. `supabase` - 5 edges
@@ -46,7 +46,7 @@
 ## Communities (11 total, 0 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.21
+Cohesion: 0.22
 Nodes (5): currentYear, CATEGORIES, CITIES, t, CATEGORY_ICONS
 
 ### Community 1 - "Community 1"

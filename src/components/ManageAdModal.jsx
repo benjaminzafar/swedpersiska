@@ -12,8 +12,8 @@ import {
 import { supabase } from '../lib/supabase';
 import { t } from '../lib/translations';
 
-export default function ManageAdModal({ lang, onClose, onDeleted, onUpdated }) {
-  const currentT = t[lang];
+export default function ManageAdModal({ lang = 'fa', onClose, onDeleted, onUpdated }) {
+  const currentT = t[lang] || t.fa;
 
   // Auth step
   const [refInput, setRefInput] = useState('');

@@ -39,8 +39,8 @@ const CATEGORY_ICONS = {
 };
 
 export default function App() {
-  const [lang, setLang] = useState('sv'); // 'sv' | 'fa'
-  const currentT = t[lang];
+  const lang = 'fa'; // Complete Persian Language
+  const currentT = t.fa;
 
   // Ads state
   const [ads, setAds] = useState([]);
@@ -54,6 +54,7 @@ export default function App() {
   // Modals
   const [activeAdDetail, setActiveAdDetail] = useState(null);
   const [postAdOpen, setPostAdOpen] = useState(false);
+  const [postAdCategory, setPostAdCategory] = useState('bostad');
   const [manageAdOpen, setManageAdOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
 
@@ -73,11 +74,11 @@ export default function App() {
     }
   }, []);
 
-  // Sync dir attribute on body for Persian RTL / Swedish LTR
+  // Strict Persian RTL
   useEffect(() => {
-    document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
-    document.documentElement.lang = lang;
-  }, [lang]);
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'fa';
+  }, []);
 
   // Fetch ads from Supabase
   const fetchAds = async () => {
@@ -137,11 +138,12 @@ export default function App() {
   return (
     <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 ${lang === 'fa' ? 'font-vazir' : ''}`}>
       
-      {/* Top Navbar (Astryx Super Modern Nav, Clean customer experience) */}
+      {/* Top Navbar (100% Persian, Meta Style with Dropdown Menus) */}
       <Navbar
-        lang={lang}
-        setLang={setLang}
-        onOpenPostAd={() => setPostAdOpen(true)}
+        onOpenPostAd={(catId) => {
+          setPostAdCategory(catId || 'bostad');
+          setPostAdOpen(true);
+        }}
         onOpenManageAd={() => setManageAdOpen(true)}
         onSelectCategory={(catId) => {
           setSelectedCategory(catId);
@@ -348,7 +350,6 @@ export default function App() {
 
       {/* Community Footer */}
       <Footer
-        lang={lang}
         onSelectCategory={(catId) => {
           setSelectedCategory(catId);
           window.scrollTo({ top: 380, behavior: 'smooth' });
@@ -373,10 +374,11 @@ export default function App() {
       {postAdOpen && (
         <PostAdModal
           lang={lang}
+          initialCategory={postAdCategory}
           onClose={() => setPostAdOpen(false)}
           onCreated={(newAd) => {
             fetchAds();
-            showToast(lang === 'fa' ? `آگهی ${newAd.reference_number} ثبت شد.` : `Annons ${newAd.reference_number} har publicerats.`);
+            showToast(`آگهی با کد مرجع ${newAd.reference_number} با موفقیت ثبت شد.`);
           }}
         />
       )}

@@ -10,8 +10,8 @@ import {
 import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supabase';
 import { CITIES, CATEGORIES, t } from '../lib/translations';
 
-export default function PostAdModal({ lang, onClose, onCreated }) {
-  const currentT = t[lang];
+export default function PostAdModal({ lang = 'fa', initialCategory = 'bostad', onClose, onCreated }) {
+  const currentT = t[lang] || t.fa;
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -20,7 +20,7 @@ export default function PostAdModal({ lang, onClose, onCreated }) {
   const [copiedPin, setCopiedPin] = useState(false);
 
   // Form fields
-  const [category, setCategory] = useState('bostad');
+  const [category, setCategory] = useState(initialCategory || 'bostad');
   const [city, setCity] = useState('Stockholm');
   const [area, setArea] = useState('');
   const [title, setTitle] = useState('');

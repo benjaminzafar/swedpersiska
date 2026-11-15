@@ -15,12 +15,12 @@ import {
 } from 'lucide-react';
 import { CATEGORIES, t } from '../lib/translations';
 
-export default function AdDetailModal({ ad, lang, onClose }) {
+export default function AdDetailModal({ ad, lang = 'fa', onClose }) {
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
 
   if (!ad) return null;
-  const currentT = t[lang];
+  const currentT = t[lang] || t.fa;
 
   const images = (ad.images && ad.images.length > 0)
     ? ad.images
