@@ -670,83 +670,90 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   // - Pure Crisp White Cards (#ffffff) with Warm Borders
   // ========================================================
   return (
-    <div className="fixed inset-0 z-50 flex bg-[#f4f3ee] text-zinc-900 font-vazir select-none overflow-hidden" dir="rtl">
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#f0f3fa] text-zinc-900 font-vazir select-none overflow-hidden" dir="rtl">
       
       {/* Toast Alert */}
       {actionSuccessMsg && (
-        <div className="fixed top-5 end-5 z-50 flex items-center gap-2 rounded-2xl bg-[#111217] text-white px-4 py-2.5 text-xs font-bold shadow-2xl border border-zinc-800 animate-in slide-in-from-top-2 duration-150">
+        <div className="fixed top-5 end-5 z-50 flex items-center gap-2 rounded-xl bg-zinc-900 text-white px-4 py-2.5 text-xs font-bold shadow-2xl border border-zinc-800 animate-in slide-in-from-top-2 duration-150">
           <CheckCircle size={16} className="text-emerald-400 shrink-0" />
           <span>{actionSuccessMsg}</span>
         </div>
       )}
 
       {/* ========================================================
-          DESKTOP SIDEBAR NAVIGATION (Modern Sleek Floating Obsidian - NT360 Style)
+          MONDAY.COM TOP WORKSPACE BAR
       ======================================================== */}
-      <aside className="hidden lg:flex w-64 shrink-0 my-3 ms-3 me-2 rounded-3xl bg-[#111217] text-zinc-300 flex-col shadow-2xl border border-zinc-800/80 overflow-hidden select-none">
-        
-        {/* Brand Top Header */}
-        <div className="pt-5 pb-4 px-4 flex items-center justify-between border-b border-zinc-800/50">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-zinc-950 font-black text-xs shadow-md shadow-black/40">
-              SP
-            </div>
-            <div>
-              <span className="font-extrabold text-sm text-white block leading-tight tracking-tight">سوئد پرشیا</span>
-              <span className="text-[10px] text-zinc-400 font-mono tracking-widest uppercase">ADMIN CRM</span>
-            </div>
+      <div className="h-12 shrink-0 bg-[#f0f3fa] border-b border-[#dde3ee] px-4 sm:px-6 flex items-center justify-between z-30">
+        <button
+          type="button"
+          onClick={onClose}
+          className="h-8 px-3.5 rounded-lg bg-white border border-[#cfd7e6] hover:bg-stone-50 text-xs font-bold text-zinc-800 flex items-center gap-2 shadow-2xs transition-all cursor-pointer active:scale-95"
+          title="بازگشت به سایت"
+        >
+          <ExternalLink size={13} className="text-stone-500" />
+          <span>بازگشت به سایت</span>
+        </button>
+
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-extrabold text-zinc-900 hidden sm:inline">{siteName || 'سوئد پرشیا'}</span>
+            <span className="text-[10px] text-[#0073ea] bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full font-bold">مدیریت</span>
           </div>
-          <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.7)]" title="آنلاین" />
+          <div className="relative h-7 w-7 rounded-full bg-zinc-900 text-white font-black text-[11px] flex items-center justify-center border border-zinc-700 shadow-2xs">
+            SP
+            <span className="absolute -bottom-0.5 -end-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+          </div>
         </div>
+      </div>
 
-        {/* Categorized Modern Navigation Items */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
-          
-          {/* Group 1: پیشخوان (ÖVERSIKT) */}
-          <div className="space-y-1">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
-              پیشخوان
+      {/* ========================================================
+          MAIN WORKSPACE (Sidebar + Content Area)
+      ======================================================== */}
+      <div className="flex-1 flex overflow-hidden">
+        
+        {/* Monday.com White Administration Sidebar */}
+        <aside className="hidden lg:flex w-60 xl:w-64 shrink-0 bg-white border-s border-[#e5ebf4] flex-col p-4 select-none">
+          <div className="pb-3.5 mb-2 border-b border-[#f0f3f8]">
+            <h2 className="text-xl font-black text-zinc-950 tracking-tight leading-tight">
+              مدیریت سیستم
+            </h2>
+            <span className="text-xs text-[#0073ea] hover:underline cursor-pointer block mt-1 font-medium">
+              راهنما و مستندات
             </span>
+          </div>
 
+          {/* Navigation Items */}
+          <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1">
             <button
               type="button"
               onClick={() => handleTabChange('overview')}
-              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'overview'
-                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
+                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
+                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <LayoutDashboard size={16} className={activeTab === 'overview' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <LayoutDashboard size={16} className={activeTab === 'overview' ? 'text-[#0073ea]' : 'text-stone-500'} />
                 <span>پیشخوان</span>
               </div>
             </button>
-          </div>
-
-          {/* Group 2: آگهی‌ها و مدیریت (FÖRSÄLJNING & ÄRENDEN) */}
-          <div className="space-y-1 pt-1">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
-              آگهی‌ها و مدیریت
-            </span>
 
             <button
               type="button"
               onClick={() => handleTabChange('ads')}
-              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'ads'
-                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
+                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
+                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Layers size={16} className={activeTab === 'ads' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <Layers size={16} className={activeTab === 'ads' ? 'text-[#0073ea]' : 'text-stone-500'} />
                 <span>آگهی‌ها</span>
               </div>
-              <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-colors ${
-                activeTab === 'ads' 
-                  ? 'bg-zinc-100 text-zinc-900 border border-zinc-300' 
-                  : 'bg-[#0e2a38] text-cyan-400 border border-cyan-800/60'
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                activeTab === 'ads' ? 'bg-[#cbe2fc] text-[#0057b8]' : 'bg-stone-100 text-stone-600'
               }`}>
                 {ads.length}
               </span>
@@ -755,51 +762,36 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={() => handleTabChange('monetization')}
-              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'monetization'
-                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
+                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
+                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <CreditCard size={16} className={activeTab === 'monetization' ? 'text-zinc-950' : 'text-zinc-400'} />
+                <CreditCard size={16} className={activeTab === 'monetization' ? 'text-[#0073ea]' : 'text-stone-500'} />
                 <span>درآمد و VIP</span>
               </div>
-              <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-colors ${
-                activeTab === 'monetization'
-                  ? 'bg-zinc-100 text-zinc-900 border border-zinc-300'
-                  : 'bg-[#2b2210] text-amber-300 border border-amber-800/60'
-              }`}>
+              <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
                 VIP
               </span>
             </button>
-          </div>
-
-          {/* Group 3: سیستم و امنیت (SYSTEM & DRIFT) */}
-          <div className="space-y-1 pt-1">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
-              سیستم و امنیت
-            </span>
 
             <button
               type="button"
               onClick={() => handleTabChange('security')}
-              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'security'
-                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
+                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
+                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <ShieldCheck size={16} className={activeTab === 'security' ? 'text-zinc-950' : 'text-zinc-400'} />
-                <span>امنیت</span>
+                <ShieldCheck size={16} className={activeTab === 'security' ? 'text-[#0073ea]' : 'text-stone-500'} />
+                <span>امنیت و ضدبات</span>
               </div>
-              <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors ${
-                activeTab === 'security'
-                  ? 'bg-zinc-100 text-zinc-900 border border-zinc-300'
-                  : turnstileSettings.enabled
-                    ? 'bg-[#0e2a1e] text-emerald-400 border border-emerald-800/60'
-                    : 'bg-zinc-800 text-zinc-500'
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                turnstileSettings.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-500'
               }`}>
                 {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
               </span>
@@ -808,123 +800,80 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={() => handleTabChange('settings')}
-              className={`w-full h-10 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'settings'
-                  ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] font-medium'
+                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
+                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Settings size={16} className={activeTab === 'settings' ? 'text-zinc-950' : 'text-zinc-400'} />
-                <span>تنظیمات</span>
+                <Settings size={16} className={activeTab === 'settings' ? 'text-[#0073ea]' : 'text-stone-500'} />
+                <span>تنظیمات و سئو</span>
               </div>
             </button>
           </div>
 
-        </div>
+          <div className="pt-3 border-t border-[#f0f3f8] space-y-2 mt-auto">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full h-9 flex items-center justify-center gap-2 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-bold transition-colors cursor-pointer"
+            >
+              <LogOut size={14} />
+              <span>خروج از حساب</span>
+            </button>
+          </div>
+        </aside>
 
-        {/* Modern Sidebar Footer - Exactly 2 Side-by-Side Action Buttons (NT360 Style) */}
-        <div className="p-3 border-t border-zinc-800/50 grid grid-cols-2 gap-2 mt-auto">
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 flex items-center justify-center gap-1.5 rounded-xl bg-[#1b1c24] hover:bg-[#252631] text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-800/80 transition-all cursor-pointer active:scale-95"
-            title="مشاهده سایت"
-          >
-            <ExternalLink size={13} className="text-zinc-400" />
-            <span>سایت</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="h-9 flex items-center justify-center gap-1.5 rounded-xl bg-[#24141b] hover:bg-[#321a24] text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-900/40 transition-all cursor-pointer active:scale-95"
-            title="خروج از حساب"
-          >
-            <LogOut size={13} />
-            <span>خروج</span>
-          </button>
-        </div>
-
-      </aside>
-
-      {/* ========================================================
-          MOBILE SLIDE-IN DRAWER (Floating Obsidian Sheet - NT360 Style)
-      ======================================================== */}
-      {mobileSidebarOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden font-vazir select-none" dir="rtl">
-          {/* Backdrop with soft blur and quick touch-dismiss */}
-          <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
-            onClick={() => setMobileSidebarOpen(false)}
-          />
-          
-          {/* Drawer Body - Floating Obsidian Sheet */}
-          <div className="relative z-10 w-72 max-w-[85vw] h-[calc(100%-24px)] my-3 ms-3 rounded-3xl bg-[#111217] text-zinc-200 flex flex-col border border-zinc-800/80 shadow-2xl overflow-hidden animate-in slide-in-from-right duration-200 ease-out">
-            {/* Drawer Header */}
-            <div className="pt-5 pb-3 px-4 flex items-center justify-between border-b border-zinc-800/50">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-zinc-950 font-black text-xs shadow-md shadow-black/40">
-                  SP
-                </div>
+        {/* Mobile Slide-in Drawer */}
+        {mobileSidebarOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden font-vazir select-none" dir="rtl">
+            <div 
+              className="fixed inset-0 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+              onClick={() => setMobileSidebarOpen(false)}
+            />
+            
+            <div className="relative z-10 w-64 max-w-[85vw] h-full bg-white text-zinc-900 flex flex-col border-s border-[#e5ebf4] shadow-2xl animate-in slide-in-from-right duration-200 ease-out">
+              <div className="p-4 flex items-center justify-between border-b border-[#f0f3f8]">
                 <div>
-                  <span className="font-extrabold text-sm text-white block leading-tight tracking-tight">سوئد پرشیا</span>
-                  <span className="text-[10px] text-zinc-400 font-mono tracking-widest uppercase">ADMIN CRM</span>
+                  <h2 className="text-lg font-black text-zinc-950">مدیریت سیستم</h2>
+                  <span className="text-xs text-[#0073ea]">سوئد پرشیا CRM</span>
                 </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setMobileSidebarOpen(false)}
-                className="h-8 w-8 flex items-center justify-center rounded-xl text-zinc-400 hover:text-white hover:bg-white/[0.06] active:scale-90 transition-all cursor-pointer"
-                title="بستن"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Drawer Links */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
-              
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
-                  پیشخوان
-                </span>
                 <button
                   type="button"
-                  onClick={() => handleTabChange('overview')}
-                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                    activeTab === 'overview'
-                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
-                  }`}
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="h-8 w-8 flex items-center justify-center rounded-lg text-stone-500 hover:bg-stone-100 cursor-pointer"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <LayoutDashboard size={17} className={activeTab === 'overview' ? 'text-zinc-950' : 'text-zinc-400'} />
-                    <span>پیشخوان</span>
-                  </div>
+                  <X size={18} />
                 </button>
               </div>
 
-              <div className="space-y-1 pt-1">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
-                  آگهی‌ها و مدیریت
-                </span>
+              <div className="flex-1 overflow-y-auto p-3 space-y-1">
                 <button
                   type="button"
-                  onClick={() => handleTabChange('ads')}
-                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                    activeTab === 'ads'
-                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  onClick={() => handleTabChange('overview')}
+                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
+                    activeTab === 'overview' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Layers size={17} className={activeTab === 'ads' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <LayoutDashboard size={17} className={activeTab === 'overview' ? 'text-[#0073ea]' : 'text-stone-500'} />
+                    <span>پیشخوان</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('ads')}
+                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
+                    activeTab === 'ads' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Layers size={17} className={activeTab === 'ads' ? 'text-[#0073ea]' : 'text-stone-500'} />
                     <span>آگهی‌ها</span>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ${
-                    activeTab === 'ads' ? 'bg-zinc-100 text-zinc-900 border border-zinc-300' : 'bg-[#0e2a38] text-cyan-400 border border-cyan-800/60'
-                  }`}>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-stone-100 text-stone-600">
                     {ads.length}
                   </span>
                 </button>
@@ -932,47 +881,32 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <button
                   type="button"
                   onClick={() => handleTabChange('monetization')}
-                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                    activeTab === 'monetization'
-                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
+                    activeTab === 'monetization' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <CreditCard size={17} className={activeTab === 'monetization' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <CreditCard size={17} className={activeTab === 'monetization' ? 'text-[#0073ea]' : 'text-stone-500'} />
                     <span>درآمد و VIP</span>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ${
-                    activeTab === 'monetization' ? 'bg-zinc-100 text-zinc-900 border border-zinc-300' : 'bg-[#2b2210] text-amber-300 border border-amber-800/60'
-                  }`}>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
                     VIP
                   </span>
                 </button>
-              </div>
 
-              <div className="space-y-1 pt-1">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 block">
-                  سیستم و امنیت
-                </span>
                 <button
                   type="button"
                   onClick={() => handleTabChange('security')}
-                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                    activeTab === 'security'
-                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
+                    activeTab === 'security' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <ShieldCheck size={17} className={activeTab === 'security' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <ShieldCheck size={17} className={activeTab === 'security' ? 'text-[#0073ea]' : 'text-stone-500'} />
                     <span>امنیت</span>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                    activeTab === 'security'
-                      ? 'bg-zinc-100 text-zinc-900 border border-zinc-300'
-                      : turnstileSettings.enabled
-                        ? 'bg-[#0e2a1e] text-emerald-400 border border-emerald-800/60'
-                        : 'bg-zinc-800 text-zinc-500'
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    turnstileSettings.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-500'
                   }`}>
                     {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
                   </span>
@@ -981,494 +915,233 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <button
                   type="button"
                   onClick={() => handleTabChange('settings')}
-                  className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
-                    activeTab === 'settings'
-                      ? 'bg-white text-zinc-950 font-extrabold shadow-sm'
-                      : 'text-zinc-300 hover:text-white hover:bg-white/[0.05] font-medium'
+                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
+                    activeTab === 'settings' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <Settings size={17} className={activeTab === 'settings' ? 'text-zinc-950' : 'text-zinc-400'} />
+                    <Settings size={17} className={activeTab === 'settings' ? 'text-[#0073ea]' : 'text-stone-500'} />
                     <span>تنظیمات</span>
                   </div>
                 </button>
               </div>
 
-            </div>
-
-            {/* Drawer Bottom Actions - 2 Side-by-Side Buttons */}
-            <div className="p-3 border-t border-zinc-800/50 grid grid-cols-2 gap-2 mt-auto">
-              <button
-                type="button"
-                onClick={() => { onClose(); setMobileSidebarOpen(false); }}
-                className="h-10 flex items-center justify-center gap-1.5 rounded-xl bg-[#1b1c24] hover:bg-[#252631] text-zinc-300 text-xs font-semibold border border-zinc-800/80 active:scale-95 transition-all cursor-pointer"
-              >
-                <ExternalLink size={13} className="text-zinc-400" />
-                <span>سایت</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="h-10 flex items-center justify-center gap-1.5 rounded-xl bg-[#24141b] hover:bg-[#321a24] text-rose-300 text-xs font-bold border border-rose-900/40 active:scale-95 transition-all cursor-pointer"
-              >
-                <LogOut size={13} />
-                <span>خروج</span>
-              </button>
+              <div className="p-3 border-t border-[#f0f3f8]">
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full h-10 flex items-center justify-center gap-2 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-bold"
+                >
+                  <LogOut size={14} />
+                  <span>خروج</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ========================================================
-          MAIN CANVAS (Eye-Care Warm Tone & Modern Navbar - NT360 Style)
-      ======================================================== */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        
-        {/* Canvas Top Bar (Clean NT360 Navbar Exactly Like Reference) */}
-        <header className="shrink-0 px-4 sm:px-6 lg:px-8 pt-6 pb-3 flex items-center justify-between bg-[#f4f3ee]">
-          <div className="flex items-center gap-3 min-w-0">
-            {/* Tactile Mobile Menu Button */}
+        {/* ========================================================
+            MAIN CANVAS (Monday.com Light Canvas Style)
+        ======================================================== */}
+        <main className="flex-1 flex flex-col overflow-hidden bg-white">
+          
+          {/* Mobile Top Bar */}
+          <div className="lg:hidden h-12 px-4 border-b border-[#e5ebf4] flex items-center justify-between bg-white shrink-0">
             <button
               type="button"
               onClick={() => setMobileSidebarOpen(true)}
-              className="lg:hidden h-10 w-10 rounded-2xl bg-white border border-[#dedad0] text-zinc-900 shadow-2xs hover:bg-stone-50 active:scale-95 transition-all flex items-center justify-center shrink-0 cursor-pointer"
-              title="منو"
+              className="h-8 px-2.5 rounded-lg bg-stone-100 text-zinc-900 text-xs font-bold flex items-center gap-1.5"
             >
-              <Menu size={18} />
+              <Menu size={16} />
+              <span>منو</span>
             </button>
-
-            {/* Clean Bold Title Exactly Like NT360 Översikt */}
-            <h1 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight leading-none">
+            <span className="text-xs font-black text-zinc-900">
               {activeTab === 'overview' && 'پیشخوان'}
               {activeTab === 'ads' && 'آگهی‌ها'}
               {activeTab === 'monetization' && 'درآمد و VIP'}
               {activeTab === 'security' && 'امنیت'}
               {activeTab === 'settings' && 'تنظیمات'}
-            </h1>
+            </span>
           </div>
-        </header>
 
-        {/* Content Tabs Area */}
-        <div className="flex-1 overflow-hidden flex flex-col">
-          
-          {/* ========================================================
-              TAB 1: OVERVIEW & CRM FLOW (NT360 Dashboard Style)
-          ======================================================== */}
-          {activeTab === 'overview' && (
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
-              
-              {/* Row 1: Top 4 Stat Cards (NT360 Top Stat Row) */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Content Tabs Area */}
+          <div className="flex-1 overflow-hidden flex flex-col">
+            
+            {/* ========================================================
+                TAB 1: OVERVIEW & CRM FLOW (Monday.com Administration Style)
+            ======================================================== */}
+            {activeTab === 'overview' && (
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 space-y-6 max-w-6xl w-full">
                 
-                {/* 1. Total Sales / Revenue */}
-                <div className="p-5 rounded-3xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">
-                      فروش کل (VIP)
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#eaf7ee] text-[#1b7a37] border border-[#c4e9cb] text-[10px] font-bold">
-                      Netto
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black text-zinc-950 tracking-tight">
-                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('fa-IR')} <span className="text-base font-bold text-stone-500">kr</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1 border-t border-[#f0ece3]">
-                    <span>سفارش‌ها via Stripe</span>
-                    <span className="font-mono font-bold text-zinc-800">{vipAds} سفارش</span>
-                  </div>
+                {/* Monday.com Sub-Tabs Navigation Line */}
+                <div className="flex items-center gap-6 border-b border-[#e5ebf4] text-xs font-bold">
+                  <button className="pb-3 border-b-2 border-[#0073ea] text-[#0073ea] flex items-center gap-1.5 cursor-pointer">
+                    <span>آمار پایه (Basic)</span>
+                  </button>
+                  <button 
+                    onClick={() => handleTabChange('ads')}
+                    className="pb-3 text-stone-500 hover:text-zinc-900 flex items-center gap-1.5 cursor-pointer transition-colors"
+                  >
+                    <span>مدیریت آگهی‌ها</span>
+                  </button>
+                  <button 
+                    onClick={() => handleTabChange('monetization')}
+                    className="pb-3 text-stone-500 hover:text-zinc-900 flex items-center gap-1.5 cursor-pointer transition-colors"
+                  >
+                    <span>درگاه Stripe</span>
+                  </button>
+                  <button 
+                    onClick={() => handleTabChange('security')}
+                    className="pb-3 text-stone-500 hover:text-zinc-900 flex items-center gap-1.5 cursor-pointer transition-colors"
+                  >
+                    <span>امنیت</span>
+                  </button>
                 </div>
 
-                {/* 2. Bookings & Ads Count */}
-                <div className="p-5 rounded-3xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">
-                      آگهی‌ها و سفارش‌ها
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#fef6e7] text-[#9a6200] border border-[#fbdca7] text-[10px] font-bold">
-                      +{ads.length} کل
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black text-zinc-950 tracking-tight">
-                    {totalAds}
-                  </div>
-                  <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1 border-t border-[#f0ece3]">
-                    <span>آگهی‌های فعال</span>
-                    <span className="font-mono font-bold text-[#1b7a37]">{activeAds} فعال</span>
-                  </div>
-                </div>
-
-                {/* 3. Traffic / Views Stream */}
-                <div className="p-5 rounded-3xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">
-                      ترافیک و بازدیدها
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#ebf4fe] text-[#175cd3] border border-[#c3ddfd] text-[10px] font-bold">
-                      کلیک‌ها
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black text-zinc-950 tracking-tight">
-                    {totalViews.toLocaleString('fa-IR')}
-                  </div>
-                  <div className="space-y-1 pt-1 border-t border-[#f0ece3]">
-                    <div className="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
-                      <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, Math.max(15, totalViews / 20))}%` }} />
-                    </div>
-                    <div className="flex items-center justify-between text-[10px] text-stone-500">
-                      <span>پایش کلیک عمومی</span>
-                      <span className="font-bold text-emerald-600">۱۰۰٪ آنلاین</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 4. Registered Advertisers */}
-                <div className="p-5 rounded-3xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">
-                      آگهی‌دهندگان و کاربران
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-bold">
-                      CRM
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black text-zinc-950 tracking-tight">
-                    {new Set(ads.map(a => a.contact_phone || a.contact_email || a.id)).size}
-                  </div>
-                  <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1 border-t border-[#f0ece3]">
-                    <span>کاربران در ۴ کشور</span>
-                    <span className="font-bold text-zinc-800">اسکاندیناوی</span>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Row 2: Two Big Split Blocks (NT360 Middle Section) */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-                
-                {/* Block 1: Bokningsstatus & CRM-flöde (آگهی‌ها و گردش کار) */}
-                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-5">
-                  {/* Header */}
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-2xl bg-blue-50 border border-blue-200/80 text-blue-600 flex items-center justify-center shrink-0">
-                      <LayoutDashboard size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-black text-zinc-950 leading-tight">
-                        گردش کار آگهی‌ها و پایش CRM
-                      </h3>
-                      <p className="text-[11px] text-stone-500">
-                        وضعیت صف آگهی‌ها و تفکیک بر اساس اولویت انتشار
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* 4-Stage Pipeline Row (NT360 Style) */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {/* Stage 1: Active Standard */}
-                    <div className="p-3.5 rounded-2xl bg-[#fffcf3] border-2 border-amber-300 shadow-2xs space-y-1 relative">
-                      <span className="absolute top-2.5 end-2.5 h-2 w-2 rounded-full bg-amber-500" />
-                      <span className="text-[10px] font-bold text-amber-900 block truncate">عادی (استاندارد)</span>
-                      <div className="text-2xl font-black text-amber-950">
-                        {ads.filter(a => a.status === 'active' && !a.is_featured).length}
-                      </div>
-                      <span className="text-[10px] text-amber-700 block">در حال نمایش</span>
-                    </div>
-
-                    {/* Stage 2: VIP Pinned */}
-                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
-                      <span className="text-[10px] font-bold text-stone-500 block truncate">ویژه (VIP)</span>
-                      <div className="text-2xl font-black text-[#9a6200]">
-                        {vipAds}
-                      </div>
-                      <span className="text-[10px] text-stone-500 block">صدر نتایج</span>
-                    </div>
-
-                    {/* Stage 3: All Active */}
-                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
-                      <span className="text-[10px] font-bold text-stone-500 block truncate">مجموع فعال</span>
-                      <div className="text-2xl font-black text-[#1b7a37]">
-                        {activeAds}
-                      </div>
-                      <span className="text-[10px] text-stone-500 block">قابل مشاهده</span>
-                    </div>
-
-                    {/* Stage 4: Hidden / Archived */}
-                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
-                      <span className="text-[10px] font-bold text-stone-500 block truncate">مخفی / بایگانی</span>
-                      <div className="text-2xl font-black text-stone-600">
-                        {ads.filter(a => a.status === 'hidden').length}
-                      </div>
-                      <span className="text-[10px] text-stone-500 block">غیرفعال</span>
-                    </div>
-                  </div>
-
-                  {/* Amber Alert Banner with Action */}
-                  <div className="p-3 rounded-2xl bg-[#fff9ea] border border-[#fae8be] text-[#8a5700] text-xs font-semibold flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Sparkles size={15} className="text-amber-600 shrink-0" />
-                      <span>
-                        {vipAds > 0 ? `${vipAds} آگهی ویژه در صدر قرار دارند` : `${ads.length} آگهی در دسترس است`}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleTabChange('ads')}
-                      className="font-bold text-amber-900 hover:underline shrink-0 cursor-pointer text-xs"
-                    >
-                      مدیریت آگهی‌ها ←
-                    </button>
-                  </div>
-
-                  {/* 4-Metric Footer Strip */}
-                  <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#f0ece3] text-center text-[10px]">
-                    <div>
-                      <span className="text-stone-400 block font-medium">کل آگهی‌ها</span>
-                      <span className="font-mono font-bold text-zinc-900 text-xs">{totalAds} عدد</span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 block font-medium">نسبت VIP</span>
-                      <span className="font-mono font-bold text-[#9a6200] text-xs">
-                        {Math.round((vipAds / Math.max(totalAds, 1)) * 100)}%
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 block font-medium">میانگین کلیک</span>
-                      <span className="font-mono font-bold text-zinc-900 text-xs">
-                        {Math.round(totalViews / Math.max(totalAds, 1))}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 block font-medium">وضعیت جریان</span>
-                      <span className="font-bold text-[#1b7a37] text-xs">پایدار</span>
-                    </div>
-                  </div>
-
-                  {/* Recent 2 Ads (NT360 Style Recent Items) */}
-                  <div className="space-y-2 pt-2 border-t border-[#f0ece3]">
-                    <div className="flex items-center justify-between text-xs text-stone-500">
-                      <span className="font-bold text-zinc-900">جدیدترین آگهی‌ها</span>
-                      <button
-                        type="button"
-                        onClick={() => handleTabChange('ads')}
-                        className="text-[11px] text-blue-600 hover:underline cursor-pointer"
-                      >
-                        مشاهده همه
-                      </button>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      {ads.slice(0, 2).map(ad => (
-                        <div
-                          key={ad.id}
-                          onClick={() => {
-                            setSelectedAdId(ad.id);
-                            handleTabChange('ads');
-                          }}
-                          className="p-3 rounded-2xl bg-stone-50 hover:bg-stone-100/80 border border-stone-200/80 flex items-center justify-between gap-3 cursor-pointer transition-all"
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="h-8 w-8 rounded-xl bg-zinc-900 text-white font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
-                              SP
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="font-mono text-[10px] text-stone-600 font-bold bg-white px-1.5 py-0.2 rounded border border-stone-200">
-                                  #{ad.reference_number}
-                                </span>
-                                {ad.is_featured && (
-                                  <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold">
-                                    VIP
-                                  </span>
-                                )}
-                                <span className="text-xs font-bold text-zinc-900 truncate">
-                                  {ad.title}
-                                </span>
-                              </div>
-                              <span className="text-[10px] text-stone-500 block truncate">
-                                {ad.contact_name} • {ad.city}
-                              </span>
-                            </div>
-                          </div>
-                          <span className="text-[10px] text-stone-400 font-mono shrink-0">
-                            {new Date(ad.created_at || '2026-01-01').toLocaleDateString('fa-IR')} &gt;
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Block 2: Butiksstatus (سلامت سیستم و اتصالات) */}
-                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-5">
-                  {/* Header */}
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-600 flex items-center justify-center shrink-0">
-                      <ShieldCheck size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-black text-zinc-950 leading-tight">
-                        سلامت سیستم و یکپارچه‌سازی
-                      </h3>
-                      <p className="text-[11px] text-stone-500">
-                        وضعیت درگاه پرداخت، سپر ضد اسپم و دیتابیس ابری
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* 4-Stage System Row (NT360 Style) */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
-                      <span className="text-[10px] font-bold text-stone-500 block truncate">درگاه Stripe</span>
-                      <div className={`text-xl font-black ${stripeSettings.enabled ? 'text-[#1b7a37]' : 'text-stone-400'}`}>
-                        {stripeSettings.enabled ? 'فعال' : 'غیرفعال'}
-                      </div>
-                      <span className="text-[10px] text-stone-500 block truncate">
-                        {stripeSettings.mode === 'live' ? 'حالت زنده' : 'حالت تستی'}
-                      </span>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
-                      <span className="text-[10px] font-bold text-stone-500 block truncate">ضد اسپم</span>
-                      <div className={`text-xl font-black ${turnstileSettings.enabled ? 'text-[#1b7a37]' : 'text-stone-400'}`}>
-                        {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
-                      </div>
-                      <span className="text-[10px] text-stone-500 block truncate">Turnstile</span>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
-                      <span className="text-[10px] font-bold text-stone-500 block truncate">پایگاه داده</span>
-                      <div className="text-xl font-black text-blue-700">
-                        متصل
-                      </div>
-                      <span className="text-[10px] text-stone-500 block truncate">Supabase Cloud</span>
-                    </div>
-
-                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
-                      <span className="text-[10px] font-bold text-stone-500 block truncate">کشورها</span>
-                      <div className="text-xl font-black text-zinc-950">
-                        ۴ کشور
-                      </div>
-                      <span className="text-[10px] text-stone-500 block truncate">اسکاندیناوی</span>
-                    </div>
-                  </div>
-
-                  {/* 4-Metric Footer Strip */}
-                  <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#f0ece3] text-center text-[10px]">
-                    <div>
-                      <span className="text-stone-400 block font-medium">تعرفه VIP</span>
-                      <span className="font-mono font-bold text-zinc-900 text-xs">
-                        {stripeSettings.vipPrice} {stripeSettings.currency}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 block font-medium">مدت اعتبار</span>
-                      <span className="font-mono font-bold text-zinc-900 text-xs">
-                        {stripeSettings.vipDurationDays} روز
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 block font-medium">پایداری سرور</span>
-                      <span className="font-bold text-[#1b7a37] text-xs">۹۹٫۹٪</span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 block font-medium">سئو گوگل</span>
-                      <span className="font-bold text-blue-600 text-xs">فعال</span>
-                    </div>
-                  </div>
-
-                  {/* Direct Shortcuts Buttons */}
-                  <div className="space-y-2 pt-2 border-t border-[#f0ece3]">
-                    <span className="text-xs font-bold text-zinc-900 block">دسترسی سریع به تنظیمات</span>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleTabChange('monetization')}
-                        className="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 text-zinc-800 border border-stone-200 text-xs font-bold text-center transition-all cursor-pointer"
-                      >
-                        درگاه Stripe ←
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleTabChange('security')}
-                        className="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 text-zinc-800 border border-stone-200 text-xs font-bold text-center transition-all cursor-pointer"
-                      >
-                        امنیت Turnstile ←
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleTabChange('settings')}
-                        className="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 text-zinc-800 border border-stone-200 text-xs font-bold text-center transition-all cursor-pointer"
-                      >
-                        سئو و برند ←
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Row 3: Scandinavian Country Performance Breakdown */}
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-extrabold text-zinc-900 flex items-center gap-2">
-                    <Globe size={16} className="text-zinc-700" />
-                    <span>عملکرد ۴ کشور اسکاندیناوی</span>
+                {/* Section Title */}
+                <div>
+                  <h3 className="text-base font-black text-zinc-900">
+                    آمار پایه (Basic stats)
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-                  {COUNTRIES.map(country => {
-                    const stats = getCountryStats(country.id);
+                {/* The 4 Monday.com Colored KPI Cards (2x2 Grid) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  
+                  {/* 1. Purple Card: Summary */}
+                  <div className="p-5 rounded-2xl bg-[#6155f5] text-white shadow-xs space-y-4">
+                    <div className="flex items-center justify-between text-xs font-semibold text-white/90">
+                      <span className="font-bold text-sm">خلاصه آگهی‌ها (Summary)</span>
+                      <span className="text-[11px] text-white/80">۳۰ روز اخیر</span>
+                    </div>
 
-                    return (
-                      <div 
-                        key={country.id}
-                        onClick={() => {
-                          setCountryFilter(country.id);
-                          handleTabChange('ads');
-                        }}
-                        className="p-4 rounded-3xl bg-white hover:bg-stone-50 border border-[#e5e1d7] hover:border-zinc-400 transition-all cursor-pointer shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3 group"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <span className="block font-extrabold text-sm text-zinc-900 group-hover:text-black">
+                    <div className="grid grid-cols-3 gap-2 text-center pt-2">
+                      <div>
+                        <div className="text-3xl font-black">{totalAds}</div>
+                        <span className="text-[11px] text-white/80 block mt-1">کل آگهی‌ها</span>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-black">{activeAds}</div>
+                        <span className="text-[11px] text-white/80 block mt-1">منتشرشده</span>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-black">{vipAds}</div>
+                        <span className="text-[11px] text-white/80 block mt-1">ویژه VIP</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2. Cyan / Sky Blue Card: Storage & Traffic */}
+                  <div className="p-5 rounded-2xl bg-[#00a8ff] text-white shadow-xs space-y-4">
+                    <div className="flex items-center justify-between text-xs font-semibold text-white/90">
+                      <span className="font-bold text-sm">ترافیک و بازدیدها (Traffic)</span>
+                      <span className="text-[11px] text-white/80">کلیک‌ها</span>
+                    </div>
+
+                    <div className="pt-2 space-y-2">
+                      <div className="w-full bg-white/25 h-3 rounded-full overflow-hidden p-0.5">
+                        <div className="bg-white h-full rounded-full w-full opacity-90" />
+                      </div>
+                      <div className="text-center pt-1">
+                        <div className="text-2xl font-black">{totalViews.toLocaleString('fa-IR')} کلیک</div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">مجموع بازدید ثبت‌شده آگهی‌ها</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3. Forest Green Card: People activity */}
+                  <div className="p-5 rounded-2xl bg-[#00b894] text-white shadow-xs space-y-4">
+                    <div className="flex items-center justify-between text-xs font-semibold text-white/90">
+                      <span className="font-bold text-sm">فعالیت کاربران (People activity)</span>
+                      <span className="text-[11px] text-white/80">۴ کشور</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center pt-2">
+                      <div>
+                        <div className="text-3xl font-black">
+                          {new Set(ads.map(a => a.contact_phone || a.contact_email || a.id)).size}
+                        </div>
+                        <span className="text-[11px] text-white/80 block mt-1">کاربران فعال</span>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-black">۴</div>
+                        <span className="text-[11px] text-white/80 block mt-1">کشورها</span>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-black">۱۰۰٪</div>
+                        <span className="text-[11px] text-white/80 block mt-1">پایداری</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 4. Warm Gold / Amber Card: Revenue & VIP */}
+                  <div className="p-5 rounded-2xl bg-[#f59e0b] text-white shadow-xs space-y-4">
+                    <div className="flex items-center justify-between text-xs font-semibold text-white/90">
+                      <span className="font-bold text-sm">فروش و درگاه (Revenue)</span>
+                      <span className="text-[11px] text-white/80">Stripe</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center pt-2">
+                      <div>
+                        <div className="text-2xl font-black">
+                          {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('fa-IR')} kr
+                        </div>
+                        <span className="text-[11px] text-white/80 block mt-1">درآمد کل</span>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-black">{vipAds}</div>
+                        <span className="text-[11px] text-white/80 block mt-1">سفارش VIP</span>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-black">{stripeSettings.vipPrice} kr</div>
+                        <span className="text-[11px] text-white/80 block mt-1">تعرفه پایه</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Nordic Country Performance Table */}
+                <div className="space-y-3 pt-4 border-t border-[#e5ebf4]">
+                  <h4 className="text-sm font-black text-zinc-900">
+                    تفکیک کشورهای منطقه اسکاندیناوی
+                  </h4>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {COUNTRIES.map(country => {
+                      const stats = getCountryStats(country.id);
+
+                      return (
+                        <div 
+                          key={country.id}
+                          onClick={() => {
+                            setCountryFilter(country.id);
+                            handleTabChange('ads');
+                          }}
+                          className="p-4 rounded-xl border border-[#e5ebf4] hover:border-blue-400 bg-white hover:bg-blue-50/20 transition-all cursor-pointer shadow-2xs space-y-2.5 group"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-xs text-zinc-900 group-hover:text-blue-600">
                               {country.nameFa}
                             </span>
-                            <span className="text-[11px] text-stone-500 font-medium">
-                              {country.currencyName}
+                            <span className="px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 text-[10px] font-mono font-bold">
+                              {stats.total} آگهی
                             </span>
                           </div>
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#f0ede6] text-stone-700 text-xs font-mono font-bold border border-[#ded9ce]">
-                            {stats.total} آگهی
-                          </span>
-                        </div>
 
-                        <div className="grid grid-cols-3 gap-1 pt-2.5 border-t border-[#f0ece3] text-center">
-                          <div>
-                            <span className="block text-[10px] text-stone-400 font-medium">فعال</span>
-                            <span className="text-xs font-black text-[#1b7a37]">{stats.active}</span>
-                          </div>
-                          <div>
-                            <span className="block text-[10px] text-stone-400 font-medium">VIP</span>
-                            <span className="text-xs font-black text-[#9a6200]">{stats.vip}</span>
-                          </div>
-                          <div>
-                            <span className="block text-[10px] text-stone-400 font-medium">بازدید</span>
-                            <span className="text-xs font-black text-stone-700">{stats.views}</span>
+                          <div className="flex items-center justify-between text-xs pt-1 border-t border-stone-100">
+                            <span className="text-stone-500 text-[11px]">{stats.active} فعال</span>
+                            <span className="text-amber-700 font-bold text-[11px]">{stats.vip} VIP</span>
+                            <span className="text-stone-600 font-mono text-[11px]">{stats.views} کلیک</span>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
 
-            </div>
-          )}
+              </div>
+            )}
 
           {/* ========================================================
               TAB 2: COUNTRY ADS MANAGEMENT (SPLIT CRM VIEW)
@@ -1477,10 +1150,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <div className="flex-1 flex overflow-hidden">
               
               {/* Left/Main Column: Ads List & Filters */}
-              <div className="flex-1 flex flex-col border-s border-[#e5e1d7] overflow-hidden bg-[#f4f3ee]">
+              <div className="flex-1 flex flex-col border-s border-[#e5ebf4] overflow-hidden bg-[#f8fafc]">
                 
                 {/* Filter Controls Header */}
-                <div className="p-3.5 sm:p-4 border-b border-[#e5e1d7] space-y-3 bg-white">
+                <div className="p-3.5 sm:p-4 border-b border-[#e5ebf4] space-y-3 bg-white">
                   
                   {/* Country Filter Tabs */}
                   <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
@@ -1582,8 +1255,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           }}
                           className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                             isSelected
-                              ? 'bg-white border-zinc-900 ring-2 ring-zinc-900/10 shadow-sm'
-                              : 'bg-white border-[#e5e1d7] hover:border-stone-400 shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
+                              ? 'bg-blue-50/40 border-[#0073ea] ring-2 ring-[#0073ea]/20 shadow-xs'
+                              : 'bg-white border-[#e5ebf4] hover:border-[#0073ea]/50 shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
                           }`}
                         >
                           <div className="flex items-center gap-3 min-w-0">
@@ -1685,10 +1358,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
               {/* Right Column: CRM Details for Selected Ad (Desktop Inspector) */}
               {currentSelectedAd && (
-                <div className="hidden lg:flex w-96 xl:w-[410px] shrink-0 bg-white flex-col overflow-hidden border-s border-[#e5e1d7]">
+                <div className="hidden lg:flex w-96 xl:w-[410px] shrink-0 bg-white flex-col overflow-hidden border-s border-[#e5ebf4]">
                   
                   {/* Header */}
-                  <div className="p-4 border-b border-[#e5e1d7] bg-stone-50/50 flex items-center justify-between">
+                  <div className="p-4 border-b border-[#e5ebf4] bg-stone-50/50 flex items-center justify-between">
                     <div className="space-y-0.5">
                       <span className="text-[10px] font-mono text-stone-500 uppercase tracking-wider block font-bold">
                         اطلاعات آگهی
@@ -1747,7 +1420,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     )}
 
                     {/* 1. Country Switcher for this Ad */}
-                    <div className="p-4 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] shadow-2xs space-y-2">
+                    <div className="p-4 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] shadow-2xs space-y-2">
                       <label className="block text-[11px] font-bold text-stone-700">
                         تغییر کشور:
                       </label>
@@ -1774,7 +1447,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </div>
 
                     {/* 2. Key Metadata & PIN */}
-                    <div className="p-4 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] shadow-2xs space-y-3">
+                    <div className="p-4 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] shadow-2xs space-y-3">
                       <div className="flex items-center justify-between pb-2 border-b border-stone-200">
                         <span className="text-stone-500 font-medium">کد پیگیری:</span>
                         <button
@@ -1808,7 +1481,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </div>
 
                     {/* 3. Seller Contacts */}
-                    <div className="p-4 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] shadow-2xs space-y-2.5">
+                    <div className="p-4 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] shadow-2xs space-y-2.5">
                       <span className="text-[11px] font-bold text-stone-700 block">اطلاعات تماس:</span>
                       
                       <div className="space-y-1.5">
@@ -1859,7 +1532,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </div>
 
                     {/* 4. Description */}
-                    <div className="p-4 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] shadow-2xs space-y-1.5">
+                    <div className="p-4 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] shadow-2xs space-y-1.5">
                       <span className="text-[11px] font-bold text-stone-700 block">متن آگهی:</span>
                       <p className="text-stone-700 leading-relaxed whitespace-pre-line text-xs font-normal">
                         {currentSelectedAd.description}
@@ -1890,7 +1563,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           {activeTab === 'monetization' && (
             <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full">
               
-              <div className="border-b border-[#e5e1d7] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="border-b border-[#e5ebf4] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-base font-black text-zinc-900">درگاه Stripe و VIP</h2>
                   <p className="text-xs text-stone-500 mt-0.5">تنظیمات پرداخت و ارتقای آگهی</p>
@@ -1917,7 +1590,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <form onSubmit={saveStripeSettings} className="space-y-6">
                 
                 {/* Stripe Credentials Card */}
-                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
                   <h3 className="text-xs font-extrabold text-zinc-900">اطلاعات اتصال Stripe</h3>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1974,7 +1647,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Pricing & VIP Configuration */}
-                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
                   <h3 className="text-xs font-extrabold text-zinc-900">تعرفه آگهی VIP</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -2038,7 +1711,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           {activeTab === 'security' && (
             <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full">
               
-              <div className="border-b border-[#e5e1d7] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="border-b border-[#e5ebf4] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-base font-black text-zinc-900">امنیت و آنتی‌بات</h2>
                   <p className="text-xs text-stone-500 mt-0.5">تنظیمات محافظت کلودفلر Turnstile</p>
@@ -2065,7 +1738,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <form onSubmit={saveTurnstileSettings} className="space-y-6">
                 
                 {/* Toggles & Modes Card */}
-                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
                   <h3 className="text-xs font-extrabold text-zinc-900">محدوده فعال‌سازی</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2131,7 +1804,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Cloudflare Keys Card */}
-                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-extrabold text-zinc-900">کلیدهای Turnstile</h3>
                     <a
@@ -2172,7 +1845,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Live Preview Widget */}
-                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-3">
+                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-3">
                   <h3 className="text-xs font-extrabold text-zinc-900">تست ویجت</h3>
                   <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col items-center justify-center space-y-2">
                     <CloudflareTurnstile
@@ -2204,7 +1877,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           {activeTab === 'settings' && (
             <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8 space-y-6 max-w-4xl mx-auto w-full">
               
-              <div className="border-b border-[#e5e1d7] pb-5">
+              <div className="border-b border-[#e5ebf4] pb-5">
                 <h2 className="text-base font-black text-zinc-900">تنظیمات سایت و سئو</h2>
                 <p className="text-xs text-stone-500 mt-0.5">مشخصات برند و اطلاعات گوگل برای ۴ کشور</p>
               </div>
@@ -2217,7 +1890,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               )}
 
               {/* Site Branding Form */}
-              <form onSubmit={saveBrandingSettings} className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+              <form onSubmit={saveBrandingSettings} className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
                 <h3 className="text-xs font-extrabold text-zinc-900">مشخصات سایت</h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2291,7 +1964,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </form>
 
               {/* Country-Specific SEO Settings */}
-              <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-5">
+              <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-5">
                 <div className="flex items-center justify-between pb-3 border-b border-stone-200">
                   <h3 className="text-xs font-extrabold text-zinc-900">سئوی گوگل</h3>
                   
@@ -2388,6 +2061,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         </div>
 
       </main>
+      </div>
 
       {/* ========================================================
           SINGLE MOBILE DETAILS DRAWER (Clean & Short)
@@ -2398,7 +2072,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             className="fixed inset-0 bg-black/60 backdrop-blur-xs"
             onClick={() => setMobileDetailOpen(false)}
           />
-          <div className="relative w-full max-h-[85vh] bg-white rounded-t-3xl border-t border-[#e5e1d7] p-5 overflow-y-auto custom-scrollbar z-10 space-y-4 text-zinc-900">
+          <div className="relative w-full max-h-[85vh] bg-white rounded-t-3xl border-t border-[#e5ebf4] p-5 overflow-y-auto custom-scrollbar z-10 space-y-4 text-zinc-900">
             <div className="flex items-center justify-between pb-3 border-b border-stone-200">
               <h3 className="text-sm font-black text-zinc-900 truncate max-w-[240px]">
                 {currentSelectedAd.title}
@@ -2440,7 +2114,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
 
             {/* Country Selector for this Ad */}
-            <div className="p-3 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] space-y-2">
+            <div className="p-3 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] space-y-2">
               <label className="block text-[11px] font-bold text-stone-700">تغییر کشور:</label>
               <div className="grid grid-cols-2 gap-1.5">
                 {COUNTRIES.map(c => {
@@ -2462,7 +2136,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
 
             {/* Reference & PIN info */}
-            <div className="p-3.5 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] space-y-2 text-xs">
+            <div className="p-3.5 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] space-y-2 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-stone-500">کد پیگیری:</span>
                 <span className="font-mono font-bold text-zinc-900">{currentSelectedAd.reference_number}</span>
