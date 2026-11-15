@@ -487,7 +487,7 @@
       "label": "Navbar()",
       "file_type": "code",
       "source_file": "src/components/Navbar.jsx",
-      "source_location": "L25",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "components_navbar_navbar",
       "community": 11,
@@ -1155,9 +1155,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "components_countrybanner",
-      "confidence_score": 1.0
+      "target": "components_countrybanner"
     },
     {
       "relation": "imports_from",
@@ -1254,9 +1254,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_translations_countries",
-      "confidence_score": 1.0
+      "target": "lib_translations_countries"
     },
     {
       "relation": "imports",
@@ -1435,9 +1435,9 @@
       "source_file": "src/components/CountryBanner.jsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_countrybanner",
-      "target": "components_countrybanner_countrybanner",
-      "confidence_score": 1.0
+      "target": "components_countrybanner_countrybanner"
     },
     {
       "relation": "imports_from",
@@ -1446,9 +1446,9 @@
       "source_file": "src/components/CountryBanner.jsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_countrybanner",
-      "target": "lib_translations",
-      "confidence_score": 1.0
+      "target": "lib_translations"
     },
     {
       "relation": "imports",
@@ -1457,9 +1457,9 @@
       "source_file": "src/components/CountryBanner.jsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_countrybanner",
-      "target": "lib_translations_countries",
-      "confidence_score": 1.0
+      "target": "lib_translations_countries"
     },
     {
       "relation": "contains",
@@ -1596,9 +1596,9 @@
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_navbar",
-      "target": "lib_translations_countries",
-      "confidence_score": 1.0
+      "target": "lib_translations_countries"
     },
     {
       "relation": "imports",
@@ -1694,9 +1694,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_translations_countries",
-      "confidence_score": 1.0
+      "target": "lib_translations_countries"
     },
     {
       "relation": "imports",
@@ -1766,9 +1766,9 @@
       "source_file": "src/lib/translations.js",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_translations",
-      "target": "lib_translations_countries",
-      "confidence_score": 1.0
+      "target": "lib_translations_countries"
     },
     {
       "relation": "contains",
@@ -1962,5 +1962,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9d2d1914b4139bee3077e850a800089f23e6357f"
+  "built_at_commit": "a673b9e90a5d808a556a8c680d8b154fccf4f3da"
 }

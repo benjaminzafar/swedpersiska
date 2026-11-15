@@ -62,6 +62,9 @@ export default function App() {
   };
 
   // Modals
+  const [countryModalOpen, setCountryModalOpen] = useState(() => {
+    return !localStorage.getItem('scandi_country_popup_seen');
+  });
   const [activeAdDetail, setActiveAdDetail] = useState(null);
   const [postAdOpen, setPostAdOpen] = useState(false);
   const [postAdCategory, setPostAdCategory] = useState('bostad');
@@ -181,8 +184,10 @@ export default function App() {
   return (
     <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 ${lang === 'fa' ? 'font-vazir' : ''}`}>
       
-      {/* Geolocation Scandinavian Detection Banner */}
+      {/* Geolocation Scandinavian Detection Pop-Up Modal */}
       <CountryBanner
+        isOpen={countryModalOpen}
+        onClose={() => setCountryModalOpen(false)}
         selectedCountry={selectedCountry}
         onSelectCountry={handleCountryChange}
       />
@@ -191,6 +196,7 @@ export default function App() {
       <Navbar
         selectedCountry={selectedCountry}
         onSelectCountry={handleCountryChange}
+        onOpenCountryModal={() => setCountryModalOpen(true)}
         onOpenPostAd={(catId) => {
           setPostAdCategory(catId || 'bostad');
           setPostAdOpen(true);

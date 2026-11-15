@@ -16,15 +16,14 @@ import {
   Trash2,
   Edit3,
   Eye,
-  ShieldCheck,
-  Check,
-  Globe
+  ShieldCheck
 } from 'lucide-react';
 import { CATEGORIES, COUNTRIES } from '../lib/translations';
 
 export default function Navbar({ 
   selectedCountry = 'se',
   onSelectCountry,
+  onOpenCountryModal,
   onOpenPostAd, 
   onOpenManageAd,
   onSelectCategory
@@ -33,12 +32,10 @@ export default function Navbar({
   const [manageDropdownOpen, setManageDropdownOpen] = useState(false);
   const [postDropdownOpen, setPostDropdownOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
-  const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
 
   const manageMenuRef = useRef(null);
   const postMenuRef = useRef(null);
   const categoriesMenuRef = useRef(null);
-  const countryMenuRef = useRef(null);
 
   // Close dropdowns on click outside
   useEffect(() => {
@@ -51,9 +48,6 @@ export default function Navbar({
       }
       if (categoriesMenuRef.current && !categoriesMenuRef.current.contains(event.target)) {
         setCategoriesDropdownOpen(false);
-      }
-      if (countryMenuRef.current && !countryMenuRef.current.contains(event.target)) {
-        setCountryDropdownOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -105,65 +99,19 @@ export default function Navbar({
               </div>
             </a>
 
-            {/* Scandinavian Country Selector Pill */}
-            <div className="relative" ref={countryMenuRef}>
-              <button
-                type="button"
-                onClick={() => setCountryDropdownOpen(!countryDropdownOpen)}
-                className="flex items-center gap-1.5 h-9 px-3 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200/90 text-xs font-bold text-slate-800 transition-all active:scale-95 cursor-pointer shadow-2xs"
-                title="تغییر کشور اسکاندیناوی"
-              >
-                <span className="text-sm">{currentCountryObj ? currentCountryObj.flag : '🌍'}</span>
-                <span>{currentCountryObj ? currentCountryObj.nameFa : 'همه اسکاندیناوی'}</span>
-                <ChevronDown size={13} className={`text-slate-400 transition-transform duration-200 ${countryDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {countryDropdownOpen && (
-                <div className="absolute start-0 top-full mt-2 w-56 rounded-2xl bg-white border border-slate-200 shadow-[0_12px_36px_rgba(0,0,0,0.12)] p-1.5 z-50 animate-in fade-in-50 zoom-in-95 duration-150">
-                  <div className="px-3 py-2 border-b border-slate-100 mb-1">
-                    <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">انتخاب کشور در اسکاندیناوی</span>
-                  </div>
-                  {COUNTRIES.map(c => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => {
-                        if (onSelectCountry) onSelectCountry(c.id);
-                        setCountryDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-right transition-colors cursor-pointer ${
-                        selectedCountry === c.id ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-950'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-base">{c.flag}</span>
-                        <span>{c.nameFa}</span>
-                        <span className="text-[10px] text-slate-400 font-normal">({c.nameNative})</span>
-                      </div>
-                      {selectedCountry === c.id && <Check size={13} className="text-blue-600" />}
-                    </button>
-                  ))}
-                  <div className="pt-1 border-t border-slate-100 mt-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (onSelectCountry) onSelectCountry('all');
-                        setCountryDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-right transition-colors cursor-pointer ${
-                        selectedCountry === 'all' ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Globe size={15} className="text-blue-600" />
-                        <span>همه کشورهای اسکاندیناوی</span>
-                      </div>
-                      {selectedCountry === 'all' && <Check size={13} className="text-blue-600" />}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Scandinavian Country Selector Pill (Opens Pop-Up Modal) */}
+            <button
+              type="button"
+              onClick={onOpenCountryModal}
+              className="flex items-center gap-2 h-9 px-3 rounded-full bg-slate-100 hover:bg-slate-200/90 border border-slate-200/90 text-xs font-bold text-slate-800 transition-all active:scale-95 cursor-pointer shadow-2xs group"
+              title="تغییر کشور اسکاندیناوی"
+            >
+              <span className="text-base">{currentCountryObj ? currentCountryObj.flag : '🌍'}</span>
+              <span>{currentCountryObj ? currentCountryObj.nameFa : 'همه اسکاندیناوی'}</span>
+              <span className="text-[10px] text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded-full border border-blue-200/60 group-hover:bg-[#1877F2] group-hover:text-white transition-colors">
+                تغییر
+              </span>
+            </button>
 
             {/* Desktop Category Navigation */}
             <nav className="hidden xl:flex items-center gap-1">
@@ -449,29 +397,25 @@ export default function Navbar({
             {/* Mobile Country Switcher */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block px-1">
-                انتخاب کشور
+                کشور انتخابی در اسکاندیناوی
               </span>
-              <div className="grid grid-cols-2 gap-2">
-                {COUNTRIES.map(c => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={() => {
-                      if (onSelectCountry) onSelectCountry(c.id);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all border ${
-                      selectedCountry === c.id ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-2xs' : 'bg-slate-50 text-slate-700 border-slate-200/80'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">{c.flag}</span>
-                      <span>{c.nameFa}</span>
-                    </div>
-                    {selectedCountry === c.id && <Check size={14} className="text-blue-600" />}
-                  </button>
-                ))}
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenCountryModal) onOpenCountryModal();
+                }}
+                className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-900 font-bold text-xs active:scale-95 transition-all text-right cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl">{currentCountryObj ? currentCountryObj.flag : '🌍'}</span>
+                  <div>
+                    <span className="block text-sm text-slate-900">{currentCountryObj ? currentCountryObj.nameFa : 'همه اسکاندیناوی'}</span>
+                    <span className="text-[11px] text-slate-500 font-normal">کلیک جهت تغییر کشور و باز شدن پنجره انتخاب</span>
+                  </div>
+                </div>
+                <span className="text-xs text-blue-600 font-bold bg-white px-2.5 py-1 rounded-xl border border-slate-200 shadow-2xs">تغییر کشور</span>
+              </button>
             </div>
 
             {/* Quick Actions Cards */}

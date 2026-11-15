@@ -2,13 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, X, Check, Globe, ArrowLeft } from 'lucide-react';
 import { COUNTRIES } from '../lib/translations';
 
-export default function CountryBanner({ selectedCountry, onSelectCountry }) {
+export default function CountryBanner({ 
+  isOpen, 
+  onClose, 
+  selectedCountry, 
+  onSelectCountry 
+}) {
   const [detectedCountryId, setDetectedCountryId] = useState('se');
-  const [isVisible, setIsVisible] = useState(false);
   const [activeChoice, setActiveChoice] = useState(selectedCountry || 'se');
 
+  // Keep activeChoice synced with selectedCountry when opened
   useEffect(() => {
-    // 1. Detect location via Timezone
+    if (selectedCountry) {
+      setActiveChoice(selectedCountry);
+    }
+  }, [selectedCountry, isOpen]);
+
+  // Detect location via Timezone & IP
+  useEffect(() => {
     let detected = 'se';
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
@@ -36,19 +47,13 @@ export default function CountryBanner({ selectedCountry, onSelectCountry }) {
 
     setDetectedCountryId(detected);
 
-    // Check if user already confirmed or dismissed
+    // If first-time visitor with no prior selection, pre-select the detected country
     const saved = localStorage.getItem('scandi_country_selected');
-    const dismissed = sessionStorage.getItem('scandi_popup_dismissed');
-
-    if (!saved && !dismissed) {
-      // First visit: open pop-up and set detected as default choice
+    if (!saved) {
       setActiveChoice(detected);
-      setIsVisible(true);
-    } else if (saved) {
-      setActiveChoice(saved);
     }
 
-    // Background IP country check (progressive enhancement)
+    // Progressive IP check
     fetch('https://api.country.is/')
       .then(res => res.json())
       .then(data => {
@@ -56,7 +61,7 @@ export default function CountryBanner({ selectedCountry, onSelectCountry }) {
           const code = data.country.toLowerCase();
           if (['se', 'no', 'dk', 'fi'].includes(code)) {
             setDetectedCountryId(code);
-            if (!localStorage.getItem('scandi_country_selected') && !sessionStorage.getItem('scandi_popup_dismissed')) {
+            if (!localStorage.getItem('scandi_country_selected')) {
               setActiveChoice(code);
             }
           }
@@ -70,27 +75,27 @@ export default function CountryBanner({ selectedCountry, onSelectCountry }) {
     setActiveChoice(finalId);
     if (onSelectCountry) onSelectCountry(finalId);
     localStorage.setItem('scandi_country_selected', finalId);
-    sessionStorage.setItem('scandi_popup_dismissed', 'true');
-    setIsVisible(false);
+    localStorage.setItem('scandi_country_popup_seen', 'true');
+    if (onClose) onClose();
   };
 
   const handleDismiss = () => {
-    sessionStorage.setItem('scandi_popup_dismissed', 'true');
-    setIsVisible(false);
+    localStorage.setItem('scandi_country_popup_seen', 'true');
+    if (onClose) onClose();
   };
 
-  // Listen for Escape key to close modal
+  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isVisible) {
+      if (e.key === 'Escape' && isOpen) {
         handleDismiss();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isVisible]);
+  }, [isOpen]);
 
-  if (!isVisible) return null;
+  if (!isOpen) return null;
 
   const detectedObj = COUNTRIES.find(c => c.id === detectedCountryId) || COUNTRIES[0];
   const chosenObj = COUNTRIES.find(c => c.id === activeChoice);
@@ -118,7 +123,7 @@ export default function CountryBanner({ selectedCountry, onSelectCountry }) {
         </button>
 
         {/* Header with Icon Badge */}
-        <div className="text-center space-y-3 pt-2">
+        <div className="text-center space-y-3 pt-1">
           
           <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 shadow-2xs">
             <Globe size={28} className="text-[#1877F2]" />
@@ -126,28 +131,27 @@ export default function CountryBanner({ selectedCountry, onSelectCountry }) {
 
           <div className="space-y-1">
             <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
-              نیازمندی‌های اسکاندیناوی
+              پرتال جامع نیازمندی‌های ایرانیان اسکاندیناوی
             </span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight pt-1">
-              خوش آمدید به سوئد پرشیا
+              انتخاب کشور مورد نظر
             </h2>
           </div>
 
-          {/* Detected location notification banner */}
+          {/* Detected location notice */}
           <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 flex items-center justify-center gap-2">
             <MapPin size={15} className="text-blue-600 shrink-0" />
             <span>
-              ما تشخیص دادیم شما از کشور{' '}
+              موقعیت شناسایی‌شده شما:{' '}
               <strong className="font-extrabold text-slate-900 inline-flex items-center gap-1 mx-0.5 px-2 py-0.5 rounded-lg bg-white border border-slate-200 shadow-2xs">
                 <span>{detectedObj.flag}</span>
                 <span>{detectedObj.nameFa}</span>
-              </strong>{' '}
-              وارد شده‌اید.
+              </strong>
             </span>
           </div>
 
           <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
-            لطفاً کشوری را که مایلید نیازمندی‌ها، مسکن و خدمات آن را مشاهده کنید، انتخاب فرمایید:
+            لطفاً کشوری را که مایلید آگهی‌ها، مسکن، رستوران‌ها و خدمات آن را مشاهده کنید، انتخاب نمایید:
           </p>
         </div>
 
@@ -250,7 +254,7 @@ export default function CountryBanner({ selectedCountry, onSelectCountry }) {
             onClick={handleDismiss}
             className="w-full h-9 rounded-full text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
           >
-            بعداً انتخاب می‌کنم (بستن پنجره)
+            بستن پنجره
           </button>
         </div>
 
