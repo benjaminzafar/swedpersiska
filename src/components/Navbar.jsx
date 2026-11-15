@@ -63,7 +63,7 @@ export default function Navbar({
     : 'همه شهرها';
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 select-none font-vazir" dir="rtl">
+    <header className="fixed top-0 inset-x-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 select-none font-vazir shadow-xs" dir="rtl">
       <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
         
         {/* MOBILE VIEW: Fixed Nav with Logo + Search & Select City Capsule */}
