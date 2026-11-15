@@ -44,7 +44,7 @@ export default function Footer({
             )}
             <div>
               <span className="font-extrabold text-base text-slate-900 tracking-tight block">{siteName}</span>
-              <span className="text-[11px] text-slate-500 font-medium">پلتفرم جامع نیازمندی‌های جامعه ایرانیان اسکاندیناوی</span>
+              <span className="text-[11px] text-slate-500 font-medium">پلتفرم جامع نیازمندی‌های جامعه فارسی‌زبانان اسکاندیناوی</span>
             </div>
           </div>
           
@@ -168,7 +168,7 @@ export default function Footer({
         {/* Bottom bar */}
         <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
           <div>
-            © {currentYear} {siteName} • سامانه نیازمندی‌های ایرانیان اسکاندیناوی
+            © {currentYear} {siteName} • سامانه نیازمندی‌های فارسی‌زبانان اسکاندیناوی
           </div>
           
           <div className="flex items-center gap-4">

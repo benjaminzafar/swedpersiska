@@ -159,7 +159,7 @@ export default function Navbar({
                   {siteName}
                 </span>
                 <span className="text-[11px] text-slate-500 font-medium">
-                  نیازمندی‌های ایرانیان اسکاندیناوی
+                  نیازمندی‌های فارسی‌زبانان اسکاندیناوی
                 </span>
               </div>
             </a>

@@ -106,10 +106,10 @@ export default function App() {
   // Dynamic Country SEO Document Title
   useEffect(() => {
     const titles = {
-      se: 'نیازمندی‌ها، مسکن و خدمات ایرانیان در سوئد | سوئد پرشیا',
-      no: 'نیازمندی‌ها، مسکن و مشاغل ایرانی در نروژ | سوئد پرشیا',
-      dk: 'نیازمندی‌ها، مسکن و خدمات ایرانی در دانمارک | سوئد پرشیا',
-      fi: 'نیازمندی‌ها، مسکن و مشاغل ایرانی در فنلاند | سوئد پرشیا'
+      se: 'نیازمندی‌ها، مسکن و خدمات فارسی‌زبانان در سوئد | سوئد پرشیا',
+      no: 'نیازمندی‌ها، مسکن و مشاغل فارسی‌زبانان در نروژ | سوئد پرشیا',
+      dk: 'نیازمندی‌ها، مسکن و خدمات فارسی‌زبانان در دانمارک | سوئد پرشیا',
+      fi: 'نیازمندی‌ها، مسکن و مشاغل فارسی‌زبانان در فنلاند | سوئد پرشیا'
     };
     document.title = titles[selectedCountry] || titles.se;
   }, [selectedCountry]);
@@ -179,18 +179,18 @@ export default function App() {
   const availableCities = currentCountryObj.cities;
 
   // Dynamic Hero Titles based on selected country
-  let heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در سوئد';
-  let heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های ایرانیان در استکهلم، یوتبوری، مالمو و سراسر سوئد.';
+  let heroHeading = 'مسکن، رستوران‌ها و خدمات فارسی‌زبانان در سوئد';
+  let heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های فارسی‌زبانان در استکهلم، یوتبوری، مالمو و سراسر سوئد.';
 
   if (selectedCountry === 'no') {
-    heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در نروژ';
-    heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های ایرانیان در اسلو، برگن، تروندهایم و سراسر نروژ.';
+    heroHeading = 'مسکن، رستوران‌ها و مشاغل فارسی‌زبانان در نروژ';
+    heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های فارسی‌زبانان در اسلو، برگن، تروندهایم و سراسر نروژ.';
   } else if (selectedCountry === 'dk') {
-    heroHeading = 'مسکن، رستوران‌ها و خدمات ایرانی در دانمارک';
-    heroSubheading = 'جامع‌ترین پرتال فارسی‌زبانان در کپنهاگ، آرهوس، اودنسه و سراسر دانمارک.';
+    heroHeading = 'مسکن، رستوران‌ها و خدمات فارسی‌زبانان در دانمارک';
+    heroSubheading = 'جامع‌ترین پرتال نیازمندی‌های فارسی‌زبانان در کپنهاگ، آرهوس، اودنسه و سراسر دانمارک.';
   } else if (selectedCountry === 'fi') {
-    heroHeading = 'مسکن، رستوران‌ها و مشاغل ایرانی در فنلاند';
-    heroSubheading = 'جامع‌ترین بازارچه و پرتال نیازمندی‌های ایرانیان در هلسینکی، اسپو، تامپره و سراسر فنلاند.';
+    heroHeading = 'مسکن، رستوران‌ها و مشاغل فارسی‌زبانان در فنلاند';
+    heroSubheading = 'جامع‌ترین بازارچه و پرتال نیازمندی‌های فارسی‌زبانان در هلسینکی، اسپو، تامپره و سراسر فنلاند.';
   }
 
   // Filter ads
@@ -263,7 +263,7 @@ export default function App() {
           {/* Subtle Nordic Pill Tag */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50/80 text-blue-700 text-[11px] font-bold border border-blue-100 shadow-2xs">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />
-            <span>پرتال نیازمندی‌های ایرانیان در سراسر اسکاندیناوی</span>
+            <span>پرتال نیازمندی‌های فارسی‌زبانان در سراسر اسکاندیناوی</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-snug sm:leading-tight px-1 break-words">

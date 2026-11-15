@@ -131,7 +131,7 @@ export default function CountryBanner({
 
           <div className="space-y-1">
             <span className="text-[10.5px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
-              پرتال جامع نیازمندی‌های ایرانیان اسکاندیناوی
+              پرتال جامع نیازمندی‌های فارسی‌زبانان اسکاندیناوی
             </span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight pt-1">
               انتخاب کشور مورد نظر

@@ -78,7 +78,7 @@ export const COUNTRIES = [
 export const CATEGORIES = [
   { id: 'all', fa: 'همه دسته‌ها', icon: 'Tag' },
   { id: 'bostad', fa: 'مسکن و خانه', icon: 'Home' },
-  { id: 'restaurang', fa: 'رستوران و غذای ایرانی', icon: 'Utensils' },
+  { id: 'restaurang', fa: 'رستوران و خوراک', icon: 'Utensils' },
   { id: 'tjanster', fa: 'خدمات و دارالترجمه', icon: 'Briefcase' },
   { id: 'jobb', fa: 'کار و استخدام', icon: 'GraduationCap' },
   { id: 'kop-salj', fa: 'خرید و فروش', icon: 'ShoppingBag' },
@@ -91,7 +91,7 @@ export const t = {
   fa: {
     siteTitle: 'نیازمندی‌های فارسی‌زبانان اسکاندیناوی',
     siteSubtitle: 'سوئد، نروژ، دانمارک و فنلاند',
-    heroHeading: 'مسکن، رستوران‌ها و خدمات ایرانی در اسکاندیناوی',
+    heroHeading: 'مسکن، رستوران‌ها و خدمات فارسی‌زبانان در اسکاندیناوی',
     heroSubheading: 'مرجع جامع و رایگان نیازمندی‌ها، کاریابی و املاک جامعه فارسی‌زبان در سوئد، نروژ و دانمارک.',
     postAdBtn: 'ثبت آگهی رایگان',
     manageAdBtn: 'مدیریت آگهی‌ها',
