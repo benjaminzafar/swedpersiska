@@ -359,26 +359,25 @@ export default function App() {
               key={activeHero.image}
               src={activeHero.image}
               alt={activeHero.cityFa}
-              className="w-full h-full object-cover object-center opacity-45 filter brightness-95 contrast-105 transition-all duration-700 ease-out"
+              className="w-full h-full object-cover object-center opacity-70 filter brightness-105 contrast-100 transition-all duration-700 ease-out"
             />
-            {/* Balanced Dark Vignette for contrast while keeping image bright and clear */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#07090e]/75 via-[#07090e]/30 to-[#07090e]/80" />
-            <div className="absolute inset-0 bg-radial from-transparent via-[#07090e]/20 to-[#07090e]/75" />
+            {/* Lighter, softer gradient overlay for clean text contrast without hiding the vibrant cityscape */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#07090e]/60 via-[#07090e]/20 to-[#07090e]/70" />
           </div>
 
           <div className="relative z-10 max-w-4xl mx-auto text-center space-y-2.5 sm:space-y-3.5">
             
             {/* Nordic Pill Tag */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 backdrop-blur-md text-blue-400 text-[10.5px] sm:text-[11px] font-bold border border-blue-500/20 shadow-xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/60 backdrop-blur-md text-blue-300 text-[10.5px] sm:text-[11px] font-bold border border-white/15 shadow-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
               <span>پرتال نیازمندی‌های فارسی‌زبانان در سراسر اسکاندیناوی</span>
             </div>
 
-            <h1 className="text-xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-snug sm:leading-tight px-1 break-words">
+            <h1 className="text-xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-snug sm:leading-tight px-1 break-words drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
               {heroHeading}
             </h1>
 
-            <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed px-2 font-normal">
+            <p className="text-xs sm:text-base text-slate-200 max-w-xl mx-auto leading-relaxed px-2 font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
               {heroSubheading}
             </p>
 
