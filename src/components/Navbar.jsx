@@ -205,27 +205,27 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* Mobile Actions on Top Nav: Manage Ads & Add Ads */}
+          {/* Mobile Actions on Top Nav: Country Selector & Add Ads */}
           <div className="flex md:hidden items-center gap-1.5 shrink-0">
-            {/* Manage Ads */}
+            {/* Country Selector */}
             <button
               type="button"
-              onClick={onOpenManageAd}
-              className="flex items-center gap-1 h-9 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 text-xs font-semibold active:scale-95 transition-all cursor-pointer shadow-2xs"
-              title="مدیریت و پیگیری آگهی با پین کد"
+              onClick={onOpenCountryModal}
+              className="flex items-center gap-1 h-9 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 text-xs font-semibold active:scale-95 transition-all cursor-pointer shadow-2xs group"
+              title="انتخاب کشور در اسکاندیناوی"
             >
-              <KeyRound size={13} className="text-amber-600" />
-              <span>مدیریت</span>
+              <Globe size={14} className="text-slate-600 group-hover:text-[#1877F2] transition-colors shrink-0" />
+              <span>انتخاب کشور</span>
             </button>
 
             {/* Add Ads */}
             <button
               type="button"
               onClick={() => onOpenPostAd()}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-bold active:scale-95 transition-all cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 h-9 px-3 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-bold active:scale-95 transition-all cursor-pointer shadow-xs shrink-0"
               title="ثبت رایگان آگهی"
             >
-              <Plus size={15} strokeWidth={2.5} />
+              <Plus size={15} strokeWidth={2.5} className="shrink-0" />
               <span>ثبت آگهی</span>
             </button>
           </div>
