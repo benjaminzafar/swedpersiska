@@ -9,13 +9,21 @@ import {
   Briefcase,
   GraduationCap,
   Tag,
-  Globe
+  Globe,
+  MapPin,
+  Search,
+  X
 } from 'lucide-react';
 import { CATEGORIES } from '../lib/translations';
 
 export default function Navbar({ 
   siteName = 'سوئد پرشیا',
   logoUrl,
+  selectedCity = 'all',
+  onSelectCity,
+  availableCities = [],
+  searchQuery = '',
+  onSearchChange,
   onOpenCountryModal,
   onOpenPostAd, 
   onOpenManageAd,
@@ -48,28 +56,107 @@ export default function Navbar({
     { id: 'jobb', title: 'کار و استخدام', Icon: GraduationCap },
   ];
 
+  // Selected city display label
+  const selectedCityObj = availableCities.find(c => c.id === selectedCity);
+  const cityLabel = selectedCityObj 
+    ? (selectedCity === 'all' ? 'همه شهرها' : selectedCityObj.fa) 
+    : 'همه شهرها';
+
   return (
     <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 select-none font-vazir" dir="rtl">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-1.5 sm:gap-6">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8">
+        
+        {/* MOBILE VIEW: Fixed Nav with Logo + Search & Select City Capsule */}
+        <div className="flex md:hidden h-14 items-center gap-2">
+          {/* Logo */}
+          <a href="/" className="flex items-center shrink-0" title={siteName}>
+            {logoUrl ? (
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-white shadow-2xs border border-slate-200">
+                <img src={logoUrl} alt={siteName} className="h-full w-full object-contain" />
+              </div>
+            ) : (
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-2xs border border-slate-800 transition-transform active:scale-95">
+                <span className="font-mono text-emerald-400 font-black">SP</span>
+              </div>
+            )}
+          </a>
+
+          {/* Integrated City Selector & Search Capsule */}
+          <div className="flex-1 flex items-center h-10 rounded-full bg-slate-100 border border-slate-200/80 px-2 gap-1.5 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all shadow-2xs min-w-0">
+            
+            {/* City Selector Pill with native select overlay */}
+            <div className="relative shrink-0 flex items-center">
+              <div className="flex items-center gap-1 ps-2 pe-1.5 py-1 rounded-full bg-white text-slate-800 text-[11px] font-bold border border-slate-200/80 shadow-2xs">
+                <MapPin size={11} className="text-[#1877F2] shrink-0" />
+                <span className="truncate max-w-[65px]">
+                  {cityLabel}
+                </span>
+                <ChevronDown size={11} className="text-slate-400 shrink-0" />
+              </div>
+
+              {/* Invisible native select over pill */}
+              <select
+                value={selectedCity}
+                onChange={(e) => onSelectCity?.(e.target.value)}
+                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"
+                aria-label="انتخاب شهر"
+              >
+                {availableCities.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.fa}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Vertical separator */}
+            <div className="h-4 w-px bg-slate-300/80 shrink-0" />
+
+            {/* Search Input */}
+            <div className="relative flex-1 flex items-center min-w-0">
+              <Search size={14} className="text-slate-400 shrink-0 pointer-events-none me-1" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                placeholder="جستجو در نیازمندی‌ها..."
+                className="w-full h-8 bg-transparent text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none min-w-0"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => onSearchChange?.('')}
+                  className="p-1 rounded-full text-slate-400 hover:text-slate-700 active:scale-95 shrink-0"
+                  aria-label="پاک کردن متن جستجو"
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+
+          </div>
+        </div>
+
+        {/* DESKTOP VIEW: Logo + Brand + Categories + Country Button + Ad Button */}
+        <div className="hidden md:flex h-16 items-center justify-between gap-6">
           
           {/* Logo & Brand */}
-          <div className="flex items-center gap-2 sm:gap-6 shrink-0">
-            <a href="/" className="flex items-center gap-2 group shrink-0">
+          <div className="flex items-center gap-6 shrink-0">
+            <a href="/" className="flex items-center gap-2.5 group shrink-0">
               {logoUrl ? (
-                <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl overflow-hidden bg-white shadow-xs border border-slate-200 shrink-0">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden bg-white shadow-xs border border-slate-200 shrink-0">
                   <img src={logoUrl} alt={siteName} className="h-full w-full object-contain" />
                 </div>
               ) : (
-                <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-xs border border-slate-800 transition-all duration-150 group-hover:scale-105 active:scale-95 shrink-0">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs shadow-xs border border-slate-800 transition-all duration-150 group-hover:scale-105 active:scale-95 shrink-0">
                   <span className="font-mono text-emerald-400 font-black">SP</span>
                 </div>
               )}
               <div className="flex flex-col min-w-0">
-                <span className="font-extrabold text-[15px] sm:text-[17px] tracking-tight text-slate-950 group-hover:text-blue-600 transition-colors truncate max-w-[120px] sm:max-w-none">
+                <span className="font-extrabold text-[17px] tracking-tight text-slate-950 group-hover:text-blue-600 transition-colors">
                   {siteName}
                 </span>
-                <span className="text-[10px] text-slate-500 font-medium hidden sm:inline">
+                <span className="text-[11px] text-slate-500 font-medium">
                   نیازمندی‌های ایرانیان اسکاندیناوی
                 </span>
               </div>
@@ -124,7 +211,7 @@ export default function Navbar({
           </div>
 
           {/* Desktop Right Action: "انتخاب کشور" + "آگهی" */}
-          <div className="hidden md:flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5">
             {/* Country Selector Button with Globe icon */}
             <button
               type="button"
@@ -205,32 +292,8 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* Mobile Actions on Top Nav: Country Selector & Add Ads */}
-          <div className="flex md:hidden items-center gap-1.5 shrink-0">
-            {/* Country Selector */}
-            <button
-              type="button"
-              onClick={onOpenCountryModal}
-              className="flex items-center gap-1 h-9 px-2.5 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 text-xs font-semibold active:scale-95 transition-all cursor-pointer shadow-2xs group"
-              title="انتخاب کشور در اسکاندیناوی"
-            >
-              <Globe size={14} className="text-slate-600 group-hover:text-[#1877F2] transition-colors shrink-0" />
-              <span>انتخاب کشور</span>
-            </button>
-
-            {/* Add Ads */}
-            <button
-              type="button"
-              onClick={() => onOpenPostAd()}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-bold active:scale-95 transition-all cursor-pointer shadow-xs shrink-0"
-              title="ثبت رایگان آگهی"
-            >
-              <Plus size={15} strokeWidth={2.5} className="shrink-0" />
-              <span>ثبت آگهی</span>
-            </button>
-          </div>
-
         </div>
+
       </div>
     </header>
   );

@@ -228,6 +228,11 @@ export default function App() {
       <Navbar
         siteName={siteName}
         logoUrl={logoUrl}
+        selectedCity={selectedCity}
+        onSelectCity={setSelectedCity}
+        availableCities={availableCities}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         onOpenCountryModal={() => setCountryModalOpen(true)}
         onOpenPostAd={(catId) => {
           setPostAdCategory(catId || 'bostad');
@@ -260,8 +265,8 @@ export default function App() {
             {heroSubheading}
           </p>
 
-          {/* Meta Floating Search Capsule */}
-          <div className="pt-2 px-1">
+          {/* Meta Floating Search Capsule (Desktop) */}
+          <div className="pt-2 px-1 hidden md:block">
             <div className="bg-white rounded-2xl sm:rounded-full p-2 sm:p-1.5 shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-slate-200/90 hover:border-slate-300 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 sm:gap-1.5 transition-all">
               
               {/* City Dropdown */}
