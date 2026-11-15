@@ -18,6 +18,7 @@ import PaymentModal from './components/PaymentModal';
 import PostAdModal from './components/PostAdModal';
 import ManageAdModal from './components/ManageAdModal';
 import AdminPanel from './components/AdminPanel';
+import ErrorBoundary from './components/ErrorBoundary';
 import { supabase } from './lib/supabase';
 import { COUNTRIES, CATEGORIES, t } from './lib/translations';
 
@@ -840,13 +841,15 @@ export default function App() {
 
       {/* MODAL 4: Admin Panel */}
       {adminOpen && (
-        <AdminPanel
-          onClose={handleCloseAdmin}
-          onRefreshAds={() => {
-            fetchAds();
-            fetchSettings();
-          }}
-        />
+        <ErrorBoundary>
+          <AdminPanel
+            onClose={handleCloseAdmin}
+            onRefreshAds={() => {
+              fetchAds();
+              fetchSettings();
+            }}
+          />
+        </ErrorBoundary>
       )}
 
     </div>
