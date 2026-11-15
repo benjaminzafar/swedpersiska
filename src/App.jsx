@@ -47,7 +47,14 @@ export default function App() {
     return 'se';
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('cat');
+      if (cat) return cat;
+    } catch {}
+    return 'all';
+  });
   const [selectedCity, setSelectedCity] = useState('all');
 
   const handleCountryChange = (c) => {
@@ -74,17 +81,42 @@ export default function App() {
     } catch {}
   }, [selectedCountry]);
 
-  // Modals
+  // Modals & Pages
   const [countryModalOpen, setCountryModalOpen] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('modal') === 'country') return true;
+    } catch {}
     return !localStorage.getItem('scandi_country_popup_seen');
   });
   const [activeAdDetail, setActiveAdDetail] = useState(null);
   const [paymentAd, setPaymentAd] = useState(null);
   const [stripeSettings, setStripeSettings] = useState(null);
-  const [postAdOpen, setPostAdOpen] = useState(false);
+  const [postAdOpen, setPostAdOpen] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('modal') === 'post';
+    } catch {
+      return false;
+    }
+  });
   const [postAdCategory, setPostAdCategory] = useState('bostad');
-  const [manageAdOpen, setManageAdOpen] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
+  const [manageAdOpen, setManageAdOpen] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('modal') === 'manage';
+    } catch {
+      return false;
+    }
+  });
+  const [adminOpen, setAdminOpen] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('admin') === '1' || params.get('admin') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [siteName, setSiteName] = useState('سوئد پرشیا');
   const [logoUrl, setLogoUrl] = useState('');
 
@@ -127,14 +159,6 @@ export default function App() {
     setTimeout(() => setToastMsg(''), 4000);
   };
 
-  // Auto-detect ?admin=1 in URL
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('admin') === '1' || params.get('admin') === 'true') {
-      setAdminOpen(true);
-    }
-  }, []);
-
   // Strict Persian RTL
   useEffect(() => {
     document.documentElement.dir = 'rtl';
@@ -165,26 +189,78 @@ export default function App() {
     fetchAds();
   }, []);
 
-  // Handle browser Back / Forward history navigation
+  // Immediate ad check on mount for direct link or browser refresh
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const adParam = params.get('ad');
+      if (adParam) {
+        supabase
+          .from('swedpersiska_ads')
+          .select('*')
+          .or(`reference_number.eq.${adParam},id.eq.${adParam}`)
+          .maybeSingle()
+          .then(({ data }) => {
+            if (data) setActiveAdDetail(data);
+          });
+      }
+    } catch {}
+  }, []);
+
+  // Handle browser Back / Forward history navigation (mobile swipe-back & desktop back button)
   useEffect(() => {
     const handlePopState = () => {
       try {
         const params = new URLSearchParams(window.location.search);
+
+        // 1. Admin Panel
+        const isAdmin = params.get('admin') === '1' || params.get('admin') === 'true';
+        setAdminOpen(isAdmin);
+
+        // 2. Modals
+        const modal = params.get('modal');
+        setPostAdOpen(modal === 'post');
+        setManageAdOpen(modal === 'manage');
+        setCountryModalOpen(modal === 'country');
+        if (modal !== 'pay') setPaymentAd(null);
+
+        // 3. Ad Detail Page
         const adParam = params.get('ad');
         if (adParam) {
           const found = ads.find(a => a.reference_number === adParam || a.id === adParam);
-          if (found) setActiveAdDetail(found);
+          if (found) {
+            setActiveAdDetail(found);
+          } else {
+            supabase
+              .from('swedpersiska_ads')
+              .select('*')
+              .or(`reference_number.eq.${adParam},id.eq.${adParam}`)
+              .maybeSingle()
+              .then(({ data }) => {
+                if (data) setActiveAdDetail(data);
+              });
+          }
         } else {
           setActiveAdDetail(null);
         }
-      } catch {}
+
+        // 4. Category
+        const cat = params.get('cat');
+        if (cat) {
+          setSelectedCategory(cat);
+        } else if (!params.has('cat') && selectedCategory !== 'all') {
+          setSelectedCategory('all');
+        }
+      } catch (err) {
+        console.error('Error in popstate handler:', err);
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [ads]);
+  }, [ads, selectedCategory]);
 
-  // Sync initial URL on ads fetch
+  // Sync initial URL on ads fetch if ad is specified
   useEffect(() => {
     if (ads.length > 0 && !activeAdDetail) {
       try {
@@ -198,32 +274,150 @@ export default function App() {
     }
   }, [ads]);
 
-  // When clicking an ad, open full page view and update URL
+  // Modal Open / Close Handlers with Browser History Support
+  const handleOpenPostAd = (catId = 'bostad') => {
+    setPostAdCategory(catId);
+    setPostAdOpen(true);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('modal', 'post');
+      window.history.pushState({ modal: 'post' }, '', url.toString());
+    } catch {}
+  };
+
+  const handleClosePostAd = () => {
+    setPostAdOpen(false);
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('modal') === 'post') {
+        url.searchParams.delete('modal');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
+  };
+
+  const handleOpenManageAd = () => {
+    setManageAdOpen(true);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('modal', 'manage');
+      window.history.pushState({ modal: 'manage' }, '', url.toString());
+    } catch {}
+  };
+
+  const handleCloseManageAd = () => {
+    setManageAdOpen(false);
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('modal') === 'manage') {
+        url.searchParams.delete('modal');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
+  };
+
+  const handleOpenCountryModal = () => {
+    setCountryModalOpen(true);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('modal', 'country');
+      window.history.pushState({ modal: 'country' }, '', url.toString());
+    } catch {}
+  };
+
+  const handleCloseCountryModal = () => {
+    setCountryModalOpen(false);
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('modal') === 'country') {
+        url.searchParams.delete('modal');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
+  };
+
+  const handleOpenPayment = (ad) => {
+    setPaymentAd(ad);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('modal', 'pay');
+      window.history.pushState({ modal: 'pay' }, '', url.toString());
+    } catch {}
+  };
+
+  const handleClosePayment = () => {
+    setPaymentAd(null);
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('modal') === 'pay') {
+        url.searchParams.delete('modal');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
+  };
+
+  const handleOpenAdmin = () => {
+    setAdminOpen(true);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('admin', '1');
+      window.history.pushState({ modal: 'admin' }, '', url.toString());
+    } catch {}
+  };
+
+  const handleCloseAdmin = () => {
+    setAdminOpen(false);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('admin');
+      url.searchParams.delete('tab');
+      window.history.replaceState({}, '', url.toString());
+    } catch {}
+  };
+
+  const handleCategoryChange = (catId) => {
+    if (activeAdDetail) handleBackToFeed();
+    setSelectedCategory(catId);
+    try {
+      const url = new URL(window.location.href);
+      if (catId === 'all') {
+        url.searchParams.delete('cat');
+      } else {
+        url.searchParams.set('cat', catId);
+      }
+      window.history.replaceState({}, '', url.toString());
+    } catch {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // When clicking an ad, open full page view and update URL history
   const handleSelectAd = (ad) => {
     setActiveAdDetail(ad);
     try {
       const url = new URL(window.location.href);
       url.searchParams.set('ad', ad.reference_number || ad.id);
-      window.history.pushState({}, '', url.toString());
+      window.history.pushState({ view: 'ad', id: ad.reference_number || ad.id }, '', url.toString());
     } catch {}
     window.scrollTo({ top: 0, behavior: 'smooth' });
     supabase
       .from('swedpersiska_ads')
       .update({ views_count: (ad.views_count || 0) + 1 })
       .eq('id', ad.id)
-      .then(() => {
-        // Updated in background
-      });
+      .then(() => {});
   };
 
   // Back to ads feed
   const handleBackToFeed = () => {
-    setActiveAdDetail(null);
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('ad');
-      window.history.pushState({}, '', url.toString());
-    } catch {}
+    if (window.history.state && window.history.state.view === 'ad') {
+      window.history.back();
+    } else {
+      setActiveAdDetail(null);
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('ad');
+        window.history.replaceState({}, '', url.toString());
+      } catch {}
+    }
   };
 
   // Active country details
@@ -299,7 +493,7 @@ export default function App() {
       {/* Geolocation Scandinavian Detection Pop-Up Modal */}
       <CountryBanner
         isOpen={countryModalOpen}
-        onClose={() => setCountryModalOpen(false)}
+        onClose={handleCloseCountryModal}
         selectedCountry={selectedCountry}
         onSelectCountry={handleCountryChange}
       />
@@ -313,17 +507,10 @@ export default function App() {
         availableCities={availableCities}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onOpenCountryModal={() => setCountryModalOpen(true)}
-        onOpenPostAd={(catId) => {
-          setPostAdCategory(catId || 'bostad');
-          setPostAdOpen(true);
-        }}
-        onOpenManageAd={() => setManageAdOpen(true)}
-        onSelectCategory={(catId) => {
-          if (activeAdDetail) handleBackToFeed();
-          setSelectedCategory(catId);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onOpenCountryModal={handleOpenCountryModal}
+        onOpenPostAd={handleOpenPostAd}
+        onOpenManageAd={handleOpenManageAd}
+        onSelectCategory={handleCategoryChange}
       />
 
       {/* Spacer for Fixed Top Navbar */}
@@ -345,7 +532,7 @@ export default function App() {
           lang={lang}
           onBack={handleBackToFeed}
           onSelectAd={handleSelectAd}
-          onOpenPromote={(targetAd) => setPaymentAd(targetAd)}
+          onOpenPromote={(targetAd) => handleOpenPayment(targetAd)}
         />
       ) : (
         <>
@@ -578,37 +765,24 @@ export default function App() {
       <Footer
         siteName={siteName}
         logoUrl={logoUrl}
-        onSelectCategory={(catId) => {
-          if (activeAdDetail) handleBackToFeed();
-          setSelectedCategory(catId);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onSelectCategory={handleCategoryChange}
         onSelectCity={(cityId) => {
           setSelectedCity(cityId);
           window.scrollTo({ top: 380, behavior: 'smooth' });
         }}
-        onOpenPostAd={() => {
-          setPostAdCategory('bostad');
-          setPostAdOpen(true);
-        }}
-        onOpenManageAd={() => setManageAdOpen(true)}
-        onOpenAdmin={() => setAdminOpen(true)}
+        onOpenPostAd={() => handleOpenPostAd('bostad')}
+        onOpenManageAd={handleOpenManageAd}
+        onOpenAdmin={handleOpenAdmin}
       />
 
       {/* Mobile Sticky Bottom Menu for Collections & Quick Actions */}
       <MobileBottomNav
         selectedCategory={selectedCategory}
         selectedCountry={selectedCountry}
-        onSelectCategory={(catId) => {
-          if (activeAdDetail) handleBackToFeed();
-          setSelectedCategory(catId);
-        }}
-        onOpenCountryModal={() => setCountryModalOpen(true)}
-        onOpenPostAd={() => {
-          setPostAdCategory('bostad');
-          setPostAdOpen(true);
-        }}
-        onOpenManageAd={() => setManageAdOpen(true)}
+        onSelectCategory={handleCategoryChange}
+        onOpenCountryModal={handleOpenCountryModal}
+        onOpenPostAd={() => handleOpenPostAd('bostad')}
+        onOpenManageAd={handleOpenManageAd}
       />
 
       {/* MODAL: Stripe Payment for VIP Ad Promotion */}
@@ -618,7 +792,7 @@ export default function App() {
           price={stripeSettings?.vipPrice || 99}
           currency={stripeSettings?.currency || 'SEK'}
           stripeSettings={stripeSettings}
-          onClose={() => setPaymentAd(null)}
+          onClose={handleClosePayment}
           onSuccess={(promotedAd) => {
             fetchAds();
             if (activeAdDetail && activeAdDetail.id === promotedAd.id) {
@@ -635,12 +809,12 @@ export default function App() {
           lang={lang}
           initialCategory={postAdCategory}
           selectedCountry={selectedCountry}
-          onClose={() => setPostAdOpen(false)}
+          onClose={handleClosePostAd}
           onCreated={(newAd, wantVip) => {
             fetchAds();
             if (wantVip) {
-              setPostAdOpen(false);
-              setPaymentAd(newAd);
+              handleClosePostAd();
+              handleOpenPayment(newAd);
             } else {
               showToast(`آگهی با کد مرجع ${newAd.reference_number} با موفقیت ثبت شد.`);
             }
@@ -652,7 +826,7 @@ export default function App() {
       {manageAdOpen && (
         <ManageAdModal
           lang={lang}
-          onClose={() => setManageAdOpen(false)}
+          onClose={handleCloseManageAd}
           onDeleted={(deletedId) => {
             setAds(ads.filter(a => a.id !== deletedId));
             showToast(lang === 'fa' ? 'آگهی حذف شد.' : 'Annonsen har raderats.');
@@ -667,7 +841,7 @@ export default function App() {
       {/* MODAL 4: Admin Panel */}
       {adminOpen && (
         <AdminPanel
-          onClose={() => setAdminOpen(false)}
+          onClose={handleCloseAdmin}
           onRefreshAds={() => {
             fetchAds();
             fetchSettings();

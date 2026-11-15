@@ -31,16 +31,46 @@ import { supabase } from '../lib/supabase';
 import { CATEGORIES, COUNTRIES } from '../lib/translations';
 
 export default function AdminPanel({ onClose, onRefreshAds }) {
-  // Authentication
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Authentication with localStorage session persistence so refresh does NOT kick admin out
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    try {
+      return localStorage.getItem('swedpersiska_admin_auth') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [adminEmailInput, setAdminEmailInput] = useState('swedpersiska@gmail.com');
   const [adminPassInput, setAdminPassInput] = useState('');
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Active view: 'overview' | 'ads' | 'monetization' | 'security' | 'settings'
-  const [activeTab, setActiveTab] = useState('overview');
+  // Active view: 'overview' | 'ads' | 'monetization' | 'security' | 'settings' with URL & localStorage persistence
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam && ['overview', 'ads', 'monetization', 'security', 'settings'].includes(tabParam)) {
+        return tabParam;
+      }
+      const saved = localStorage.getItem('swedpersiska_admin_tab');
+      if (saved && ['overview', 'ads', 'monetization', 'security', 'settings'].includes(saved)) {
+        return saved;
+      }
+    } catch {}
+    return 'overview';
+  });
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setMobileSidebarOpen(false);
+    try {
+      localStorage.setItem('swedpersiska_admin_tab', tab);
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', tab);
+      window.history.replaceState({ modal: 'admin', tab }, '', url.toString());
+    } catch {}
+  };
 
   // Ads state
   const [ads, setAds] = useState([]);
@@ -130,30 +160,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }, 3000);
   };
 
-  // Login verification
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setLoginError('');
-
-    // Check Cloudflare Anti-Bot if enabled
-    if (turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false) {
-      if (!adminTurnstileToken) {
-        setLoginError('لطفاً تاییدیه امنیتی کلودفلر (Turnstile) را تیک بزنید.');
-        return;
-      }
-    }
-
-    const cleanedEmail = adminEmailInput.trim().toLowerCase();
-    const cleanedPass = adminPassInput.trim();
-
-    if (cleanedEmail === 'swedpersiska@gmail.com' && cleanedPass === 'swed2026') {
-      setIsAuthenticated(true);
-      fetchAdminData();
-    } else {
-      setLoginError('ایمیل یا رمز عبور اشتباه است.');
-    }
-  };
-
   // Fetch all ads and settings
   const fetchAdminData = async () => {
     setLoading(true);
@@ -213,6 +219,54 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       setLoading(false);
     }
   };
+
+  // Login verification
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setLoginError('');
+
+    // Check Cloudflare Anti-Bot if enabled
+    if (turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false) {
+      if (!adminTurnstileToken) {
+        setLoginError('لطفاً تاییدیه امنیتی کلودفلر (Turnstile) را تیک بزنید.');
+        return;
+      }
+    }
+
+    const cleanedEmail = adminEmailInput.trim().toLowerCase();
+    const cleanedPass = adminPassInput.trim();
+
+    if (cleanedEmail === 'swedpersiska@gmail.com' && cleanedPass === 'swed2026') {
+      setIsAuthenticated(true);
+      try {
+        localStorage.setItem('swedpersiska_admin_auth', 'true');
+      } catch {}
+      fetchAdminData();
+    } else {
+      setLoginError('ایمیل یا رمز عبور اشتباه است.');
+    }
+  };
+
+  // Logout handler
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    try {
+      localStorage.removeItem('swedpersiska_admin_auth');
+      localStorage.removeItem('swedpersiska_admin_tab');
+      const url = new URL(window.location.href);
+      url.searchParams.delete('admin');
+      url.searchParams.delete('tab');
+      window.history.replaceState({}, '', url.toString());
+    } catch {}
+    onClose();
+  };
+
+  // Auto-fetch data on mount if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchAdminData();
+    }
+  }, [isAuthenticated]);
 
   // Update country of an ad
   const updateAdCountry = async (adId, newCountry) => {
@@ -600,7 +654,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             
             <button
               type="button"
-              onClick={() => { setActiveTab('overview'); setMobileSidebarOpen(false); }}
+              onClick={() => handleTabChange('overview')}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
                 activeTab === 'overview'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
@@ -622,7 +676,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
             <button
               type="button"
-              onClick={() => { setActiveTab('ads'); setMobileSidebarOpen(false); }}
+              onClick={() => handleTabChange('ads')}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
                 activeTab === 'ads'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
@@ -649,7 +703,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
             <button
               type="button"
-              onClick={() => { setActiveTab('monetization'); setMobileSidebarOpen(false); }}
+              onClick={() => handleTabChange('monetization')}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
                 activeTab === 'monetization'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
@@ -674,7 +728,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
             <button
               type="button"
-              onClick={() => { setActiveTab('security'); setMobileSidebarOpen(false); }}
+              onClick={() => handleTabChange('security')}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
                 activeTab === 'security'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
@@ -694,7 +748,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
             <button
               type="button"
-              onClick={() => { setActiveTab('settings'); setMobileSidebarOpen(false); }}
+              onClick={() => handleTabChange('settings')}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
                 activeTab === 'settings'
                   ? 'bg-white text-zinc-950 font-black shadow-xs'
@@ -724,10 +778,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           <button
             type="button"
             onClick={onClose}
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-700/60 transition-all cursor-pointer"
+            title="مشاهده سایت اصلی"
+          >
+            <ExternalLink size={13} />
+            <span>مشاهده سایت اصلی</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-900/50 transition-all cursor-pointer"
+            title="خروج کامل از حساب مدیریت"
           >
             <LogOut size={13} />
-            <span>خروج از مدیریت</span>
+            <span>خروج از حساب</span>
           </button>
         </div>
 
@@ -881,7 +946,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('ads')}
+                  onClick={() => handleTabChange('ads')}
                   className="font-bold text-amber-900 hover:underline shrink-0 text-start sm:text-end"
                 >
                   مشاهده لیست آگهی‌ها ←
@@ -907,7 +972,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         key={country.id}
                         onClick={() => {
                           setCountryFilter(country.id);
-                          setActiveTab('ads');
+                          handleTabChange('ads');
                         }}
                         className="p-4 rounded-2xl bg-white hover:bg-stone-50 border border-[#e5e1d7] hover:border-zinc-400 transition-all cursor-pointer shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3 group"
                       >
@@ -969,7 +1034,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setActiveTab('monetization')}
+                    onClick={() => handleTabChange('monetization')}
                     className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
                   >
                     تنظیمات Stripe ←
@@ -997,7 +1062,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setActiveTab('security')}
+                    onClick={() => handleTabChange('security')}
                     className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
                   >
                     تنظیمات فایروال ←
@@ -1021,7 +1086,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setActiveTab('settings')}
+                    onClick={() => handleTabChange('settings')}
                     className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
                   >
                     ویرایش سئو ←
