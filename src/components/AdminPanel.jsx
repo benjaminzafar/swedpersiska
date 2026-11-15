@@ -62,6 +62,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const handleTabChange = (tab) => {
+    playFeedback('click');
     setActiveTab(tab);
     setMobileSidebarOpen(false);
     try {
@@ -159,6 +160,48 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     setTimeout(() => {
       setActionSuccessMsg('');
     }, 3000);
+  };
+
+  // Lightweight Apple-style Synthetic Haptic & Audio Feedback
+  const playFeedback = (type = 'click') => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'click' || type === 'select') {
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.015);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.015);
+      } else if (type === 'vip') {
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+      } else if (type === 'status') {
+        osc.frequency.setValueAtTime(440, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.08);
+      } else if (type === 'delete') {
+        osc.frequency.setValueAtTime(320, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
+      }
+    } catch {}
   };
 
   // Fetch all ads and settings
@@ -287,6 +330,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
   // Update country of an ad
   const updateAdCountry = async (adId, newCountry) => {
+    playFeedback('click');
     try {
       const { error } = await supabase
         .from('swedpersiska_ads')
@@ -305,6 +349,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
   // Toggle Featured / VIP
   const toggleFeatured = async (ad) => {
+    playFeedback('vip');
     try {
       const nextVal = !ad.is_featured;
       const { error } = await supabase
@@ -323,6 +368,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
   // Toggle Status (Active / Hidden)
   const toggleStatus = async (ad) => {
+    playFeedback('status');
     try {
       const nextStatus = ad.status === 'active' ? 'hidden' : 'active';
       const { error } = await supabase
@@ -344,6 +390,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     if (!window.confirm('آیا از حذف همیشگی این آگهی اطمینان دارید؟ این عملیات غیرقابل بازگشت است.')) {
       return;
     }
+    playFeedback('delete');
     try {
       const { error } = await supabase
         .from('swedpersiska_ads')
@@ -670,154 +717,111 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   // - Pure Crisp White Cards (#ffffff) with Warm Borders
   // ========================================================
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#f0f3fa] text-zinc-900 font-vazir select-none overflow-hidden" dir="rtl">
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#f5f6fa] text-zinc-900 font-vazir select-none overflow-hidden" dir="rtl">
       
-      {/* Toast Alert */}
+      {/* Apple Dynamic Island Toast */}
       {actionSuccessMsg && (
-        <div className="fixed top-5 end-5 z-50 flex items-center gap-2 rounded-xl bg-zinc-900 text-white px-4 py-2.5 text-xs font-bold shadow-2xl border border-zinc-800 animate-in slide-in-from-top-2 duration-150">
-          <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full bg-zinc-950/90 text-white px-4 py-2 text-xs font-semibold shadow-2xl border border-white/15 backdrop-blur-md animate-in fade-in slide-in-from-top-3 duration-200 select-none">
+          <CheckCircle size={15} className="text-[#34c759] shrink-0" />
           <span>{actionSuccessMsg}</span>
         </div>
       )}
 
       {/* ========================================================
-          MONDAY.COM TOP WORKSPACE BAR
+          APPLE macOS SEQUOIA WINDOW TOOLBAR
       ======================================================== */}
-      <div className="h-12 shrink-0 bg-[#f0f3fa] border-b border-[#dde3ee] px-4 sm:px-6 flex items-center justify-between z-30">
+      <header className="h-12 shrink-0 bg-white/80 backdrop-blur-xl border-b border-black/[0.07] px-4 sm:px-6 flex items-center justify-between z-30 select-none">
         <button
           type="button"
           onClick={onClose}
-          className="h-8 px-3.5 rounded-lg bg-white border border-[#cfd7e6] hover:bg-stone-50 text-xs font-bold text-zinc-800 flex items-center gap-2 shadow-2xs transition-all cursor-pointer active:scale-95"
+          className="group h-8 px-3.5 rounded-full bg-black/[0.04] hover:bg-black/[0.08] border border-black/[0.06] text-xs font-semibold text-zinc-700 flex items-center gap-1.5 active:scale-[0.97] transition-all cursor-pointer"
           title="بازگشت به سایت"
         >
-          <ExternalLink size={13} className="text-stone-500" />
+          <ExternalLink size={13} className="text-zinc-500 group-hover:text-zinc-800 transition-colors" />
           <span>بازگشت به سایت</span>
         </button>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-extrabold text-zinc-900 hidden sm:inline">{siteName || 'سوئد پرشیا'}</span>
-            <span className="text-[10px] text-[#0073ea] bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full font-bold">مدیریت</span>
+            <span className="text-xs font-bold text-zinc-900 tracking-tight hidden sm:inline">{siteName || 'سوئد پرشیا'}</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-[#007aff]/10 text-[#007aff] text-[11px] font-bold border border-[#007aff]/20">
+              مرکز مدیریت
+            </span>
           </div>
-          <div className="relative h-7 w-7 rounded-full bg-zinc-900 text-white font-black text-[11px] flex items-center justify-center border border-zinc-700 shadow-2xs">
-            SP
-            <span className="absolute -bottom-0.5 -end-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+
+          <div className="relative flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full bg-black/[0.03] border border-black/[0.06]">
+            <div className="relative h-6 w-6 rounded-full bg-gradient-to-tr from-[#007aff] to-[#5856d6] text-white font-black text-[10px] flex items-center justify-center shadow-xs">
+              SP
+              <span className="absolute -bottom-0.5 -start-0.5 h-2 w-2 rounded-full bg-[#34c759] ring-2 ring-white" />
+            </div>
+            <span className="text-xs font-medium text-zinc-700 hidden md:inline">Admin</span>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* ========================================================
           MAIN WORKSPACE (Sidebar + Content Area)
       ======================================================== */}
       <div className="flex-1 flex overflow-hidden">
         
-        {/* Monday.com White Administration Sidebar */}
-        <aside className="hidden lg:flex w-60 xl:w-64 shrink-0 bg-white border-s border-[#e5ebf4] flex-col p-4 select-none">
-          <div className="pb-3.5 mb-2 border-b border-[#f0f3f8]">
-            <h2 className="text-xl font-black text-zinc-950 tracking-tight leading-tight">
-              مدیریت سیستم
-            </h2>
-            <span className="text-xs text-[#0073ea] hover:underline cursor-pointer block mt-1 font-medium">
-              راهنما و مستندات
+        {/* Apple macOS Navigation Sidebar */}
+        <aside className="hidden lg:flex w-60 xl:w-64 shrink-0 bg-[#fbfbfd]/80 backdrop-blur-2xl border-s border-black/[0.06] flex-col p-3.5 select-none">
+          <div className="px-2.5 pb-3 mb-2 border-b border-black/[0.05]">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+              سیستم ادمین
             </span>
+            <h2 className="text-base font-extrabold text-zinc-950 tracking-tight mt-0.5">
+              مدیریت سرویس‌ها
+            </h2>
           </div>
 
           {/* Navigation Items */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1">
-            <button
-              type="button"
-              onClick={() => handleTabChange('overview')}
-              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'overview'
-                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
-                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <LayoutDashboard size={16} className={activeTab === 'overview' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                <span>پیشخوان</span>
-              </div>
-            </button>
+          <nav className="flex-1 overflow-y-auto custom-scrollbar space-y-1">
+            {[
+              { id: 'overview', label: 'پیشخوان', icon: LayoutDashboard, badge: null },
+              { id: 'ads', label: 'آگهی‌ها', icon: Layers, badge: ads.length },
+              { id: 'monetization', label: 'درآمد و VIP', icon: CreditCard, badge: 'Stripe' },
+              { id: 'security', label: 'امنیت و ضدبات', icon: ShieldCheck, badge: turnstileSettings.enabled ? 'فعال' : 'خاموش' },
+              { id: 'settings', label: 'تنظیمات و سئو', icon: Settings, badge: null },
+            ].map(item => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
 
-            <button
-              type="button"
-              onClick={() => handleTabChange('ads')}
-              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'ads'
-                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
-                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Layers size={16} className={activeTab === 'ads' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                <span>آگهی‌ها</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
-                activeTab === 'ads' ? 'bg-[#cbe2fc] text-[#0057b8]' : 'bg-stone-100 text-stone-600'
-              }`}>
-                {ads.length}
-              </span>
-            </button>
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => handleTabChange(item.id)}
+                  className={`w-full h-10 flex items-center justify-between px-3 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                    isActive
+                      ? 'bg-[#007aff] text-white shadow-[0_2px_10px_rgba(0,122,255,0.30)] font-semibold'
+                      : 'text-zinc-600 hover:text-zinc-950 hover:bg-black/[0.04] font-medium'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Icon size={16} className={isActive ? 'text-white' : 'text-zinc-500'} />
+                    <span>{item.label}</span>
+                  </div>
 
-            <button
-              type="button"
-              onClick={() => handleTabChange('monetization')}
-              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'monetization'
-                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
-                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <CreditCard size={16} className={activeTab === 'monetization' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                <span>درآمد و VIP</span>
-              </div>
-              <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
-                VIP
-              </span>
-            </button>
+                  {item.badge !== null && (
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                      isActive
+                        ? 'bg-white/20 text-white'
+                        : 'bg-black/[0.05] text-zinc-600'
+                    }`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
 
-            <button
-              type="button"
-              onClick={() => handleTabChange('security')}
-              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'security'
-                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
-                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <ShieldCheck size={16} className={activeTab === 'security' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                <span>امنیت و ضدبات</span>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                turnstileSettings.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-500'
-              }`}>
-                {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleTabChange('settings')}
-              className={`w-full h-10 flex items-center justify-between px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                activeTab === 'settings'
-                  ? 'bg-[#dcebfd] text-[#0073ea] font-bold shadow-2xs'
-                  : 'text-stone-700 hover:text-zinc-950 hover:bg-[#f0f4fa]'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Settings size={16} className={activeTab === 'settings' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                <span>تنظیمات و سئو</span>
-              </div>
-            </button>
-          </div>
-
-          <div className="pt-3 border-t border-[#f0f3f8] space-y-2 mt-auto">
+          <div className="pt-3 border-t border-black/[0.06] mt-auto">
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full h-9 flex items-center justify-center gap-2 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-bold transition-colors cursor-pointer"
+              className="w-full h-9 flex items-center justify-center gap-2 rounded-xl text-[#ff3b30] hover:bg-[#ff3b30]/10 text-xs font-semibold transition-colors cursor-pointer active:scale-[0.98]"
             >
               <LogOut size={14} />
               <span>خروج از حساب</span>
@@ -829,108 +833,68 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         {mobileSidebarOpen && (
           <div className="fixed inset-0 z-50 lg:hidden font-vazir select-none" dir="rtl">
             <div 
-              className="fixed inset-0 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+              className="fixed inset-0 bg-black/40 backdrop-blur-md animate-in fade-in duration-200"
               onClick={() => setMobileSidebarOpen(false)}
             />
             
-            <div className="relative z-10 w-64 max-w-[85vw] h-full bg-white text-zinc-900 flex flex-col border-s border-[#e5ebf4] shadow-2xl animate-in slide-in-from-right duration-200 ease-out">
-              <div className="p-4 flex items-center justify-between border-b border-[#f0f3f8]">
+            <div className="relative z-10 w-64 max-w-[85vw] h-full bg-white/95 backdrop-blur-2xl text-zinc-900 flex flex-col border-s border-black/[0.08] shadow-2xl animate-in slide-in-from-right duration-250 ease-out">
+              <div className="p-4 flex items-center justify-between border-b border-black/[0.06]">
                 <div>
-                  <h2 className="text-lg font-black text-zinc-950">مدیریت سیستم</h2>
-                  <span className="text-xs text-[#0073ea]">سوئد پرشیا CRM</span>
+                  <h2 className="text-base font-extrabold text-zinc-950">مدیریت سیستم</h2>
+                  <span className="text-xs text-[#007aff] font-medium">سوئد پرشیا CRM</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMobileSidebarOpen(false)}
-                  className="h-8 w-8 flex items-center justify-center rounded-lg text-stone-500 hover:bg-stone-100 cursor-pointer"
+                  className="h-8 w-8 flex items-center justify-center rounded-full text-stone-500 hover:bg-black/[0.05] cursor-pointer active:scale-90"
                 >
                   <X size={18} />
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-3 space-y-1">
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('overview')}
-                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
-                    activeTab === 'overview' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <LayoutDashboard size={17} className={activeTab === 'overview' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                    <span>پیشخوان</span>
-                  </div>
-                </button>
+                {[
+                  { id: 'overview', label: 'پیشخوان', icon: LayoutDashboard, badge: null },
+                  { id: 'ads', label: 'آگهی‌ها', icon: Layers, badge: ads.length },
+                  { id: 'monetization', label: 'درآمد و VIP', icon: CreditCard, badge: 'VIP' },
+                  { id: 'security', label: 'امنیت', icon: ShieldCheck, badge: turnstileSettings.enabled ? 'فعال' : 'خاموش' },
+                  { id: 'settings', label: 'تنظیمات', icon: Settings, badge: null },
+                ].map(item => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
 
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('ads')}
-                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
-                    activeTab === 'ads' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Layers size={17} className={activeTab === 'ads' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                    <span>آگهی‌ها</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-stone-100 text-stone-600">
-                    {ads.length}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('monetization')}
-                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
-                    activeTab === 'monetization' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <CreditCard size={17} className={activeTab === 'monetization' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                    <span>درآمد و VIP</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
-                    VIP
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('security')}
-                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
-                    activeTab === 'security' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <ShieldCheck size={17} className={activeTab === 'security' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                    <span>امنیت</span>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    turnstileSettings.enabled ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-500'
-                  }`}>
-                    {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('settings')}
-                  className={`w-full h-11 flex items-center justify-between px-3 rounded-lg text-xs font-semibold ${
-                    activeTab === 'settings' ? 'bg-[#dcebfd] text-[#0073ea] font-bold' : 'text-stone-700'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Settings size={17} className={activeTab === 'settings' ? 'text-[#0073ea]' : 'text-stone-500'} />
-                    <span>تنظیمات</span>
-                  </div>
-                </button>
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleTabChange(item.id)}
+                      className={`w-full h-11 flex items-center justify-between px-3.5 rounded-xl text-xs transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                        isActive
+                          ? 'bg-[#007aff] text-white font-bold shadow-[0_2px_8px_rgba(0,122,255,0.28)]'
+                          : 'text-stone-700 hover:bg-black/[0.04] font-medium'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Icon size={17} className={isActive ? 'text-white' : 'text-stone-500'} />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.badge !== null && (
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                          isActive ? 'bg-white/20 text-white' : 'bg-black/[0.05] text-stone-600'
+                        }`}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
 
-              <div className="p-3 border-t border-[#f0f3f8]">
+              <div className="p-3 border-t border-black/[0.06]">
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="w-full h-10 flex items-center justify-center gap-2 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-bold"
+                  className="w-full h-10 flex items-center justify-center gap-2 rounded-xl text-[#ff3b30] hover:bg-[#ff3b30]/10 text-xs font-bold active:scale-[0.98] transition-colors"
                 >
                   <LogOut size={14} />
                   <span>خروج</span>
@@ -1005,96 +969,108 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </h3>
                 </div>
 
-                {/* The 4 Monday.com Colored KPI Cards (2x2 Grid) */}
+                {/* Apple Widget Style KPI Cards (2x2 Grid) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   
-                  {/* 1. Purple Card: Summary */}
-                  <div className="p-5 rounded-2xl bg-[#6155f5] text-white shadow-xs space-y-4">
-                    <div className="flex items-center justify-between text-xs font-semibold text-white/90">
-                      <span className="font-bold text-sm">خلاصه آگهی‌ها (Summary)</span>
-                      <span className="text-[11px] text-white/80">۳۰ روز اخیر</span>
+                  {/* 1. SF Purple Widget: Summary */}
+                  <div className="relative p-5 rounded-3xl bg-gradient-to-br from-[#af52de] via-[#7d3cb5] to-[#5856d6] text-white shadow-[0_8px_20px_-4px_rgba(175,82,222,0.35)] border border-white/20 overflow-hidden">
+                    <div className="absolute top-0 end-0 -mt-8 -me-8 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
+                    
+                    <div className="flex items-center justify-between text-xs font-medium text-white/90">
+                      <span className="font-bold text-sm tracking-tight">خلاصه آگهی‌ها</span>
+                      <span className="px-2 py-0.5 rounded-full bg-white/15 text-[10px] font-semibold backdrop-blur-md">۳۰ روز اخیر</span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 text-center pt-2">
+                    <div className="grid grid-cols-3 gap-2 text-center pt-4">
                       <div>
-                        <div className="text-3xl font-black">{totalAds}</div>
-                        <span className="text-[11px] text-white/80 block mt-1">کل آگهی‌ها</span>
+                        <div className="text-3xl font-extrabold tracking-tight tabular-nums">{totalAds}</div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">کل آگهی‌ها</span>
                       </div>
                       <div>
-                        <div className="text-3xl font-black">{activeAds}</div>
-                        <span className="text-[11px] text-white/80 block mt-1">منتشرشده</span>
+                        <div className="text-3xl font-extrabold tracking-tight tabular-nums">{activeAds}</div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">منتشر شده</span>
                       </div>
                       <div>
-                        <div className="text-3xl font-black">{vipAds}</div>
-                        <span className="text-[11px] text-white/80 block mt-1">ویژه VIP</span>
+                        <div className="text-3xl font-extrabold tracking-tight tabular-nums">{vipAds}</div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">ویژه VIP</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* 2. Cyan / Sky Blue Card: Storage & Traffic */}
-                  <div className="p-5 rounded-2xl bg-[#00a8ff] text-white shadow-xs space-y-4">
-                    <div className="flex items-center justify-between text-xs font-semibold text-white/90">
-                      <span className="font-bold text-sm">ترافیک و بازدیدها (Traffic)</span>
-                      <span className="text-[11px] text-white/80">کلیک‌ها</span>
+                  {/* 2. SF Blue Widget: Traffic & Views */}
+                  <div className="relative p-5 rounded-3xl bg-gradient-to-br from-[#007aff] via-[#0066d6] to-[#5ac8fa] text-white shadow-[0_8px_20px_-4px_rgba(0,122,255,0.35)] border border-white/20 overflow-hidden">
+                    <div className="absolute top-0 end-0 -mt-8 -me-8 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
+
+                    <div className="flex items-center justify-between text-xs font-medium text-white/90">
+                      <span className="font-bold text-sm tracking-tight">ترافیک و بازدیدها</span>
+                      <span className="px-2 py-0.5 rounded-full bg-white/15 text-[10px] font-semibold backdrop-blur-md">کلیک‌ها</span>
                     </div>
 
-                    <div className="pt-2 space-y-2">
-                      <div className="w-full bg-white/25 h-3 rounded-full overflow-hidden p-0.5">
-                        <div className="bg-white h-full rounded-full w-full opacity-90" />
+                    <div className="pt-4 space-y-2">
+                      <div className="w-full bg-white/20 h-2.5 rounded-full overflow-hidden p-0.5">
+                        <div className="bg-white h-full rounded-full w-[85%] shadow-xs transition-all duration-500" />
                       </div>
                       <div className="text-center pt-1">
-                        <div className="text-2xl font-black">{totalViews.toLocaleString('fa-IR')} کلیک</div>
-                        <span className="text-[11px] text-white/80 block mt-0.5">مجموع بازدید ثبت‌شده آگهی‌ها</span>
+                        <div className="text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums">
+                          {totalViews.toLocaleString('fa-IR')} <span className="text-base font-bold">کلیک</span>
+                        </div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">مجموع بازدیدهای ثبت‌شده کاربران</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* 3. Forest Green Card: People activity */}
-                  <div className="p-5 rounded-2xl bg-[#00b894] text-white shadow-xs space-y-4">
-                    <div className="flex items-center justify-between text-xs font-semibold text-white/90">
-                      <span className="font-bold text-sm">فعالیت کاربران (People activity)</span>
-                      <span className="text-[11px] text-white/80">۴ کشور</span>
+                  {/* 3. SF Mint Widget: Users & Health */}
+                  <div className="relative p-5 rounded-3xl bg-gradient-to-br from-[#30d158] via-[#248a3d] to-[#00b894] text-white shadow-[0_8px_20px_-4px_rgba(48,209,88,0.35)] border border-white/20 overflow-hidden">
+                    <div className="absolute top-0 end-0 -mt-8 -me-8 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
+
+                    <div className="flex items-center justify-between text-xs font-medium text-white/90">
+                      <span className="font-bold text-sm tracking-tight">فعالیت کاربران</span>
+                      <span className="px-2 py-0.5 rounded-full bg-white/15 text-[10px] font-semibold backdrop-blur-md">۴ کشور</span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 text-center pt-2">
+                    <div className="grid grid-cols-3 gap-2 text-center pt-4">
                       <div>
-                        <div className="text-3xl font-black">
+                        <div className="text-3xl font-extrabold tracking-tight tabular-nums">
                           {new Set(ads.map(a => a.contact_phone || a.contact_email || a.id)).size}
                         </div>
-                        <span className="text-[11px] text-white/80 block mt-1">کاربران فعال</span>
+                        <span className="text-[11px] text-white/80 block mt-0.5">آگهی‌دهندگان</span>
                       </div>
                       <div>
-                        <div className="text-3xl font-black">۴</div>
-                        <span className="text-[11px] text-white/80 block mt-1">کشورها</span>
+                        <div className="text-3xl font-extrabold tracking-tight tabular-nums">۴</div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">کشورها</span>
                       </div>
                       <div>
-                        <div className="text-3xl font-black">۱۰۰٪</div>
-                        <span className="text-[11px] text-white/80 block mt-1">پایداری</span>
+                        <div className="text-3xl font-extrabold tracking-tight tabular-nums">۱۰۰٪</div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">پایداری سرور</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* 4. Warm Gold / Amber Card: Revenue & VIP */}
-                  <div className="p-5 rounded-2xl bg-[#f59e0b] text-white shadow-xs space-y-4">
-                    <div className="flex items-center justify-between text-xs font-semibold text-white/90">
-                      <span className="font-bold text-sm">فروش و درگاه (Revenue)</span>
-                      <span className="text-[11px] text-white/80">Stripe</span>
+                  {/* 4. SF Orange Widget: Revenue & VIP */}
+                  <div className="relative p-5 rounded-3xl bg-gradient-to-br from-[#ff9500] via-[#e07500] to-[#f59e0b] text-white shadow-[0_8px_20px_-4px_rgba(255,149,0,0.35)] border border-white/20 overflow-hidden">
+                    <div className="absolute top-0 end-0 -mt-8 -me-8 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
+
+                    <div className="flex items-center justify-between text-xs font-medium text-white/90">
+                      <span className="font-bold text-sm tracking-tight">درآمد و فروش VIP</span>
+                      <span className="px-2 py-0.5 rounded-full bg-white/15 text-[10px] font-semibold backdrop-blur-md">Stripe</span>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 text-center pt-2">
+                    <div className="grid grid-cols-3 gap-2 text-center pt-4">
                       <div>
-                        <div className="text-2xl font-black">
-                          {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('fa-IR')} kr
+                        <div className="text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums">
+                          {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('fa-IR')} <span className="text-xs font-bold">kr</span>
                         </div>
-                        <span className="text-[11px] text-white/80 block mt-1">درآمد کل</span>
+                        <span className="text-[11px] text-white/80 block mt-0.5">درآمد کل</span>
                       </div>
                       <div>
-                        <div className="text-3xl font-black">{vipAds}</div>
-                        <span className="text-[11px] text-white/80 block mt-1">سفارش VIP</span>
+                        <div className="text-3xl font-extrabold tracking-tight tabular-nums">{vipAds}</div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">سفارش VIP</span>
                       </div>
                       <div>
-                        <div className="text-2xl font-black">{stripeSettings.vipPrice} kr</div>
-                        <span className="text-[11px] text-white/80 block mt-1">تعرفه پایه</span>
+                        <div className="text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums">
+                          {stripeSettings.vipPrice} <span className="text-xs font-bold">kr</span>
+                        </div>
+                        <span className="text-[11px] text-white/80 block mt-0.5">تعرفه پایه</span>
                       </div>
                     </div>
                   </div>
@@ -1155,42 +1131,46 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 {/* Filter Controls Header */}
                 <div className="p-3.5 sm:p-4 border-b border-[#e5ebf4] space-y-3 bg-white">
                   
-                  {/* Country Filter Tabs */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-                    <span className="text-xs font-bold text-stone-500 shrink-0 pe-1">کشور:</span>
+                  {/* Apple macOS Segmented Control for Country Filter */}
+                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                    <span className="text-xs font-semibold text-zinc-500 shrink-0">کشور:</span>
                     
-                    <button
-                      type="button"
-                      onClick={() => setCountryFilter('all')}
-                      className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                        countryFilter === 'all'
-                          ? 'bg-zinc-900 text-white shadow-xs'
-                          : 'bg-stone-100 text-stone-600 hover:text-zinc-900 border border-stone-200'
-                      }`}
-                    >
-                      همه ({ads.length})
-                    </button>
+                    <div className="p-1 rounded-xl bg-black/[0.04] border border-black/[0.05] inline-flex items-center gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => { playFeedback('select'); setCountryFilter('all'); }}
+                        className={`min-h-[30px] px-3 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 select-none active:scale-95 cursor-pointer ${
+                          countryFilter === 'all'
+                            ? 'bg-white text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.1)] font-bold'
+                            : 'text-zinc-600 hover:text-zinc-950 hover:bg-white/40'
+                        }`}
+                      >
+                        همه ({ads.length})
+                      </button>
 
-                    {COUNTRIES.map(country => {
-                      const count = ads.filter(a => a.country === country.id || (!a.country && country.id === 'se')).length;
-                      const isSelected = countryFilter === country.id;
+                      {COUNTRIES.map(country => {
+                        const count = ads.filter(a => a.country === country.id || (!a.country && country.id === 'se')).length;
+                        const isSelected = countryFilter === country.id;
 
-                      return (
-                        <button
-                          key={country.id}
-                          type="button"
-                          onClick={() => setCountryFilter(country.id)}
-                          className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
-                            isSelected
-                              ? 'bg-zinc-900 text-white shadow-xs'
-                              : 'bg-stone-100 text-stone-600 hover:text-zinc-900 border border-stone-200'
-                          }`}
-                        >
-                          <span>{country.nameFa}</span>
-                          <span className="text-[10px] opacity-80 font-mono font-bold">({count})</span>
-                        </button>
-                      );
-                    })}
+                        return (
+                          <button
+                            key={country.id}
+                            type="button"
+                            onClick={() => { playFeedback('select'); setCountryFilter(country.id); }}
+                            className={`min-h-[30px] px-3 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 select-none flex items-center gap-1.5 active:scale-95 cursor-pointer ${
+                              isSelected
+                                ? 'bg-white text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.1)] font-bold'
+                                : 'text-zinc-600 hover:text-zinc-950 hover:bg-white/40'
+                            }`}
+                          >
+                            <span>{country.nameFa}</span>
+                            <span className={`text-[10px] font-mono ${isSelected ? 'text-[#007aff]' : 'opacity-60'}`}>
+                              ({count})
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Search & Category / Status filters */}
@@ -1250,15 +1230,19 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         <div
                           key={ad.id}
                           onClick={() => {
+                            playFeedback('select');
                             setSelectedAdId(ad.id);
                             setMobileDetailOpen(true);
                           }}
-                          className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                          className={`relative p-3.5 rounded-2xl border transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 active:scale-[0.99] select-none ${
                             isSelected
-                              ? 'bg-blue-50/40 border-[#0073ea] ring-2 ring-[#0073ea]/20 shadow-xs'
-                              : 'bg-white border-[#e5ebf4] hover:border-[#0073ea]/50 shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
+                              ? 'bg-[#007aff]/5 border-[#007aff] shadow-xs ring-1 ring-[#007aff]/30'
+                              : 'bg-white border-[#e5ebf4] hover:border-black/[0.15] shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
                           }`}
                         >
+                          {isSelected && (
+                            <span className="absolute inset-y-3 -end-0.5 w-1 rounded-full bg-[#007aff] shadow-xs" />
+                          )}
                           <div className="flex items-center gap-3 min-w-0">
                             {/* Image thumbnail */}
                             <div className="h-12 w-12 rounded-xl bg-stone-100 border border-stone-200 overflow-hidden shrink-0">
@@ -1360,8 +1344,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               {currentSelectedAd && (
                 <div className="hidden lg:flex w-96 xl:w-[410px] shrink-0 bg-white flex-col overflow-hidden border-s border-[#e5ebf4]">
                   
-                  {/* Header */}
-                  <div className="p-4 border-b border-[#e5ebf4] bg-stone-50/50 flex items-center justify-between">
+                  {/* Sticky Frosted Header */}
+                  <div className="sticky top-0 z-10 p-4 border-b border-[#e5ebf4] bg-white/85 backdrop-blur-md flex items-center justify-between">
                     <div className="space-y-0.5">
                       <span className="text-[10px] font-mono text-stone-500 uppercase tracking-wider block font-bold">
                         اطلاعات آگهی
@@ -1695,10 +1679,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <button
                   type="submit"
                   disabled={savingSettings}
-                  className="h-10 px-6 rounded-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                  className="h-10 px-6 rounded-full bg-[#007aff] hover:bg-[#0071eb] disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-[0_2px_10px_rgba(0,122,255,0.30)] active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Save size={15} />
-                  <span>{savingSettings ? 'در حال ذخیره...' : 'ذخیره تنظیمات'}</span>
+                  <span>{savingSettings ? 'در حال ذخیره‌سازی...' : 'ذخیره تنظیمات'}</span>
                 </button>
               </form>
 
@@ -1861,10 +1845,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <button
                   type="submit"
                   disabled={savingSettings}
-                  className="h-10 px-6 rounded-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                  className="h-10 px-6 rounded-full bg-[#007aff] hover:bg-[#0071eb] disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-[0_2px_10px_rgba(0,122,255,0.30)] active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Save size={15} />
-                  <span>{savingSettings ? 'در حال ذخیره...' : 'ذخیره تنظیمات'}</span>
+                  <span>{savingSettings ? 'در حال ذخیره‌سازی...' : 'ذخیره تنظیمات'}</span>
                 </button>
               </form>
 
@@ -1955,7 +1939,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <button
                     type="submit"
                     disabled={savingSettings}
-                    className="h-10 px-5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                    className="h-10 px-5 rounded-full bg-[#007aff] hover:bg-[#0071eb] text-white font-bold text-xs flex items-center gap-2 shadow-[0_2px_10px_rgba(0,122,255,0.30)] active:scale-[0.98] transition-all cursor-pointer"
                   >
                     <Save size={15} />
                     <span>ذخیره مشخصات</span>
@@ -2046,7 +2030,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     <button
                       type="submit"
                       disabled={savingSettings}
-                      className="h-10 px-5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                      className="h-10 px-5 rounded-full bg-[#007aff] hover:bg-[#0071eb] text-white font-bold text-xs flex items-center gap-2 shadow-[0_2px_10px_rgba(0,122,255,0.30)] active:scale-[0.98] transition-all cursor-pointer"
                     >
                       <Save size={15} />
                       <span>ذخیره سئو</span>
@@ -2064,23 +2048,26 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       </div>
 
       {/* ========================================================
-          SINGLE MOBILE DETAILS DRAWER (Clean & Short)
+          SINGLE MOBILE DETAILS DRAWER (Apple iOS 18 Sheet)
       ======================================================== */}
       {mobileDetailOpen && currentSelectedAd && (
-        <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden">
+        <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden font-vazir" dir="rtl">
           <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            className="fixed inset-0 bg-black/40 backdrop-blur-md animate-in fade-in duration-200"
             onClick={() => setMobileDetailOpen(false)}
           />
-          <div className="relative w-full max-h-[85vh] bg-white rounded-t-3xl border-t border-[#e5ebf4] p-5 overflow-y-auto custom-scrollbar z-10 space-y-4 text-zinc-900">
-            <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+          <div className="relative w-full max-h-[88vh] bg-white rounded-t-[28px] border-t border-black/[0.08] p-5 pb-8 overflow-y-auto custom-scrollbar z-10 space-y-4 text-zinc-900 shadow-2xl animate-in slide-in-from-bottom duration-250 ease-out">
+            {/* Tactile Grab Handle */}
+            <div className="w-12 h-1.5 bg-stone-300 rounded-full mx-auto -mt-1 mb-2 shrink-0" />
+
+            <div className="flex items-center justify-between pb-3 border-b border-black/[0.06]">
               <h3 className="text-sm font-black text-zinc-900 truncate max-w-[240px]">
                 {currentSelectedAd.title}
               </h3>
               <button
                 type="button"
                 onClick={() => setMobileDetailOpen(false)}
-                className="p-1.5 rounded-full text-stone-500 hover:text-zinc-900 hover:bg-stone-100"
+                className="h-8 w-8 flex items-center justify-center rounded-full text-stone-500 hover:text-zinc-900 hover:bg-black/[0.05] active:scale-90"
               >
                 <X size={18} />
               </button>
