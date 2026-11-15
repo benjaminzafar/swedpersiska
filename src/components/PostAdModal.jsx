@@ -5,9 +5,7 @@ import {
   KeyRound, 
   Check, 
   Copy, 
-  AlertCircle,
-  Crown,
-  Sparkles
+  AlertCircle
 } from 'lucide-react';
 import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supabase';
 import { COUNTRIES, CATEGORIES, t } from '../lib/translations';
@@ -558,54 +556,31 @@ export default function PostAdModal({
                 </div>
               </div>
 
-              {/* VIP Promotion Upgrade Box */}
-              <div 
-                onClick={() => setWantVipPromotion(!wantVipPromotion)}
-                className={`rounded-2xl border p-4 transition-all cursor-pointer select-none space-y-2.5 ${
+              {/* VIP Promotion Upgrade Box - Clean & Minimal */}
+              <label 
+                className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
                   wantVipPromotion 
-                    ? 'bg-gradient-to-br from-blue-50 to-indigo-50/70 border-blue-400 ring-2 ring-blue-200' 
-                    : 'bg-slate-50/80 hover:bg-slate-50 border-slate-200'
+                    ? 'bg-blue-50/80 border-blue-500 ring-1 ring-blue-500' 
+                    : 'bg-slate-50 hover:bg-slate-100/80 border-slate-200'
                 }`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-2.5">
-                    <input
-                      type="checkbox"
-                      checked={wantVipPromotion}
-                      onChange={(e) => setWantVipPromotion(e.target.checked)}
-                      className="mt-1 h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black text-slate-950">ارتقا به آگهی ویژه (VIP Promoted)</span>
-                        <span className="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[9.5px] font-bold">پیشنهاد ویژه</span>
-                      </div>
-                      <p className="text-[11px] text-slate-600 leading-relaxed">
-                        نمایش در صدر آگهی‌ها و ۴ جایگاه ویژه در سایدبار تمام صفحات برای جذب ۳ برابری مشتریان.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-left shrink-0">
-                    <span className="text-sm font-black text-blue-700">۹۹ کرون</span>
-                    <span className="text-[10px] text-slate-400 block">۳۰ روز اعتبار</span>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={wantVipPromotion}
+                    onChange={(e) => setWantVipPromotion(e.target.checked)}
+                    className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">ارتقا به آگهی ویژه (VIP)</span>
+                    <span className="text-[11px] text-slate-500">نمایش در بالای لیست و سایدبار اختصاصی</span>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-200/60 text-[10.5px] text-slate-600">
-                  <span className="flex items-center gap-1 font-semibold text-emerald-700">
-                    <Check size={12} /> صدر نتایج جستجو
-                  </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1 font-semibold text-blue-700">
-                    <Check size={12} /> ۴ جایگاه ویژه صفحات
-                  </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1 font-semibold text-purple-700">
-                    <Check size={12} /> برچسب اختصاصی ویژه
-                  </span>
+                <div className="text-left shrink-0">
+                  <span className="text-sm font-extrabold text-blue-700">۹۹ kr</span>
                 </div>
-              </div>
+              </label>
 
               {/* Submit CTA */}
               <div className="pt-2">
@@ -617,8 +592,8 @@ export default function PostAdModal({
                   <PlusCircle size={16} />
                   <span>
                     {loading 
-                      ? 'در حال ثبت و ذخیره...' 
-                      : (wantVipPromotion ? 'ثبت آگهی و انتقال به پرداخت امن Stripe' : currentT.postAdBtn)}
+                      ? 'در حال ثبت...' 
+                      : (wantVipPromotion ? 'ثبت و پرداخت (۹۹ kr)' : currentT.postAdBtn)}
                   </span>
                 </button>
               </div>
