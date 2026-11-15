@@ -1,18 +1,26 @@
 import React from 'react';
-import { ShieldCheck, Lock } from 'lucide-react';
+import { ShieldCheck, Lock, PlusCircle, KeyRound } from 'lucide-react';
 import { CATEGORIES } from '../lib/translations';
 
 const currentYear = new Date().getFullYear();
 
-export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) {
-  // Scandinavian cities preview
+export default function Footer({ 
+  siteName = 'سوئد پرشیا',
+  logoUrl = '',
+  onSelectCategory, 
+  onSelectCity, 
+  onOpenPostAd,
+  onOpenManageAd,
+  onOpenAdmin 
+}) {
+  // Scandinavian cities without emoji flags to prevent Windows raw ISO code rendering
   const scandiCities = [
-    { name: 'استکهلم 🇸🇪', id: 'Stockholm' },
-    { name: 'اسلو 🇳🇴', id: 'Oslo' },
-    { name: 'کپنهاگ 🇩🇰', id: 'Copenhagen' },
-    { name: 'یوتبوری 🇸🇪', id: 'Göteborg' },
-    { name: 'مالمو 🇸🇪', id: 'Malmö' },
-    { name: 'هلسینکی 🇫🇮', id: 'Helsinki' },
+    { name: 'استکهلم (سوئد)', id: 'Stockholm' },
+    { name: 'اسلو (نروژ)', id: 'Oslo' },
+    { name: 'کپنهاگ (دانمارک)', id: 'Copenhagen' },
+    { name: 'یوتبوری (سوئد)', id: 'Göteborg' },
+    { name: 'مالمو (سوئد)', id: 'Malmö' },
+    { name: 'هلسینکی (فنلاند)', id: 'Helsinki' },
   ];
 
   return (
@@ -25,10 +33,19 @@ export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) 
           {/* Brand & mission */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs">
-                <span className="font-mono text-emerald-400">SP</span>
-              </div>
-              <span className="font-extrabold text-base text-slate-900 tracking-tight">سوئد پرشیا</span>
+              {logoUrl ? (
+                <img 
+                  src={logoUrl} 
+                  alt={siteName} 
+                  className="h-8 max-w-[120px] object-contain rounded-lg"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-white font-extrabold text-xs">
+                  <span className="font-mono text-emerald-400">SP</span>
+                </div>
+              )}
+              <span className="font-extrabold text-base text-slate-900 tracking-tight">{siteName}</span>
             </div>
             <p className="text-slate-500 leading-relaxed text-xs">
               پلتفرم جامع و رایگان نیازمندی‌ها، رهن و اجاره مسکن، رستوران‌های ایرانی، استخدام و مشاغل برای جامعه ایرانیان و فارسی‌زبانان مقیم سوئد، نروژ، دانمارک و فنلاند.
@@ -45,7 +62,7 @@ export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) 
                 <li key={cat.id}>
                   <button
                     type="button"
-                    onClick={() => onSelectCategory(cat.id)}
+                    onClick={() => onSelectCategory?.(cat.id)}
                     className="hover:text-blue-600 transition-colors text-right cursor-pointer"
                   >
                     {cat.fa}
@@ -65,7 +82,7 @@ export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) 
                 <li key={city.id}>
                   <button
                     type="button"
-                    onClick={() => onSelectCity(city.id)}
+                    onClick={() => onSelectCity?.(city.id)}
                     className="hover:text-blue-600 transition-colors text-right cursor-pointer"
                   >
                     {city.name}
@@ -75,18 +92,60 @@ export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) 
             </ul>
           </div>
 
-          {/* Safe Community Info */}
-          <div className="space-y-3">
+          {/* Quick Access & Admin Login */}
+          <div className="space-y-4">
             <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">
-              امنیت و راهنمای معاملات
+              دسترسی سریع و مدیریت
             </h4>
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3.5 space-y-1.5 text-[11px] leading-relaxed">
+            <ul className="space-y-2.5">
+              {onOpenPostAd && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={onOpenPostAd}
+                    className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors cursor-pointer"
+                  >
+                    <PlusCircle size={13} className="text-blue-500" />
+                    <span>ثبت رایگان آگهی</span>
+                  </button>
+                </li>
+              )}
+              {onOpenManageAd && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={onOpenManageAd}
+                    className="flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors cursor-pointer"
+                  >
+                    <KeyRound size={13} className="text-amber-500" />
+                    <span>پیگیری و مدیریت آگهی</span>
+                  </button>
+                </li>
+              )}
+              {/* Normal admin login link URL */}
+              <li>
+                <a
+                  href="?admin=1"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onOpenAdmin?.();
+                  }}
+                  className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 transition-colors cursor-pointer font-medium"
+                >
+                  <Lock size={13} className="text-slate-400 group-hover:text-blue-600" />
+                  <span>ورود به پنل مدیریت</span>
+                </a>
+              </li>
+            </ul>
+
+            {/* Safe Community Info */}
+            <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 space-y-1 text-[11px] leading-relaxed">
               <div className="flex items-center gap-1.5 font-bold text-slate-800">
-                <ShieldCheck size={15} className="text-emerald-600 shrink-0" />
-                <span>معامله مطمئن و ارتباط مستقیم</span>
+                <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
+                <span>معامله مطمئن و بدون واسطه</span>
               </div>
-              <p className="text-slate-500">
-                هر آگهی دارای کد پیگیری اختصاصی و رمز ۴ رقمی است تا آگهی‌دهنده بتواند در هر زمان آن را ویرایش یا حذف نماید.
+              <p className="text-slate-500 text-[10.5px]">
+                هر آگهی دارای کد پیگیری اختصاصی و رمز ۴ رقمی برای ویرایش یا حذف است.
               </p>
             </div>
           </div>
@@ -96,23 +155,25 @@ export default function Footer({ onSelectCategory, onSelectCity, onOpenAdmin }) 
         {/* Bottom bar */}
         <div className="border-t border-slate-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
           <div>
-            © {currentYear} سوئد پرشیا • SwedPersiska.se
+            © {currentYear} {siteName} • سامانه نیازمندی‌های ایرانیان اسکاندیناوی
           </div>
           
           <div className="flex items-center gap-4">
-            <span>سامانه نیازمندی‌های ایرانیان در سراسر اسکاندیناوی (🇸🇪 سوئد • 🇳🇴 نروژ • 🇩🇰 دانمارک • 🇫🇮 فنلاند)</span>
+            <span className="hidden md:inline text-slate-400">سوئد • نروژ • دانمارک • فنلاند</span>
             
-            {onOpenAdmin && (
-              <button
-                type="button"
-                onClick={onOpenAdmin}
-                className="flex items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer text-[10.5px]"
-                title="ورود مدیریت"
-              >
-                <Lock size={11} />
-                <span>مدیریت</span>
-              </button>
-            )}
+            {/* Standard Login URL in footer */}
+            <a
+              href="?admin=1"
+              onClick={(e) => {
+                e.preventDefault();
+                onOpenAdmin?.();
+              }}
+              className="inline-flex items-center gap-1.5 text-slate-500 hover:text-blue-600 transition-colors cursor-pointer text-[11px] font-medium"
+              title="ورود مدیریت سایت"
+            >
+              <Lock size={12} className="text-slate-400" />
+              <span>ورود مدیریت</span>
+            </a>
           </div>
         </div>
 

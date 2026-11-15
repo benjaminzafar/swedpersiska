@@ -426,6 +426,8 @@ export default function App() {
 
       {/* Community Footer */}
       <Footer
+        siteName={siteName}
+        logoUrl={logoUrl}
         onSelectCategory={(catId) => {
           setSelectedCategory(catId);
           window.scrollTo({ top: 380, behavior: 'smooth' });
@@ -434,6 +436,11 @@ export default function App() {
           setSelectedCity(cityId);
           window.scrollTo({ top: 380, behavior: 'smooth' });
         }}
+        onOpenPostAd={() => {
+          setPostAdCategory('bostad');
+          setPostAdOpen(true);
+        }}
+        onOpenManageAd={() => setManageAdOpen(true)}
         onOpenAdmin={() => setAdminOpen(true)}
       />
 
