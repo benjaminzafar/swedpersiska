@@ -77,6 +77,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [ads, setAds] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef(null);
+  const topSearchRef = useRef(null);
   const [countryFilter, setCountryFilter] = useState('all'); // 'all' | 'se' | 'no' | 'dk' | 'fi'
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'hidden' | 'vip'
@@ -577,40 +578,69 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       // 1. Ctrl+K or Cmd+K: Focus search
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        searchInputRef.current?.focus();
-        return;
-      }
-
-      // 2. Ignore if typing in an input, textarea or select
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
-        if (e.key === 'Escape') {
-          document.activeElement.blur();
+        if (topSearchRef.current) {
+          topSearchRef.current.focus();
+          topSearchRef.current.select();
+        } else if (searchInputRef.current) {
+          searchInputRef.current.focus();
+          searchInputRef.current.select();
         }
         return;
       }
 
-      // 3. Tab Navigation (1-5) on Desktop
+      // 2. Escape Key Multi-Layer Dismissal Stack
+      if (e.key === 'Escape') {
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+          document.activeElement.blur();
+          return;
+        }
+        if (mobileDetailOpen) {
+          setMobileDetailOpen(false);
+          return;
+        }
+        if (mobileSidebarOpen) {
+          setMobileSidebarOpen(false);
+          return;
+        }
+        if (searchQuery) {
+          setSearchQuery('');
+          return;
+        }
+        onClose();
+        return;
+      }
+
+      // 3. Ignore if typing in an input, textarea or select
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+        return;
+      }
+
+      // 4. Tab Navigation (1-5) on Desktop
       if (e.key === '1') handleTabChange('overview');
       else if (e.key === '2') handleTabChange('ads');
       else if (e.key === '3') handleTabChange('monetization');
       else if (e.key === '4') handleTabChange('security');
       else if (e.key === '5') handleTabChange('settings');
 
-      // 4. Arrow navigation through ads in Ads tab
+      // 5. Arrow navigation through ads in Ads tab with auto-scroll
       if (activeTab === 'ads' && filteredAds.length > 0) {
         if (e.key === 'ArrowDown') {
           e.preventDefault();
           const currentId = currentSelectedAd?.id || filteredAds[0].id;
           const currentIndex = filteredAds.findIndex(a => a.id === currentId);
           if (currentIndex < filteredAds.length - 1) {
-            setSelectedAdId(filteredAds[currentIndex + 1].id);
+            const nextId = filteredAds[currentIndex + 1].id;
+            setSelectedAdId(nextId);
+            document.getElementById(`ad-item-${nextId}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
           }
         } else if (e.key === 'ArrowUp') {
           e.preventDefault();
           const currentId = currentSelectedAd?.id || filteredAds[0].id;
           const currentIndex = filteredAds.findIndex(a => a.id === currentId);
           if (currentIndex > 0) {
-            setSelectedAdId(filteredAds[currentIndex - 1].id);
+            const prevId = filteredAds[currentIndex - 1].id;
+            setSelectedAdId(prevId);
+            document.getElementById(`ad-item-${prevId}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
           }
         }
       }
@@ -618,7 +648,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTab, filteredAds, currentSelectedAd]);
+  }, [activeTab, filteredAds, currentSelectedAd, mobileDetailOpen, mobileSidebarOpen, searchQuery, onClose]);
 
   // ========================================================
   // LOGIN SCREEN - Relaxed Obsidian Focus Card
@@ -1012,6 +1042,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <div className="relative w-64 xl:w-72">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
+                ref={topSearchRef}
                 type="search"
                 value={searchQuery}
                 onChange={(e) => {
@@ -1025,7 +1056,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
                 >
                   <X size={13} />
                 </button>
@@ -1122,22 +1153,22 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         </header>
 
         {/* Content Tabs Area */}
-        <div className="flex-1 overflow-hidden flex flex-col">
+        <div className="flex-1 overflow-hidden flex flex-col font-vazir" dir="rtl">
           
           {/* ========================================================
               TAB 1: COMPLETE NT360 OVERVIEW SCREEN
           ======================================================== */}
           {activeTab === 'overview' && (
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto animate-in fade-in duration-150 ease-out">
               
               {/* 1. Top 3 Scandinavian KPI Cards (Exact NT360 Row 1) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 
                 {/* Card 1: TOTAL FÖRSÄLJNING */}
-                <div className="p-5 rounded-3xl bg-white border border-[#ebe6dc] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-3">
+                <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      TOTAL FÖRSÄLJNING (فروش کل)
+                      TOTAL FÖRSÄLJNING
                     </span>
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
                       Netto
@@ -1155,10 +1186,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Card 2: BOKNINGAR & OFFERTER */}
-                <div className="p-5 rounded-3xl bg-white border border-[#ebe6dc] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-3">
+                <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      BOKNINGAR & OFFERTER (آگهی‌ها)
+                      BOKNINGAR & OFFERTER
                     </span>
                     <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
                       +{totalAds} nya
@@ -1176,10 +1207,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Card 3: WEBBORDERFLÖDE */}
-                <div className="p-5 rounded-3xl bg-white border border-[#ebe6dc] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-3">
+                <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      WEBBORDERFLÖDE (ترافیک و پایداری)
+                      WEBBORDERFLÖDE
                     </span>
                     <span className="px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 text-[10px] font-bold border border-teal-200">
                       Alla klara
@@ -1203,7 +1234,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </div>
 
               {/* 2. Signature Operational Flow Card (Exact NT360 Row 2: Bokningsstatus & CRM-flöde) */}
-              <div className="p-6 rounded-3xl bg-white border border-[#ebe6dc] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-5">
+              <div className="p-6 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-5">
                 <div className="flex items-center justify-between pb-3 border-b border-stone-100">
                   <div className="flex items-center gap-3">
                     <div className="h-9 w-9 rounded-xl bg-blue-50 text-[#0073ea] flex items-center justify-center">
@@ -1211,7 +1242,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </div>
                     <div>
                       <h3 className="text-sm font-black text-zinc-900">
-                        Bokningsstatus & CRM-flöde (جریان کاری و وضعیت آگهی‌ها)
+                        Bokningsstatus & CRM-flöde
                       </h3>
                       <p className="text-xs text-stone-500 mt-0.5">
                         Arbetsbelastning och kundärenden genom säljtratten
@@ -1366,10 +1397,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </div>
 
               {/* 4. Recent Live Tickets Feed (Exact NT360 Row 4: Senaste Bokningar & CRM-ärenden) */}
-              <div className="p-6 rounded-3xl bg-white border border-[#ebe6dc] shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-4">
+              <div className="p-6 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-stone-100">
                   <h3 className="text-sm font-black text-zinc-900">
-                    SENASTE BOKNINGAR & CRM-ÄRENDEN (آخرین پرونده‌ها و آگهی‌های ثبت‌شده)
+                    SENASTE BOKNINGAR & CRM-ÄRENDEN
                   </h3>
                   <span className="text-xs text-stone-500">کلیک برای باز کردن در پنل مدیریت</span>
                 </div>
@@ -1435,13 +1466,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               TAB 2: COUNTRY ADS MANAGEMENT (SPLIT CRM VIEW)
           ======================================================== */}
           {activeTab === 'ads' && (
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-hidden rounded-2xl border border-stone-200/80 bg-white animate-in fade-in duration-150 ease-out">
               
               {/* Left/Main Column: Ads List & Filters */}
-              <div className="flex-1 flex flex-col border-s border-[#e5ebf4] overflow-hidden bg-[#f8fafc]">
+              <div className="flex-1 flex flex-col border-e border-stone-200/80 overflow-hidden bg-[#fafaf9]">
                 
                 {/* Filter Controls Header */}
-                <div className="p-3.5 sm:p-4 border-b border-[#e5ebf4] space-y-3 bg-white">
+                <div className="p-3.5 sm:p-4 border-b border-stone-200/80 space-y-3 bg-white">
                   
                   {/* Apple macOS Segmented Control for Country Filter */}
                   <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
@@ -1495,15 +1526,24 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         placeholder="جستجو در عنوان، کد پیگیری، شهر، نام..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-9 rounded-xl bg-stone-50 border border-stone-300 ps-8 pe-3 text-xs text-zinc-900 placeholder-stone-400 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        className="w-full h-9 rounded-xl bg-stone-50 border border-stone-200 ps-8 pe-8 text-xs text-zinc-900 placeholder-stone-400 focus:bg-white focus:border-zinc-900 focus:outline-none"
                       />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchQuery('')}
+                          className="absolute end-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
+                        >
+                          <X size={13} />
+                        </button>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-2">
                       <select
                         value={categoryFilter}
                         onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="h-9 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                        className="h-9 rounded-xl bg-stone-50 border border-stone-200 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
                       >
                         <option value="all">همه دسته‌ها</option>
                         {CATEGORIES.filter(c => c.id !== 'all').map(c => (
@@ -1514,7 +1554,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-9 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                        className="h-9 rounded-xl bg-stone-50 border border-stone-200 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
                       >
                         <option value="all">همه وضعیت‌ها</option>
                         <option value="active">فقط فعال</option>
@@ -1541,6 +1581,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       return (
                         <div
                           key={ad.id}
+                          id={`ad-item-${ad.id}`}
                           onClick={() => {
                             playFeedback('select');
                             setSelectedAdId(ad.id);
@@ -1549,7 +1590,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           className={`relative p-3.5 rounded-2xl border transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 active:scale-[0.99] select-none ${
                             isSelected
                               ? 'bg-[#007aff]/5 border-[#007aff] shadow-xs ring-1 ring-[#007aff]/30'
-                              : 'bg-white border-[#e5ebf4] hover:border-black/[0.15] shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
+                              : 'bg-white border-stone-200/80 hover:border-black/[0.15] shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
                           }`}
                         >
                           {isSelected && (
@@ -1857,7 +1898,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               TAB 3: STRIPE PAYMENT GATEWAY & VIP SETTINGS
           ======================================================== */}
           {activeTab === 'monetization' && (
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full animate-in fade-in duration-150 ease-out">
               
               <div className="border-b border-[#e5ebf4] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
@@ -2005,7 +2046,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               TAB 4: CLOUDFLARE TURNSTILE ANTI-BOT SETTINGS
           ======================================================== */}
           {activeTab === 'security' && (
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full animate-in fade-in duration-150 ease-out">
               
               <div className="border-b border-[#e5ebf4] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
@@ -2171,7 +2212,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               TAB 5: SITE BRANDING & SEO
           ======================================================== */}
           {activeTab === 'settings' && (
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8 space-y-6 max-w-4xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8 space-y-6 max-w-4xl mx-auto w-full animate-in fade-in duration-150 ease-out">
               
               <div className="border-b border-[#e5ebf4] pb-5">
                 <h2 className="text-base font-black text-zinc-900">تنظیمات سایت و سئو</h2>
