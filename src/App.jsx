@@ -282,8 +282,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Hero Section - Soft Nordic Photographic Canvas */}
-      <section className="relative overflow-hidden border-b border-slate-200/70 pt-7 sm:pt-11 pb-9 sm:pb-13 px-3 sm:px-6 lg:px-8 w-full bg-slate-900">
+      {/* Hero Section - Majestic Nordic Cityscape Canvas */}
+      <section className="relative overflow-hidden border-b border-slate-200/80 pt-10 sm:pt-16 pb-12 sm:pb-20 px-3 sm:px-6 lg:px-8 w-full bg-slate-950">
         
         {/* Dynamic Architectural Country Cityscape Background */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
@@ -293,53 +293,38 @@ export default function App() {
             alt={activeHero.cityFa}
             className="w-full h-full object-cover object-center scale-105 transition-all duration-700 ease-out"
           />
-          {/* Gentle Nordic Frosted Scrim Overlay - Soft, non-harsh, human-friendly contrast */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/94 via-white/88 to-[#f8fafc]" />
-          <div className="absolute inset-0 bg-radial from-transparent via-white/30 to-white/70" />
+          {/* Rich Cinematic Contrast Scrim - Makes the photo pop while keeping white text 100% crisp & beautiful */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/50 to-slate-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/40 via-transparent to-slate-950/40" />
+          {/* Subtle bottom fade into the page body */}
+          <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#f8fafc] to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-3 sm:space-y-4">
+        {/* Discreet City Landmark Badge (Corner credit) */}
+        <div className="hidden sm:inline-flex absolute bottom-4 end-5 z-10 items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/75 backdrop-blur-md text-white/90 text-[11px] font-medium border border-white/15 shadow-sm">
+          <MapPin size={11} className="text-blue-400 shrink-0" />
+          <span>{activeHero.cityFa}</span>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-3.5 sm:space-y-4">
           
-          {/* Country Quick Switcher Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
-            {COUNTRIES.map(c => {
-              const isActive = c.id === selectedCountry;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => handleCountryChange(c.id)}
-                  type="button"
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-xs scale-105'
-                      : 'bg-white/85 hover:bg-white text-slate-700 border border-slate-200/80 backdrop-blur-xs'
-                  }`}
-                >
-                  <span className={`h-1.5 w-1.5 rounded-full ${isActive ? 'bg-white animate-pulse' : 'bg-slate-400'}`} />
-                  <span>{c.fa}</span>
-                </button>
-              );
-            })}
+          {/* Nordic Pill Tag */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-md text-white text-[11px] font-bold border border-white/25 shadow-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>پرتال نیازمندی‌های فارسی‌زبانان در سراسر اسکاندیناوی</span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-950 leading-snug sm:leading-tight px-1 break-words">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] leading-snug sm:leading-tight px-1 break-words">
             {heroHeading}
           </h1>
 
-          <p className="text-xs sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed px-2 font-medium">
+          <p className="text-xs sm:text-base text-slate-100 max-w-xl mx-auto leading-relaxed px-2 font-medium drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
             {heroSubheading}
           </p>
 
-          {/* Current City Landmark Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-slate-600 text-[11px] font-semibold border border-slate-200/80 shadow-2xs">
-            <MapPin size={12} className="text-blue-600 shrink-0" />
-            <span>چشم‌انداز اختصاصی:</span>
-            <span className="text-slate-900 font-bold">{activeHero.cityFa}</span>
-          </div>
-
           {/* Meta Floating Search Capsule (Desktop) */}
           <div className="pt-2 px-1 hidden md:block">
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-full p-2 sm:p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-slate-200 hover:border-slate-300 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 sm:gap-1.5 transition-all">
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-full p-2 sm:p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.22)] border border-white/60 max-w-2xl mx-auto flex flex-col sm:flex-row gap-2 sm:gap-1.5 transition-all">
               
               {/* City Dropdown */}
               <div className="relative w-full sm:w-48 shrink-0">
@@ -402,7 +387,7 @@ export default function App() {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
               {featuredAds.map(ad => (
                 <AdCard
                   key={ad.id}
@@ -456,9 +441,9 @@ export default function App() {
 
           {loading ? (
             /* Loading skeletons */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
               {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="h-64 rounded-2xl bg-stone-200/60 animate-pulse" />
+                <div key={i} className="h-56 sm:h-64 rounded-xl sm:rounded-2xl bg-stone-200/60 animate-pulse" />
               ))}
             </div>
           ) : filteredAds.length === 0 ? (
@@ -488,7 +473,7 @@ export default function App() {
             </div>
           ) : (
             /* Ads Grid */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 lg:gap-5">
               {filteredAds.map(ad => (
                 <AdCard
                   key={ad.id}
