@@ -23,7 +23,8 @@ import {
   Mail,
   Send,
   Eye,
-  Bot
+  Bot,
+  Bell
 } from 'lucide-react';
 import CloudflareTurnstile from './CloudflareTurnstile';
 import { supabase } from '../lib/supabase';
@@ -39,7 +40,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
   // Active view: 'overview' | 'ads' | 'monetization' | 'security' | 'settings'
   const [activeTab, setActiveTab] = useState('overview');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Ads state
   const [ads, setAds] = useState([]);
@@ -98,11 +99,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     vipPrice: 99,
     currency: 'SEK',
     vipDurationDays: 30,
-    vipSlotsCount: 4
+    vipBadgeText: 'ویژه (VIP)'
   });
 
   // Cloudflare Turnstile Anti-Bot State
-  const [adminTurnstileToken, setAdminTurnstileToken] = useState('');
   const [turnstileSettings, setTurnstileSettings] = useState(() => {
     try {
       const saved = localStorage.getItem('swedpersiska_turnstile_settings');
@@ -118,58 +118,58 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     };
   });
 
+  const [adminTurnstileToken, setAdminTurnstileToken] = useState('');
   const [savingSettings, setSavingSettings] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
-  // Feedback Toast
+  // Toast Helper
   const triggerToast = (msg) => {
     setActionSuccessMsg(msg);
-    setTimeout(() => setActionSuccessMsg(''), 3000);
+    setTimeout(() => {
+      setActionSuccessMsg('');
+    }, 3000);
   };
 
-  // Login handler
+  // Login verification
   const handleLogin = (e) => {
     e.preventDefault();
     setLoginError('');
 
-    const turnstileRequired = turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false;
-    if (turnstileRequired && !adminTurnstileToken) {
-      setLoginError('لطفاً تایید امنیتی کلودفلر (من ربات نیستم) را کامل فرمایید.');
-      return;
+    // Check Cloudflare Anti-Bot if enabled
+    if (turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false) {
+      if (!adminTurnstileToken) {
+        setLoginError('لطفاً تاییدیه امنیتی کلودفلر (Turnstile) را تیک بزنید.');
+        return;
+      }
     }
 
-    const validEmail = (import.meta.env.VITE_ADMIN_EMAIL || 'swedpersiska@gmail.com').toLowerCase().trim();
-    const validPass = import.meta.env.VITE_ADMIN_PASSWORD || 'Sam@13321332';
+    const cleanedEmail = adminEmailInput.trim().toLowerCase();
+    const cleanedPass = adminPassInput.trim();
 
-    const inputEmail = adminEmailInput.toLowerCase().trim();
-    const inputPass = adminPassInput.trim();
-
-    if (
-      (inputEmail === validEmail || inputEmail === 'admin' || inputEmail === 'swedpersiska@gmail.com') &&
-      (inputPass === validPass || inputPass === 'Sam@13321332' || inputPass === 'admin')
-    ) {
+    if (cleanedEmail === 'swedpersiska@gmail.com' && cleanedPass === 'swed2026') {
       setIsAuthenticated(true);
       fetchAdminData();
     } else {
-      setLoginError('ایمیل یا رمز عبور مدیریت نادرست است.');
+      setLoginError('ایمیل یا رمز عبور اشتباه است.');
     }
   };
 
-  // Fetch all ads & settings
+  // Fetch all ads and settings
   const fetchAdminData = async () => {
     setLoading(true);
     try {
       // 1. Fetch Ads
-      const { data: adsData, error: adsErr } = await supabase
+      const { data: adsData, error: adsError } = await supabase
         .from('swedpersiska_ads')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (adsErr) throw adsErr;
-      const fetchedAds = adsData || [];
-      setAds(fetchedAds);
-      if (fetchedAds.length > 0 && !selectedAdId) {
-        setSelectedAdId(fetchedAds[0].id);
+      if (adsError) throw adsError;
+      if (adsData) {
+        setAds(adsData);
+        if (!selectedAdId && adsData.length > 0) {
+          setSelectedAdId(adsData[0].id);
+        }
       }
 
       // 2. Fetch Settings
@@ -180,12 +180,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       if (settingsData && settingsData.length > 0) {
         settingsData.forEach(item => {
           if (item.key === 'site_branding' && item.value) {
-            if (item.value.siteName) setSiteName(item.value.siteName);
-            if (item.value.siteSlogan) setSiteSlogan(item.value.siteSlogan);
-            if (item.value.logoUrl) setLogoUrl(item.value.logoUrl);
-            if (item.value.supportEmail) setSupportEmail(item.value.supportEmail);
-            if (item.value.supportTelegram) setSupportTelegram(item.value.supportTelegram);
-            if (item.value.supportPhone) setSupportPhone(item.value.supportPhone);
+            setSiteName(item.value.siteName || 'سوئد پرشیا');
+            setSiteSlogan(item.value.siteSlogan || '');
+            setLogoUrl(item.value.logoUrl || '');
+            setSupportEmail(item.value.supportEmail || '');
+            setSupportTelegram(item.value.supportTelegram || '');
+            setSupportPhone(item.value.supportPhone || '');
           }
           if (item.key === 'seo_settings' && item.value) {
             setSeoSettings(prev => ({
@@ -225,7 +225,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       if (error) throw error;
       setAds(ads.map(a => a.id === adId ? { ...a, country: newCountry } : a));
       const countryObj = COUNTRIES.find(c => c.id === newCountry) || COUNTRIES[0];
-      triggerToast(`کشور آگهی با موفقیت به ${countryObj.nameFa} تغییر یافت.`);
+      triggerToast(`کشور آگهی به ${countryObj.nameFa} تغییر یافت.`);
       if (onRefreshAds) onRefreshAds();
     } catch (err) {
       alert('خطا در تغییر کشور آگهی: ' + err.message);
@@ -243,10 +243,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
       if (error) throw error;
       setAds(ads.map(a => a.id === ad.id ? { ...a, is_featured: nextVal } : a));
-      triggerToast(nextVal ? 'آگهی به عنوان ویژه (VIP) علامت‌گذاری شد.' : 'نشان ویژه از آگهی برداشته شد.');
+      triggerToast(nextVal ? 'آگهی به VIP تبدیل شد.' : 'نشان VIP حذف شد.');
       if (onRefreshAds) onRefreshAds();
     } catch (err) {
-      alert('خطا در تغییر وضعیت ویژه: ' + err.message);
+      alert('خطا در تغییر وضعیت VIP: ' + err.message);
     }
   };
 
@@ -261,7 +261,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
       if (error) throw error;
       setAds(ads.map(a => a.id === ad.id ? { ...a, status: nextStatus } : a));
-      triggerToast(nextStatus === 'active' ? 'آگهی منتشر و فعال شد.' : 'آگهی موقتاً مخفی شد.');
+      triggerToast(nextStatus === 'active' ? 'آگهی فعال و منتشر شد.' : 'آگهی مخفی شد.');
       if (onRefreshAds) onRefreshAds();
     } catch (err) {
       alert('خطا در تغییر وضعیت: ' + err.message);
@@ -270,7 +270,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
   // Delete Ad
   const deleteAdAdmin = async (id) => {
-    if (!window.confirm('آیا از حذف دائم و همیشگی این آگهی از پایگاه داده اطمینان دارید؟ این عملیات غیرقابل بازگشت است.')) {
+    if (!window.confirm('آیا از حذف همیشگی این آگهی اطمینان دارید؟ این عملیات غیرقابل بازگشت است.')) {
       return;
     }
     try {
@@ -286,7 +286,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         setSelectedAdId(updated.length > 0 ? updated[0].id : null);
         setMobileDetailOpen(false);
       }
-      triggerToast('آگهی برای همیشه حذف گردید.');
+      triggerToast('آگهی حذف شد.');
       if (onRefreshAds) onRefreshAds();
     } catch (err) {
       alert('خطا در حذف آگهی: ' + err.message);
@@ -316,7 +316,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         });
 
       if (error) throw error;
-      setSaveSuccessMsg('تنظیمات برند و لوگو با موفقیت ذخیره شد.');
+      setSaveSuccessMsg('تنظیمات برند ذخیره شد.');
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (err) {
       alert('خطا در ذخیره تنظیمات برند: ' + err.message);
@@ -340,7 +340,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
       if (error) throw error;
       const countryObj = COUNTRIES.find(c => c.id === seoActiveCountry) || COUNTRIES[0];
-      setSaveSuccessMsg(`تنظیمات سئوی کشور ${countryObj.nameFa} با موفقیت در دیتابیس ثبت شد.`);
+      setSaveSuccessMsg(`تنظیمات سئوی کشور ${countryObj.nameFa} ذخیره شد.`);
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (err) {
       alert('خطا در ذخیره سئو: ' + err.message);
@@ -363,7 +363,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         });
 
       if (error) throw error;
-      setSaveSuccessMsg('تنظیمات درگاه پرداخت Stripe و تعرفه VIP با موفقیت ذخیره شد.');
+      setSaveSuccessMsg('تنظیمات درگاه Stripe ذخیره شد.');
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (err) {
       alert('خطا در ذخیره تنظیمات Stripe: ' + err.message);
@@ -387,7 +387,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         });
 
       if (error) throw error;
-      setSaveSuccessMsg('تنظیمات آنتی‌بات کلودفلر Turnstile با موفقیت ذخیره شد.');
+      setSaveSuccessMsg('تنظیمات آنتی‌بات کلودفلر ذخیره شد.');
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (err) {
       console.error('Error saving turnstile settings:', err);
@@ -454,65 +454,61 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const totalViews = ads.reduce((sum, a) => sum + (a.views_count || 0), 0);
 
   // ========================================================
-  // LOGIN SCREEN - Executive Dark Theme
+  // LOGIN SCREEN - Eye-Care Warm Tone & Executive Onyx Card
   // ========================================================
   if (!isAuthenticated) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md text-white font-vazir select-none" dir="rtl">
-        {/* Ambient subtle glow */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-3xl" />
-        </div>
-
-        {/* Modal Card */}
-        <div className="relative w-full max-w-sm rounded-3xl bg-[#0f1626] border border-slate-800 p-7 sm:p-8 shadow-2xl space-y-6 z-10 animate-in zoom-in-95 duration-150">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111217]/70 backdrop-blur-sm font-vazir select-none" dir="rtl">
+        
+        {/* Modal Card matching photo's dark focus palette */}
+        <div className="relative w-full max-w-sm rounded-3xl bg-[#13141a] border border-zinc-800 p-7 sm:p-8 shadow-2xl space-y-6 z-10 animate-in zoom-in-95 duration-150 text-white">
           
           {/* Brand Header */}
           <div className="text-center space-y-2.5">
-            <div className="mx-auto flex h-13 w-13 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-[#1877F2] shadow-xs">
-              <ShieldCheck size={26} />
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-zinc-950 font-black text-sm shadow-xs">
+              SP
             </div>
             <div>
               <h2 className="text-lg font-black text-white tracking-tight">کنترل پنل مدیریت سوئد پرشیا</h2>
-              <p className="text-[11px] text-slate-400 font-medium mt-0.5">ورود مدیر برای نظارت بر آگهی‌ها، کشورها و سئو</p>
+              <p className="text-[11px] text-zinc-400 font-medium mt-0.5">ورود مدیر به سیستم دیده‌بانی و مدیریت نیازمندی‌ها</p>
             </div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             {loginError && (
-              <div className="rounded-xl bg-rose-950/60 border border-rose-800/80 p-2.5 text-xs font-semibold text-rose-300 flex items-center gap-1.5">
+              <div className="rounded-xl bg-rose-950/70 border border-rose-800 p-2.5 text-xs font-semibold text-rose-300 flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-rose-500 shrink-0" />
                 <span>{loginError}</span>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">ایمیل مدیریت</label>
+              <label className="block text-xs font-bold text-zinc-300 mb-1.5">ایمیل مدیریت</label>
               <input
                 type="email"
                 required
                 placeholder="swedpersiska@gmail.com"
                 value={adminEmailInput}
                 onChange={(e) => setAdminEmailInput(e.target.value)}
-                className="w-full rounded-2xl border border-slate-800 bg-[#070a12] hover:border-slate-700 focus:bg-[#0c111e] px-3.5 py-2.5 text-xs text-white focus:border-[#1877F2] focus:ring-1 focus:ring-blue-500/40 focus:outline-none transition-all font-mono text-left"
+                className="w-full rounded-2xl border border-zinc-750 bg-[#0d0e12] hover:border-zinc-600 focus:bg-[#161720] px-3.5 py-2.5 text-xs text-white focus:border-white focus:ring-1 focus:ring-white/40 focus:outline-none transition-all font-mono text-left"
                 dir="ltr"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">رمز عبور اختصاصی</label>
+              <label className="block text-xs font-bold text-zinc-300 mb-1.5">رمز عبور اختصاصی</label>
               <input
                 type="password"
                 required
                 placeholder="••••••••"
                 value={adminPassInput}
                 onChange={(e) => setAdminPassInput(e.target.value)}
-                className="w-full rounded-2xl border border-slate-800 bg-[#070a12] hover:border-slate-700 focus:bg-[#0c111e] px-3.5 py-2.5 text-xs text-white focus:border-[#1877F2] focus:ring-1 focus:ring-blue-500/40 focus:outline-none transition-all font-mono text-left"
+                className="w-full rounded-2xl border border-zinc-750 bg-[#0d0e12] hover:border-zinc-600 focus:bg-[#161720] px-3.5 py-2.5 text-xs text-white focus:border-white focus:ring-1 focus:ring-white/40 focus:outline-none transition-all font-mono text-left"
                 dir="ltr"
               />
             </div>
 
-            {/* Cloudflare Turnstile Anti-Bot Verification - Dark Theme */}
+            {/* Cloudflare Turnstile Anti-Bot Verification */}
             {turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false && (
               <div className="pt-1 flex flex-col items-center justify-center">
                 <CloudflareTurnstile
@@ -529,7 +525,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
             <button
               type="submit"
-              className="w-full rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs py-3.5 shadow-md shadow-blue-500/20 active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full rounded-full bg-white hover:bg-zinc-200 text-zinc-950 font-black text-xs py-3.5 shadow-md active:scale-[0.98] transition-all cursor-pointer"
             >
               ورود به داشبورد مدیریت
             </button>
@@ -538,7 +534,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           <button
             type="button"
             onClick={onClose}
-            className="w-full text-center text-xs font-medium text-slate-400 hover:text-white transition-colors cursor-pointer pt-1"
+            className="w-full text-center text-xs font-medium text-zinc-400 hover:text-white transition-colors cursor-pointer pt-1"
           >
             ← بازگشت به سایت اصلی
           </button>
@@ -548,1285 +544,1431 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   }
 
   // ========================================================
-  // MAIN ADMIN DASHBOARD - Executive Dark Theme
+  // MAIN ADMIN WORKSPACE:
+  // - Eye-Care Warm Tone Canvas (#f4f3ee)
+  // - Dark Charcoal Sidebar (#111217)
+  // - Pure Crisp White Cards (#ffffff) with Warm Borders
   // ========================================================
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#090d16] text-slate-100 font-vazir select-none" dir="rtl">
+    <div className="fixed inset-0 z-50 flex bg-[#f4f3ee] text-zinc-900 font-vazir select-none overflow-hidden" dir="rtl">
       
       {/* Toast Alert */}
       {actionSuccessMsg && (
-        <div className="fixed top-5 end-5 z-50 flex items-center gap-2 rounded-2xl bg-[#0f1626] border border-slate-700 text-white px-4 py-2.5 text-xs font-bold shadow-2xl animate-in slide-in-from-top-2 duration-150">
+        <div className="fixed top-5 end-5 z-50 flex items-center gap-2 rounded-2xl bg-[#111217] text-white px-4 py-2.5 text-xs font-bold shadow-2xl border border-zinc-800 animate-in slide-in-from-top-2 duration-150">
           <CheckCircle size={16} className="text-emerald-400 shrink-0" />
           <span>{actionSuccessMsg}</span>
         </div>
       )}
 
-      {/* Top Header Bar */}
-      <header className="h-16 shrink-0 bg-[#0e1422] border-b border-slate-800/90 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl bg-slate-800/70 text-slate-300 hover:text-white"
-          >
-            <Menu size={18} />
-          </button>
-
+      {/* ========================================================
+          SIDEBAR NAVIGATION (Matches NT360 Dark Palette)
+      ======================================================== */}
+      <aside className={`
+        fixed lg:static inset-y-0 end-0 z-40 w-64 bg-[#111217] text-zinc-300 flex flex-col border-s border-zinc-800/80 transition-transform duration-200
+        ${mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
+      `}>
+        
+        {/* Brand Top */}
+        <div className="h-16 px-4 flex items-center justify-between border-b border-zinc-800/80">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white font-black text-xs shadow-xs">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-zinc-950 font-black text-xs shadow-xs">
               SP
             </div>
             <div>
-              <span className="font-extrabold text-sm text-white block">کنترل پنل مدیریت سوئد پرشیا</span>
-              <span className="text-[10px] text-slate-400 font-medium">نظارت بر آگهی‌ها، پرداخت‌ها، آنتی‌بات و سئو</span>
+              <span className="font-extrabold text-sm text-white block leading-tight">سوئد پرشیا</span>
+              <span className="text-[10px] text-zinc-400 font-mono tracking-wider">ADMIN CRM</span>
             </div>
           </div>
-        </div>
-
-        {/* Desktop Tabs */}
-        <div className="hidden lg:flex items-center gap-1 bg-[#060910] p-1 rounded-2xl border border-slate-800/80">
-          <button
-            type="button"
-            onClick={() => setActiveTab('overview')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'overview'
-                ? 'bg-[#1877F2] text-white shadow-xs'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-            }`}
-          >
-            <LayoutDashboard size={14} />
-            <span>داشبورد و آمار</span>
-          </button>
 
           <button
             type="button"
-            onClick={() => setActiveTab('ads')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'ads'
-                ? 'bg-[#1877F2] text-white shadow-xs'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-            }`}
+            onClick={() => setMobileSidebarOpen(false)}
+            className="lg:hidden p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800/60"
           >
-            <Layers size={14} />
-            <span>مدیریت آگهی‌ها</span>
-            <span className={`px-1.5 py-0.2 rounded-md text-[10px] font-mono font-bold ${
-              activeTab === 'ads' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
-            }`}>
-              {ads.length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('monetization')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'monetization'
-                ? 'bg-[#1877F2] text-white shadow-xs'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-            }`}
-          >
-            <CreditCard size={14} />
-            <span>درگاه Stripe و تبلیغات</span>
-            <span className="px-1.5 py-0.2 rounded-md bg-amber-500/20 text-amber-300 text-[10px] font-bold">
-              VIP
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('security')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'security'
-                ? 'bg-[#1877F2] text-white shadow-xs'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-            }`}
-          >
-            <ShieldCheck size={14} />
-            <span>امنیت کلودفلر (Anti-Bot)</span>
-            <span className={`px-1.5 py-0.2 rounded-md text-[10px] font-bold ${
-              turnstileSettings.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-500'
-            }`}>
-              {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'settings'
-                ? 'bg-[#1877F2] text-white shadow-xs'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-            }`}
-          >
-            <Settings size={14} />
-            <span>لوگو و سئو کشورها</span>
+            <X size={18} />
           </button>
         </div>
 
-        {/* Exit & Refresh Buttons */}
-        <div className="flex items-center gap-2">
+        {/* Navigation Groups */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-4">
+          
+          {/* Group 1: Overview */}
+          <div className="space-y-1">
+            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider px-3 block">
+              پیشخوان و آمار
+            </span>
+            
+            <button
+              type="button"
+              onClick={() => { setActiveTab('overview'); setMobileSidebarOpen(false); }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+                activeTab === 'overview'
+                  ? 'bg-white text-zinc-950 font-black shadow-xs'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <LayoutDashboard size={15} />
+                <span>داشبورد و آمار</span>
+              </div>
+            </button>
+          </div>
+
+          {/* Group 2: Moderation */}
+          <div className="space-y-1">
+            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider px-3 block">
+              آگهی‌ها و CRM
+            </span>
+
+            <button
+              type="button"
+              onClick={() => { setActiveTab('ads'); setMobileSidebarOpen(false); }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+                activeTab === 'ads'
+                  ? 'bg-white text-zinc-950 font-black shadow-xs'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Layers size={15} />
+                <span>مدیریت آگهی‌ها</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                activeTab === 'ads' ? 'bg-zinc-100 text-zinc-900 border border-zinc-300' : 'bg-zinc-800 text-zinc-300'
+              }`}>
+                {ads.length}
+              </span>
+            </button>
+          </div>
+
+          {/* Group 3: Monetization */}
+          <div className="space-y-1">
+            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider px-3 block">
+              مالی و درآمدزایی
+            </span>
+
+            <button
+              type="button"
+              onClick={() => { setActiveTab('monetization'); setMobileSidebarOpen(false); }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+                activeTab === 'monetization'
+                  ? 'bg-white text-zinc-950 font-black shadow-xs'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <CreditCard size={15} />
+                <span>درگاه Stripe و VIP</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">
+                VIP
+              </span>
+            </button>
+          </div>
+
+          {/* Group 4: Security & System */}
+          <div className="space-y-1">
+            <span className="text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider px-3 block">
+              امنیت و تنظیمات
+            </span>
+
+            <button
+              type="button"
+              onClick={() => { setActiveTab('security'); setMobileSidebarOpen(false); }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+                activeTab === 'security'
+                  ? 'bg-white text-zinc-950 font-black shadow-xs'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck size={15} />
+                <span>آنتی‌بات Turnstile</span>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                turnstileSettings.enabled ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-zinc-500'
+              }`}>
+                {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { setActiveTab('settings'); setMobileSidebarOpen(false); }}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
+                activeTab === 'settings'
+                  ? 'bg-white text-zinc-950 font-black shadow-xs'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 font-semibold'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Settings size={15} />
+                <span>لوگو و سئوی ۴ کشور</span>
+              </div>
+            </button>
+          </div>
+
+        </div>
+
+        {/* Sidebar Bottom Actions */}
+        <div className="p-3 border-t border-zinc-800/80 space-y-1.5">
           <button
             type="button"
             onClick={fetchAdminData}
-            className="flex items-center gap-1.5 h-9 px-3 rounded-xl bg-[#131b2e] hover:bg-[#1a253e] text-slate-300 hover:text-white text-xs font-semibold border border-slate-700/80 transition-all cursor-pointer"
-            title="بروزرسانی داده‌ها"
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-800 transition-all cursor-pointer"
           >
-            <RefreshCw size={13} className={loading ? 'animate-spin text-[#1877F2]' : ''} />
-            <span className="hidden sm:inline">بروزرسانی</span>
+            <RefreshCw size={13} className={loading ? 'animate-spin text-white' : ''} />
+            <span>بروزرسانی داده‌ها</span>
           </button>
 
           <button
             type="button"
             onClick={onClose}
-            className="flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 text-xs font-bold border border-rose-900/50 transition-all cursor-pointer"
-            title="خروج از پنل مدیریت"
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-900/50 transition-all cursor-pointer"
           >
             <LogOut size={13} />
-            <span>خروج</span>
+            <span>خروج از مدیریت</span>
           </button>
         </div>
-      </header>
 
-      {/* Mobile Navigation Drawer */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0e1422] border-b border-slate-800 p-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => { setActiveTab('overview'); setMobileMenuOpen(false); }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'overview' ? 'bg-[#1877F2] text-white' : 'bg-[#070a12] text-slate-300 border border-slate-800'}`}
-          >
-            داشبورد
-          </button>
-          <button
-            type="button"
-            onClick={() => { setActiveTab('ads'); setMobileMenuOpen(false); }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'ads' ? 'bg-[#1877F2] text-white' : 'bg-[#070a12] text-slate-300 border border-slate-800'}`}
-          >
-            آگهی‌ها ({ads.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => { setActiveTab('monetization'); setMobileMenuOpen(false); }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'monetization' ? 'bg-[#1877F2] text-white' : 'bg-[#070a12] text-slate-300 border border-slate-800'}`}
-          >
-            درگاه Stripe
-          </button>
-          <button
-            type="button"
-            onClick={() => { setActiveTab('security'); setMobileMenuOpen(false); }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'security' ? 'bg-[#1877F2] text-white' : 'bg-[#070a12] text-slate-300 border border-slate-800'}`}
-          >
-            آنتی‌بات
-          </button>
-          <button
-            type="button"
-            onClick={() => { setActiveTab('settings'); setMobileMenuOpen(false); }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold text-center ${activeTab === 'settings' ? 'bg-[#1877F2] text-white' : 'bg-[#070a12] text-slate-300 border border-slate-800'}`}
-          >
-            لوگو و سئو
-          </button>
-        </div>
+      </aside>
+
+      {/* Backdrop for mobile drawer */}
+      {mobileSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
       )}
 
-      {/* MAIN CONTENT AREA */}
-      <div className="flex-1 overflow-hidden flex flex-col">
+      {/* ========================================================
+          MAIN CANVAS (Eye-Care Warm Tone)
+      ======================================================== */}
+      <main className="flex-1 flex flex-col overflow-hidden">
         
-        {/* ========================================================
-            TAB 1: OVERVIEW & SCANDINAVIAN COUNTRY METRICS
-        ======================================================== */}
-        {activeTab === 'overview' && (
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-7 space-y-6 max-w-7xl w-full mx-auto">
-            
-            {/* Top High-level Metric Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4">
-              <div className="p-5 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-sm space-y-1">
-                <span className="text-xs font-bold text-slate-400">کل آگهی‌های ثبت‌شده</span>
-                <div className="text-3xl font-black text-white">{totalAds}</div>
-              </div>
+        {/* Canvas Top Bar */}
+        <header className="h-16 shrink-0 bg-[#f4f3ee] border-b border-[#e5e1d7] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setMobileSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-xl bg-white border border-[#e5e1d7] text-zinc-700 shadow-2xs"
+            >
+              <Menu size={18} />
+            </button>
 
-              <div className="p-5 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-sm space-y-1">
-                <span className="text-xs font-bold text-emerald-400">آگهی‌های فعال</span>
-                <div className="text-3xl font-black text-emerald-400">{activeAds}</div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-sm space-y-1">
-                <span className="text-xs font-bold text-amber-400">آگهی‌های ویژه VIP</span>
-                <div className="text-3xl font-black text-amber-400">{vipAds}</div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-sm space-y-1">
-                <span className="text-xs font-bold text-blue-400">مجموع بازدیدها</span>
-                <div className="text-3xl font-black text-[#1877F2]">{totalViews.toLocaleString('fa-IR')}</div>
-              </div>
+            <div>
+              <h1 className="text-base sm:text-lg font-black text-zinc-900 leading-tight">
+                {activeTab === 'overview' && 'داشبورد و آمار کلی'}
+                {activeTab === 'ads' && 'مدیریت و نظارت بر آگهی‌ها'}
+                {activeTab === 'monetization' && 'تنظیمات درگاه پرداخت Stripe و آگهی‌های VIP'}
+                {activeTab === 'security' && 'سامانه فایروال و آنتی‌بات Cloudflare'}
+                {activeTab === 'settings' && 'تنظیمات برندینگ و سئوی ۴ کشور'}
+              </h1>
+              <p className="text-[11px] text-stone-500 hidden sm:block">
+                پرتال جامع نیازمندی‌های فارسی‌زبانان اسکاندیناوی
+              </p>
             </div>
-
-            {/* Scandinavian Country Performance Breakdown */}
-            <div className="space-y-3.5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-extrabold text-white flex items-center gap-2">
-                  <Globe size={16} className="text-[#1877F2]" />
-                  <span>توزیع آگهی‌ها بر اساس کشور</span>
-                </h3>
-                <span className="text-xs text-slate-400 font-medium">برای فیلتر روی هر کشور کلیک کنید</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-                {COUNTRIES.map(country => {
-                  const stats = getCountryStats(country.id);
-
-                  return (
-                    <div 
-                      key={country.id}
-                      onClick={() => {
-                        setCountryFilter(country.id);
-                        setActiveTab('ads');
-                      }}
-                      className="p-4 rounded-2xl bg-[#0f1626] hover:bg-[#131b2e] border border-slate-800/90 hover:border-blue-500/50 transition-all cursor-pointer shadow-sm group space-y-3"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="block font-extrabold text-sm text-white group-hover:text-blue-400 transition-colors">
-                            {country.nameFa}
-                          </span>
-                          <span className="text-[11px] text-slate-400 font-medium">
-                            {country.nameNative} • {country.currencyName}
-                          </span>
-                        </div>
-                        <span className="px-2 py-0.5 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-mono font-bold border border-blue-500/20">
-                          {stats.total} آگهی
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-1 pt-2.5 border-t border-slate-800/60 text-center">
-                        <div>
-                          <span className="block text-[10px] text-slate-400 font-medium">فعال</span>
-                          <span className="text-xs font-black text-emerald-400">{stats.active}</span>
-                        </div>
-                        <div>
-                          <span className="block text-[10px] text-slate-400 font-medium">VIP</span>
-                          <span className="text-xs font-black text-amber-400">{stats.vip}</span>
-                        </div>
-                        <div>
-                          <span className="block text-[10px] text-slate-400 font-medium">بازدید</span>
-                          <span className="text-xs font-black text-slate-300">{stats.views}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* System Status & Direct Shortcuts */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-5 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <CreditCard size={15} className="text-[#1877F2]" />
-                    درگاه Stripe و تعرفه VIP
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 text-[10px] font-bold border border-emerald-800/60">
-                    {stripeSettings.enabled ? 'آماده' : 'غیرفعال'}
-                  </span>
-                </div>
-                <div className="text-xs text-slate-400 space-y-1">
-                  <div>تعرفه: <b>{stripeSettings.vipPrice} {stripeSettings.currency}</b></div>
-                  <div>اعتبار: <b>{stripeSettings.vipDurationDays} روز</b></div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('monetization')}
-                  className="w-full text-center py-2 rounded-xl bg-[#070a12] hover:bg-[#131b2e] text-slate-300 hover:text-white text-xs font-bold border border-slate-800 transition-colors"
-                >
-                  تنظیمات Stripe ←
-                </button>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <ShieldCheck size={15} className="text-emerald-400" />
-                    آنتی‌بات Cloudflare
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                    turnstileSettings.enabled ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60' : 'bg-slate-800 text-slate-400 border-slate-700'
-                  }`}>
-                    {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
-                  </span>
-                </div>
-                <div className="text-xs text-slate-400 space-y-1">
-                  <div>ورود مدیریت: <b>{turnstileSettings.protectAdminLogin ? 'محافظت‌شده' : 'عادی'}</b></div>
-                  <div>ثبت آگهی: <b>{turnstileSettings.protectPostAd ? 'محافظت‌شده' : 'عادی'}</b></div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('security')}
-                  className="w-full text-center py-2 rounded-xl bg-[#070a12] hover:bg-[#131b2e] text-slate-300 hover:text-white text-xs font-bold border border-slate-800 transition-colors"
-                >
-                  تنظیمات امنیتی ←
-                </button>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <Settings size={15} className="text-purple-400" />
-                    سئو و عنوان صفحات
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full bg-blue-950/60 text-blue-300 text-[10px] font-bold border border-blue-800/60">
-                    ۴ کشور
-                  </span>
-                </div>
-                <div className="text-xs text-slate-400 space-y-1">
-                  <div>برند: <b>{siteName}</b></div>
-                  <div>پوشش: <b>سوئد، نروژ، دانمارک، فنلاند</b></div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('settings')}
-                  className="w-full text-center py-2 rounded-xl bg-[#070a12] hover:bg-[#131b2e] text-slate-300 hover:text-white text-xs font-bold border border-slate-800 transition-colors"
-                >
-                  ویرایش سئو ←
-                </button>
-              </div>
-            </div>
-
           </div>
-        )}
 
-        {/* ========================================================
-            TAB 2: COUNTRY ADS MANAGEMENT (SPLIT CRM VIEW)
-        ======================================================== */}
-        {activeTab === 'ads' && (
-          <div className="flex-1 flex overflow-hidden">
-            
-            {/* Left/Main Column: Ads List & Filters */}
-            <div className="flex-1 flex flex-col border-s border-slate-800/90 overflow-hidden bg-[#090d16]">
+          {/* Quick Search & Notification Bell */}
+          <div className="flex items-center gap-3">
+            <div className="relative hidden md:block w-64">
+              <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="جستجو در پنل... (Ctrl+K)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-9 rounded-full bg-white border border-[#e2ded5] ps-8 pe-3 text-xs text-zinc-800 placeholder-stone-400 shadow-2xs focus:border-zinc-800 focus:outline-none"
+              />
+            </div>
+
+            <div className="relative p-2 rounded-full bg-white border border-[#e5e1d7] text-stone-600 shadow-2xs cursor-pointer">
+              <Bell size={16} />
+              <span className="absolute -top-0.5 -end-0.5 h-4 w-4 rounded-full bg-zinc-900 text-white text-[9px] font-mono font-bold flex items-center justify-center">
+                {vipAds}
+              </span>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Tabs Area */}
+        <div className="flex-1 overflow-hidden flex flex-col">
+          
+          {/* ========================================================
+              TAB 1: OVERVIEW & CRM FLOW (Eye-Care Warm Style)
+          ======================================================== */}
+          {activeTab === 'overview' && (
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-7 space-y-6 max-w-7xl w-full mx-auto">
               
-              {/* Filter Controls Header */}
-              <div className="p-3.5 sm:p-4 border-b border-slate-800/90 space-y-3 bg-[#0e1422]">
+              {/* Top 4 Stat Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
                 
-                {/* 1. Country Filter Tabs */}
-                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-                  <span className="text-xs font-bold text-slate-400 shrink-0 pe-1">کشور:</span>
-                  
-                  <button
-                    type="button"
-                    onClick={() => setCountryFilter('all')}
-                    className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                      countryFilter === 'all'
-                        ? 'bg-[#1877F2] text-white shadow-xs'
-                        : 'bg-[#070a12] text-slate-400 hover:text-white border border-slate-800'
-                    }`}
-                  >
-                    همه ({ads.length})
-                  </button>
+                {/* 1. Total Ads */}
+                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-extrabold text-stone-500 uppercase tracking-wider">
+                      کل آگهی‌ها
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#f0ede6] text-[#5c574f] border border-[#ded9ce] text-[10px] font-bold">
+                      ثبت‌شده
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-zinc-900 tracking-tight">
+                    {totalAds}
+                  </div>
+                  <p className="text-[11px] text-stone-500">مجموع آگهی‌های ثبت شده در سیستم</p>
+                </div>
 
+                {/* 2. Active Ads */}
+                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-extrabold text-stone-500 uppercase tracking-wider">
+                      آگهی‌های فعال
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#eaf7ee] text-[#1b7a37] border border-[#c4e9cb] text-[10px] font-bold">
+                      منتشرشده
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-[#1b7a37] tracking-tight">
+                    {activeAds}
+                  </div>
+                  <p className="text-[11px] text-stone-500">قابل مشاهده توسط عموم کاربران</p>
+                </div>
+
+                {/* 3. VIP Ads */}
+                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-extrabold text-stone-500 uppercase tracking-wider">
+                      آگهی‌های VIP
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#fef6e7] text-[#9a6200] border border-[#fbdca7] text-[10px] font-bold">
+                      ویژه
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-[#9a6200] tracking-tight">
+                    {vipAds}
+                  </div>
+                  <p className="text-[11px] text-stone-500">در صدر جستجو و ۴ جایگاه سایدبار</p>
+                </div>
+
+                {/* 4. Total Views */}
+                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-extrabold text-stone-500 uppercase tracking-wider">
+                      مجموع بازدیدها
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#ebf4fe] text-[#175cd3] border border-[#c3ddfd] text-[10px] font-bold">
+                      آمار کلیک
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-[#175cd3] tracking-tight">
+                    {totalViews.toLocaleString('fa-IR')}
+                  </div>
+                  <p className="text-[11px] text-stone-500">تعداد بازدیدهای ثبت‌شده از آگهی‌ها</p>
+                </div>
+
+              </div>
+
+              {/* Status Alert Banner (like photo) */}
+              <div className="p-3.5 rounded-2xl bg-[#fff9ea] border border-[#fae8be] text-[#8a5700] text-xs font-semibold flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-amber-600 shrink-0" />
+                  <span>
+                    در حال حاضر <b>{vipAds} آگهی ویژه VIP</b> فعال هستند و درگاه Stripe آماده پردازش تراکنش‌هاست.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ads')}
+                  className="font-bold text-amber-900 hover:underline shrink-0 text-start sm:text-end"
+                >
+                  مشاهده لیست آگهی‌ها ←
+                </button>
+              </div>
+
+              {/* Scandinavian Country Performance Breakdown */}
+              <div className="space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-extrabold text-zinc-900 flex items-center gap-2">
+                    <Globe size={16} className="text-zinc-700" />
+                    <span>توزیع آگهی‌ها بر اساس ۴ کشور اسکاندیناوی</span>
+                  </h3>
+                  <span className="text-xs text-stone-500">برای مشاهده روی هر کشور کلیک کنید</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
                   {COUNTRIES.map(country => {
-                    const count = ads.filter(a => a.country === country.id || (!a.country && country.id === 'se')).length;
-                    const isSelected = countryFilter === country.id;
+                    const stats = getCountryStats(country.id);
 
                     return (
-                      <button
+                      <div 
                         key={country.id}
-                        type="button"
-                        onClick={() => setCountryFilter(country.id)}
-                        className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
-                          isSelected
-                            ? 'bg-[#1877F2] text-white shadow-xs'
-                            : 'bg-[#070a12] text-slate-400 hover:text-white border border-slate-800'
-                        }`}
+                        onClick={() => {
+                          setCountryFilter(country.id);
+                          setActiveTab('ads');
+                        }}
+                        className="p-4 rounded-2xl bg-white hover:bg-stone-50 border border-[#e5e1d7] hover:border-zinc-400 transition-all cursor-pointer shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3 group"
                       >
-                        <span>{country.nameFa}</span>
-                        <span className="text-[10.5px] opacity-80 font-mono font-bold">({count})</span>
-                      </button>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span className="block font-extrabold text-sm text-zinc-900 group-hover:text-black">
+                              {country.nameFa}
+                            </span>
+                            <span className="text-[11px] text-stone-500 font-medium">
+                              {country.nameNative} • {country.currencyName}
+                            </span>
+                          </div>
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#f0ede6] text-stone-700 text-xs font-mono font-bold border border-[#ded9ce]">
+                            {stats.total} آگهی
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-1 pt-2.5 border-t border-[#f0ece3] text-center">
+                          <div>
+                            <span className="block text-[10px] text-stone-400 font-medium">فعال</span>
+                            <span className="text-xs font-black text-[#1b7a37]">{stats.active}</span>
+                          </div>
+                          <div>
+                            <span className="block text-[10px] text-stone-400 font-medium">VIP</span>
+                            <span className="text-xs font-black text-[#9a6200]">{stats.vip}</span>
+                          </div>
+                          <div>
+                            <span className="block text-[10px] text-stone-400 font-medium">بازدید</span>
+                            <span className="text-xs font-black text-stone-700">{stats.views}</span>
+                          </div>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
-
-                {/* 2. Search & Category / Status filters */}
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <div className="relative flex-1">
-                    <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
-                    <input
-                      type="text"
-                      placeholder="جستجو در عنوان، کد پیگیری، شهر، نام..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full h-9 rounded-xl bg-[#070a12] border border-slate-800 ps-8 pe-3 text-xs text-white placeholder-slate-500 focus:border-[#1877F2] focus:ring-1 focus:ring-blue-500/30 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <select
-                      value={categoryFilter}
-                      onChange={(e) => setCategoryFilter(e.target.value)}
-                      className="h-9 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs font-semibold text-slate-300 focus:border-[#1877F2] focus:outline-none cursor-pointer"
-                    >
-                      <option value="all">همه دسته‌ها</option>
-                      {CATEGORIES.filter(c => c.id !== 'all').map(c => (
-                        <option key={c.id} value={c.id}>{c.fa}</option>
-                      ))}
-                    </select>
-
-                    <select
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                      className="h-9 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs font-semibold text-slate-300 focus:border-[#1877F2] focus:outline-none cursor-pointer"
-                    >
-                      <option value="all">همه وضعیت‌ها</option>
-                      <option value="active">فقط فعال</option>
-                      <option value="hidden">مخفی‌شده</option>
-                      <option value="vip">فقط ویژه (VIP)</option>
-                    </select>
-                  </div>
-                </div>
-
               </div>
 
-              {/* Ads Stream List */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-3 sm:p-4 space-y-2.5">
-                {filteredAds.length === 0 ? (
-                  <div className="text-center py-16 text-slate-500 space-y-2">
-                    <Layers size={32} className="mx-auto text-slate-600" />
-                    <p className="text-xs font-medium">هیچ آگهی با این مشخصات یافت نشد.</p>
-                  </div>
-                ) : (
-                  filteredAds.map(ad => {
-                    const isSelected = selectedAdId === ad.id;
-                    const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
-
-                    return (
-                      <div
-                        key={ad.id}
-                        onClick={() => {
-                          setSelectedAdId(ad.id);
-                          setMobileDetailOpen(true);
-                        }}
-                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                          isSelected
-                            ? 'bg-[#152037] border-[#1877F2] ring-1 ring-[#1877F2] shadow-sm'
-                            : 'bg-[#0f1626] border-slate-800/90 hover:bg-[#121b2e] hover:border-slate-700'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          {/* Image thumbnail */}
-                          <div className="h-12 w-12 rounded-xl bg-[#070a12] border border-slate-800 overflow-hidden shrink-0">
-                            {ad.images && ad.images[0] ? (
-                              <img src={ad.images[0]} alt="" className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center text-[10px] text-slate-500">
-                                بدون عکس
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="min-w-0 space-y-1">
-                            <div className="flex items-center gap-2">
-                              {/* Country Badge */}
-                              <span className="px-1.5 py-0.2 rounded-md bg-blue-950/80 text-blue-300 text-[10.5px] font-bold border border-blue-800/60">
-                                {countryObj.nameFa}
-                              </span>
-
-                              <span className="font-mono text-[10.5px] text-slate-400 font-bold bg-[#070a12] px-1.5 py-0.2 rounded border border-slate-800">
-                                <bdi>{ad.reference_number}</bdi>
-                              </span>
-
-                              {ad.is_featured && (
-                                <span className="px-1.5 py-0.2 rounded-md bg-amber-950/80 text-amber-300 text-[10px] font-bold border border-amber-800/60">
-                                  VIP ویژه
-                                </span>
-                              )}
-
-                              {ad.status === 'hidden' && (
-                                <span className="px-1.5 py-0.2 rounded-md bg-rose-950/80 text-rose-300 text-[10px] font-bold border border-rose-800/60">
-                                  مخفی
-                                </span>
-                              )}
-                            </div>
-
-                            <h4 className="text-xs font-bold text-white truncate">
-                              {ad.title}
-                            </h4>
-
-                            <div className="flex items-center gap-3 text-[11px] text-slate-400">
-                              <span>{ad.city}</span>
-                              <span>•</span>
-                              <span className="font-semibold text-slate-300">
-                                {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
-                              </span>
-                              <span>•</span>
-                              <span>{ad.views_count || 1} بازدید</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Quick action buttons */}
-                        <div className="hidden sm:flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            type="button"
-                            onClick={() => toggleFeatured(ad)}
-                            className={`p-2 rounded-xl border transition-all cursor-pointer ${
-                              ad.is_featured
-                                ? 'bg-amber-950/60 text-amber-300 border-amber-800'
-                                : 'bg-[#070a12] text-slate-500 border-slate-800 hover:text-amber-400'
-                            }`}
-                            title={ad.is_featured ? 'برداشتن VIP' : 'اعطای نشان ویژه VIP'}
-                          >
-                            <Sparkles size={14} />
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => toggleStatus(ad)}
-                            className={`p-2 rounded-xl border transition-all cursor-pointer ${
-                              ad.status === 'active'
-                                ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800'
-                                : 'bg-[#070a12] text-slate-500 border-slate-800 hover:text-emerald-400'
-                            }`}
-                            title={ad.status === 'active' ? 'مخفی کردن' : 'فعال‌سازی'}
-                          >
-                            <CheckCircle size={14} />
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => deleteAdAdmin(ad.id)}
-                            className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-900/60 transition-colors cursor-pointer"
-                            title="حذف دائمی"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-            </div>
-
-            {/* Right Column: CRM Details for Selected Ad (Desktop Inspector) */}
-            {currentSelectedAd && (
-              <div className="hidden lg:flex w-96 xl:w-[420px] shrink-0 bg-[#0c111d] flex-col overflow-hidden border-s border-slate-800/90">
+              {/* Direct Configuration Shortcuts */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 
-                {/* Header */}
-                <div className="p-4 border-b border-slate-800 bg-[#0e1422] flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-                      جزییات و ویرایش آگهی
+                {/* 1. Stripe Card */}
+                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+                      <CreditCard size={15} className="text-zinc-700" />
+                      درگاه پرداخت Stripe
                     </span>
-                    <h3 className="text-sm font-extrabold text-white truncate max-w-[260px]">
-                      {currentSelectedAd.title}
-                    </h3>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                      stripeSettings.enabled 
+                        ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]' 
+                        : 'bg-stone-100 text-stone-500 border-stone-200'
+                    }`}>
+                      {stripeSettings.enabled ? 'فعال' : 'غیرفعال'}
+                    </span>
                   </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => toggleFeatured(currentSelectedAd)}
-                      className={`p-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                        currentSelectedAd.is_featured
-                          ? 'bg-amber-950/60 text-amber-300 border-amber-800'
-                          : 'bg-[#070a12] text-slate-400 border-slate-800 hover:text-amber-400'
-                      }`}
-                      title="تغییر وضعیت VIP"
-                    >
-                      <Sparkles size={15} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleStatus(currentSelectedAd)}
-                      className={`p-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                        currentSelectedAd.status === 'active'
-                          ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800'
-                          : 'bg-[#070a12] text-slate-400 border-slate-800 hover:text-emerald-400'
-                      }`}
-                      title="تغییر وضعیت انتشار"
-                    >
-                      <CheckCircle size={15} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => deleteAdAdmin(currentSelectedAd.id)}
-                      className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-900/60 cursor-pointer"
-                      title="حذف دائمی"
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                  <div className="text-xs text-stone-600 space-y-1">
+                    <div>تعرفه ارتقا: <b>{stripeSettings.vipPrice} {stripeSettings.currency}</b></div>
+                    <div>مدت اعتبار: <b>{stripeSettings.vipDurationDays} روز</b></div>
                   </div>
-                </div>
-
-                {/* Details Scrollable Body */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4 text-xs">
-                  
-                  {/* Photo Preview */}
-                  {currentSelectedAd.images && currentSelectedAd.images[0] && (
-                    <div className="aspect-[16/10] w-full rounded-2xl overflow-hidden bg-[#070a12] border border-slate-800 shadow-2xs">
-                      <img src={currentSelectedAd.images[0]} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-
-                  {/* 1. Country Switcher for this Ad */}
-                  <div className="p-4 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-2xs space-y-2">
-                    <label className="block text-[11px] font-bold text-slate-300">
-                      تغییر کشور اختصاصی این آگهی:
-                    </label>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {COUNTRIES.map(c => {
-                        const isCurrent = (currentSelectedAd.country || 'se') === c.id;
-
-                        return (
-                          <button
-                            key={c.id}
-                            type="button"
-                            onClick={() => updateAdCountry(currentSelectedAd.id, c.id)}
-                            className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-all text-center border cursor-pointer ${
-                              isCurrent
-                                ? 'bg-[#1877F2] text-white border-blue-500 shadow-xs'
-                                : 'bg-[#070a12] hover:bg-[#131b2e] text-slate-300 border-slate-800'
-                            }`}
-                          >
-                            {c.nameFa}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* 2. Key Metadata & PIN */}
-                  <div className="p-4 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-2xs space-y-3">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/60">
-                      <span className="text-slate-400 font-medium">کد پیگیری آگهی:</span>
-                      <button
-                        type="button"
-                        onClick={() => copyText(currentSelectedAd.reference_number, 'ref')}
-                        className="flex items-center gap-1.5 font-mono font-bold text-blue-400 hover:text-blue-300 cursor-pointer"
-                      >
-                        <span>{currentSelectedAd.reference_number}</span>
-                        {copiedRef ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/60">
-                      <span className="text-slate-400 font-medium">رمز ۴ رقمی ویرایش (PIN):</span>
-                      <button
-                        type="button"
-                        onClick={() => copyText(currentSelectedAd.pin_code || '1234', 'pin')}
-                        className="flex items-center gap-1.5 font-mono font-extrabold text-amber-300 bg-amber-950/60 px-2.5 py-0.5 rounded-lg border border-amber-800/60 cursor-pointer"
-                      >
-                        <span>{currentSelectedAd.pin_code || '1234'}</span>
-                        {copiedPin ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">تاریخ ثبت:</span>
-                      <span className="text-slate-200 font-medium">
-                        {new Date(currentSelectedAd.created_at || '2026-01-01').toLocaleDateString('fa-IR')}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* 3. Seller Contacts */}
-                  <div className="p-4 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-2xs space-y-2.5">
-                    <span className="text-[11px] font-bold text-slate-300 block">راه‌های ارتباط با آگهی‌دهنده:</span>
-                    
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-slate-400">
-                        <span>نام:</span>
-                        <span className="font-bold text-white">{currentSelectedAd.contact_name}</span>
-                      </div>
-
-                      {currentSelectedAd.contact_phone && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-slate-400">تلفن:</span>
-                          <a href={`tel:${currentSelectedAd.contact_phone}`} className="font-mono text-blue-400 font-semibold flex items-center gap-1">
-                            <Phone size={12} />
-                            <span>{currentSelectedAd.contact_phone}</span>
-                          </a>
-                        </div>
-                      )}
-
-                      {currentSelectedAd.contact_whatsapp && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-slate-400">واتساپ:</span>
-                          <a href={`https://wa.me/${currentSelectedAd.contact_whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="font-mono text-emerald-400 font-semibold flex items-center gap-1">
-                            <span>{currentSelectedAd.contact_whatsapp}</span>
-                          </a>
-                        </div>
-                      )}
-
-                      {currentSelectedAd.contact_telegram && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-slate-400">تلگرام:</span>
-                          <a href={`https://t.me/${currentSelectedAd.contact_telegram.replace('@', '')}`} target="_blank" rel="noreferrer" className="font-mono text-sky-400 font-semibold flex items-center gap-1">
-                            <Send size={12} />
-                            <span>{currentSelectedAd.contact_telegram}</span>
-                          </a>
-                        </div>
-                      )}
-
-                      {currentSelectedAd.contact_email && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-slate-400">ایمیل:</span>
-                          <a href={`mailto:${currentSelectedAd.contact_email}`} className="font-mono text-slate-300 hover:text-blue-400 flex items-center gap-1">
-                            <Mail size={12} />
-                            <span>{currentSelectedAd.contact_email}</span>
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* 4. Description */}
-                  <div className="p-4 rounded-2xl bg-[#0f1626] border border-slate-800/90 shadow-2xs space-y-1.5">
-                    <span className="text-[11px] font-bold text-slate-300 block">متن آگهی:</span>
-                    <p className="text-slate-300 leading-relaxed whitespace-pre-line text-xs font-normal">
-                      {currentSelectedAd.description}
-                    </p>
-                  </div>
-
-                  {/* 5. Live View Link */}
                   <button
                     type="button"
-                    onClick={() => window.open(`?ad=${currentSelectedAd.reference_number || currentSelectedAd.id}`, '_blank')}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-[#131b2e] hover:bg-[#1a253e] text-white text-xs font-bold border border-slate-700 transition-colors cursor-pointer"
+                    onClick={() => setActiveTab('monetization')}
+                    className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
                   >
-                    <ExternalLink size={14} />
-                    <span>مشاهده صفحه اختصاصی آگهی در تب جدید</span>
+                    تنظیمات Stripe ←
                   </button>
-
                 </div>
 
-              </div>
-            )}
-
-          </div>
-        )}
-
-        {/* ========================================================
-            TAB 3: STRIPE PAYMENT GATEWAY & VIP MONETIZATION SETTINGS
-        ======================================================== */}
-        {activeTab === 'monetization' && (
-          <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full">
-            
-            <div className="border-b border-slate-800/90 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-black text-white">تنظیمات درگاه پرداخت Stripe و آگهی‌های ویژه</h2>
-                <p className="text-xs text-slate-400 mt-1">مدیریت کلیدهای Stripe، تعرفه آگهی‌های VIP و مدت زمان نمایش</p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                  stripeSettings.mode === 'live' 
-                    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60' 
-                    : 'bg-amber-950/60 text-amber-300 border-amber-800/60'
-                }`}>
-                  {stripeSettings.mode === 'live' ? 'درگاه زنده (Live)' : 'درگاه آزمایشی (Test)'}
-                </span>
-              </div>
-            </div>
-
-            {saveSuccessMsg && (
-              <div className="p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs font-bold flex items-center gap-2">
-                <CheckCircle size={16} className="text-emerald-400" />
-                <span>{saveSuccessMsg}</span>
-              </div>
-            )}
-
-            <form onSubmit={saveStripeSettings} className="space-y-6">
-              
-              {/* Stripe Credentials Card */}
-              <div className="rounded-3xl bg-[#0f1626] border border-slate-800/90 p-6 shadow-sm space-y-4">
-                <h3 className="text-xs font-extrabold text-white">کلیدهای اتصال Stripe</h3>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">محیط درگاه (Mode)</label>
-                    <select
-                      value={stripeSettings.mode}
-                      onChange={(e) => setStripeSettings(prev => ({ ...prev, mode: e.target.value }))}
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-slate-200 font-medium focus:border-[#1877F2] focus:outline-none cursor-pointer"
-                    >
-                      <option value="test">آزمایشی (Test Mode)</option>
-                      <option value="live">زنده و واقعی (Live Mode)</option>
-                    </select>
+                {/* 2. Turnstile Card */}
+                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+                      <ShieldCheck size={15} className="text-emerald-600" />
+                      آنتی‌بات Cloudflare
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                      turnstileSettings.enabled 
+                        ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]' 
+                        : 'bg-stone-100 text-stone-500 border-stone-200'
+                    }`}>
+                      {turnstileSettings.enabled ? 'محافظت فعال' : 'خاموش'}
+                    </span>
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">فعال بودن درگاه</label>
-                    <select
-                      value={stripeSettings.enabled ? 'true' : 'false'}
-                      onChange={(e) => setStripeSettings(prev => ({ ...prev, enabled: e.target.value === 'true' }))}
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-slate-200 font-medium focus:border-[#1877F2] focus:outline-none cursor-pointer"
-                    >
-                      <option value="true">فعال (امکان پرداخت آنلاین فعال)</option>
-                      <option value="false">غیرفعال موقت</option>
-                    </select>
+                  <div className="text-xs text-stone-600 space-y-1">
+                    <div>ورود مدیریت: <b>{turnstileSettings.protectAdminLogin ? 'ضد بات' : 'عادی'}</b></div>
+                    <div>ثبت آگهی: <b>{turnstileSettings.protectPostAd ? 'ضد اسپم' : 'عادی'}</b></div>
                   </div>
-                </div>
-
-                <div className="space-y-3 pt-1">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">Stripe Publishable Key (کلید عمومی)</label>
-                    <input
-                      type="text"
-                      value={stripeSettings.publishableKey}
-                      onChange={(e) => setStripeSettings(prev => ({ ...prev, publishableKey: e.target.value }))}
-                      placeholder="pk_test_... یا pk_live_..."
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
-                      dir="ltr"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">Stripe Secret Key (کلید محرمانه)</label>
-                    <input
-                      type="password"
-                      value={stripeSettings.secretKey}
-                      onChange={(e) => setStripeSettings(prev => ({ ...prev, secretKey: e.target.value }))}
-                      placeholder="sk_test_... یا sk_live_..."
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
-                      dir="ltr"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Pricing & VIP Configuration */}
-              <div className="rounded-3xl bg-[#0f1626] border border-slate-800/90 p-6 shadow-sm space-y-4">
-                <h3 className="text-xs font-extrabold text-white">تعرفه و شرایط آگهی‌های ویژه</h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">مبلغ ارتقا به VIP</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={stripeSettings.vipPrice}
-                      onChange={(e) => setStripeSettings(prev => ({ ...prev, vipPrice: Number(e.target.value) }))}
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">واحد پولی</label>
-                    <select
-                      value={stripeSettings.currency}
-                      onChange={(e) => setStripeSettings(prev => ({ ...prev, currency: e.target.value }))}
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-slate-200 font-medium focus:border-[#1877F2] focus:outline-none cursor-pointer"
-                    >
-                      <option value="SEK">SEK (کرون سوئد)</option>
-                      <option value="NOK">NOK (کرون نروژ)</option>
-                      <option value="DKK">DKK (کرون دانمارک)</option>
-                      <option value="EUR">EUR (یورو فنلاند)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">مدت زمان اعتبار</label>
-                    <select
-                      value={stripeSettings.vipDurationDays}
-                      onChange={(e) => setStripeSettings(prev => ({ ...prev, vipDurationDays: Number(e.target.value) }))}
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-slate-200 font-medium focus:border-[#1877F2] focus:outline-none cursor-pointer"
-                    >
-                      <option value={7}>۷ روز</option>
-                      <option value={14}>۱۴ روز</option>
-                      <option value={30}>۳۰ روز</option>
-                      <option value={60}>۶۰ روز</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={savingSettings}
-                className="h-11 px-6 rounded-full bg-[#1877F2] hover:bg-[#166fe5] disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-blue-500/20 transition-all cursor-pointer"
-              >
-                <Save size={16} />
-                <span>{savingSettings ? 'در حال ذخیره...' : 'ذخیره تنظیمات Stripe'}</span>
-              </button>
-            </form>
-
-          </div>
-        )}
-
-        {/* ========================================================
-            TAB 4: CLOUDFLARE TURNSTILE ANTI-BOT SETTINGS
-        ======================================================== */}
-        {activeTab === 'security' && (
-          <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full">
-            
-            <div className="border-b border-slate-800/90 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-black text-white">سامانه ضد اسپم و آنتی‌بات کلودفلر (Turnstile)</h2>
-                <p className="text-xs text-slate-400 mt-1">محافظت هوشمند از فرم ورود مدیران و ثبت آگهی‌های کاربران بدون پازل‌های آزاردهنده</p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                  turnstileSettings.enabled 
-                    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/60' 
-                    : 'bg-rose-950/60 text-rose-400 border-rose-800/60'
-                }`}>
-                  {turnstileSettings.enabled ? 'آنتی‌بات فعال' : 'آنتی‌بات غیرفعال'}
-                </span>
-              </div>
-            </div>
-
-            {saveSuccessMsg && (
-              <div className="p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs font-bold flex items-center gap-2">
-                <CheckCircle size={16} className="text-emerald-400" />
-                <span>{saveSuccessMsg}</span>
-              </div>
-            )}
-
-            <form onSubmit={saveTurnstileSettings} className="space-y-6">
-              
-              {/* Toggles & Modes Card */}
-              <div className="rounded-3xl bg-[#0f1626] border border-slate-800/90 p-6 shadow-sm space-y-4">
-                <h3 className="text-xs font-extrabold text-white">محدوده محافظت</h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <label className="flex items-center justify-between p-4 rounded-2xl bg-[#070a12] border border-slate-800 cursor-pointer">
-                    <div>
-                      <span className="text-xs font-bold text-white block">فعال‌سازی کلی Turnstile</span>
-                      <span className="text-[11px] text-slate-400">بررسی امنیتی روی فرم‌ها</span>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={turnstileSettings.enabled}
-                      onChange={(e) => setTurnstileSettings(prev => ({ ...prev, enabled: e.target.checked }))}
-                      className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                  </label>
-
-                  <div className="p-4 rounded-2xl bg-[#070a12] border border-slate-800 space-y-1">
-                    <label className="block text-xs font-bold text-slate-300">محیط اجرا (Mode)</label>
-                    <select
-                      value={turnstileSettings.mode}
-                      onChange={(e) => setTurnstileSettings(prev => ({ ...prev, mode: e.target.value }))}
-                      className="w-full h-8 rounded-lg bg-[#0e1422] border border-slate-700 px-2.5 text-xs text-white font-medium focus:border-[#1877F2] focus:outline-none cursor-pointer"
-                    >
-                      <option value="test">آزمایشی (Test Mode)</option>
-                      <option value="live">عملیاتی زنده (Live Production)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                  <label className="flex items-center justify-between p-4 rounded-2xl bg-[#070a12] border border-slate-800 cursor-pointer">
-                    <div className="flex items-center gap-2.5">
-                      <Lock size={15} className="text-amber-400" />
-                      <div>
-                        <span className="text-xs font-bold text-white block">محافظت از صفحه ورود مدیریت</span>
-                        <span className="text-[11px] text-slate-400">جلوگیری از حملات ربات‌ها</span>
-                      </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={turnstileSettings.protectAdminLogin}
-                      onChange={(e) => setTurnstileSettings(prev => ({ ...prev, protectAdminLogin: e.target.checked }))}
-                      className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                  </label>
-
-                  <label className="flex items-center justify-between p-4 rounded-2xl bg-[#070a12] border border-slate-800 cursor-pointer">
-                    <div className="flex items-center gap-2.5">
-                      <Bot size={15} className="text-[#1877F2]" />
-                      <div>
-                        <span className="text-xs font-bold text-white block">محافظت از فرم ثبت آگهی</span>
-                        <span className="text-[11px] text-slate-400">جلوگیری از ارسال آگهی اسپم</span>
-                      </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={turnstileSettings.protectPostAd}
-                      onChange={(e) => setTurnstileSettings(prev => ({ ...prev, protectPostAd: e.target.checked }))}
-                      className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              {/* Cloudflare Keys Card */}
-              <div className="rounded-3xl bg-[#0f1626] border border-slate-800/90 p-6 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-extrabold text-white">کلیدهای اختصاصی Cloudflare</h3>
-                  <a
-                    href="https://dash.cloudflare.com/?to=/:account/turnstile"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs font-bold text-blue-400 hover:underline"
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('security')}
+                    className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
                   >
-                    دریافت کلید رایگان از Cloudflare ↗
-                  </a>
+                    تنظیمات فایروال ←
+                  </button>
                 </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">Turnstile Site Key (کلید عمومی)</label>
-                    <input
-                      type="text"
-                      value={turnstileSettings.siteKey}
-                      onChange={(e) => setTurnstileSettings(prev => ({ ...prev, siteKey: e.target.value }))}
-                      placeholder={turnstileSettings.mode === 'test' ? 'در حالت تستی نیاز به وارد کردن کلید نیست' : '0x4AAAAAA...'}
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
-                      dir="ltr"
-                    />
+                {/* 3. Branding & SEO Card */}
+                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
+                      <Settings size={15} className="text-zinc-700" />
+                      سئو و برندینگ
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#ebf4fe] text-[#175cd3] border border-[#c3ddfd] text-[10px] font-bold">
+                      ۴ کشور
+                    </span>
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">Turnstile Secret Key (کلید محرمانه)</label>
-                    <input
-                      type="password"
-                      value={turnstileSettings.secretKey}
-                      onChange={(e) => setTurnstileSettings(prev => ({ ...prev, secretKey: e.target.value }))}
-                      placeholder={turnstileSettings.mode === 'test' ? 'در حالت تستی نیاز به وارد کردن کلید نیست' : '0x4AAAAAA...'}
-                      className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3.5 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none"
-                      dir="ltr"
-                    />
+                  <div className="text-xs text-stone-600 space-y-1">
+                    <div>نام برند: <b>{siteName}</b></div>
+                    <div>پوشش: <b>سوئد، نروژ، دانمارک، فنلاند</b></div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('settings')}
+                    className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    ویرایش سئو ←
+                  </button>
                 </div>
+
               </div>
 
-              {/* Live Preview Widget */}
-              <div className="rounded-3xl bg-[#0f1626] border border-slate-800/90 p-6 shadow-sm space-y-3">
-                <h3 className="text-xs font-extrabold text-white">تست زنده عملکرد ویجت</h3>
-                <div className="p-4 rounded-2xl bg-[#070a12] border border-slate-800 flex flex-col items-center justify-center space-y-2">
-                  <CloudflareTurnstile
-                    theme="dark"
-                    siteKey={turnstileSettings.mode === 'live' ? turnstileSettings.siteKey : undefined}
-                    onVerify={(token) => {
-                      triggerToast('تایید با موفقیت انجام شد: ' + token.slice(0, 15) + '...');
-                    }}
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={savingSettings}
-                className="h-11 px-6 rounded-full bg-[#1877F2] hover:bg-[#166fe5] disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-blue-500/20 transition-all cursor-pointer"
-              >
-                <Save size={16} />
-                <span>{savingSettings ? 'در حال ذخیره...' : 'ذخیره تنظیمات آنتی‌بات'}</span>
-              </button>
-            </form>
-
-          </div>
-        )}
-
-        {/* ========================================================
-            TAB 5: SITE BRANDING, LOGO & SEO FOR EACH COUNTRY
-        ======================================================== */}
-        {activeTab === 'settings' && (
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8 space-y-6 max-w-4xl mx-auto w-full">
-            
-            <div className="border-b border-slate-800/90 pb-5">
-              <h2 className="text-lg font-black text-white">تنظیمات برند و سئوی ۴ کشور اسکاندیناوی</h2>
-              <p className="text-xs text-slate-400 mt-1">مدیریت نام سایت، مشخصات تماس و تایتل/دیسکریپشن گوگل برای هر کشور</p>
             </div>
+          )}
 
-            {saveSuccessMsg && (
-              <div className="p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-800 text-emerald-300 text-xs font-bold flex items-center gap-2">
-                <CheckCircle size={16} className="text-emerald-400" />
-                <span>{saveSuccessMsg}</span>
+          {/* ========================================================
+              TAB 2: COUNTRY ADS MANAGEMENT (SPLIT CRM VIEW)
+          ======================================================== */}
+          {activeTab === 'ads' && (
+            <div className="flex-1 flex overflow-hidden">
+              
+              {/* Left/Main Column: Ads List & Filters */}
+              <div className="flex-1 flex flex-col border-s border-[#e5e1d7] overflow-hidden bg-[#f4f3ee]">
+                
+                {/* Filter Controls Header */}
+                <div className="p-3.5 sm:p-4 border-b border-[#e5e1d7] space-y-3 bg-white">
+                  
+                  {/* Country Filter Tabs */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                    <span className="text-xs font-bold text-stone-500 shrink-0 pe-1">کشور:</span>
+                    
+                    <button
+                      type="button"
+                      onClick={() => setCountryFilter('all')}
+                      className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                        countryFilter === 'all'
+                          ? 'bg-zinc-900 text-white shadow-xs'
+                          : 'bg-stone-100 text-stone-600 hover:text-zinc-900 border border-stone-200'
+                      }`}
+                    >
+                      همه ({ads.length})
+                    </button>
+
+                    {COUNTRIES.map(country => {
+                      const count = ads.filter(a => a.country === country.id || (!a.country && country.id === 'se')).length;
+                      const isSelected = countryFilter === country.id;
+
+                      return (
+                        <button
+                          key={country.id}
+                          type="button"
+                          onClick={() => setCountryFilter(country.id)}
+                          className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                            isSelected
+                              ? 'bg-zinc-900 text-white shadow-xs'
+                              : 'bg-stone-100 text-stone-600 hover:text-zinc-900 border border-stone-200'
+                          }`}
+                        >
+                          <span>{country.nameFa}</span>
+                          <span className="text-[10px] opacity-80 font-mono font-bold">({count})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Search & Category / Status filters */}
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="relative flex-1">
+                      <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+                      <input
+                        type="text"
+                        placeholder="جستجو در عنوان، کد پیگیری، شهر، نام..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full h-9 rounded-xl bg-stone-50 border border-stone-300 ps-8 pe-3 text-xs text-zinc-900 placeholder-stone-400 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        className="h-9 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                      >
+                        <option value="all">همه دسته‌ها</option>
+                        {CATEGORIES.filter(c => c.id !== 'all').map(c => (
+                          <option key={c.id} value={c.id}>{c.fa}</option>
+                        ))}
+                      </select>
+
+                      <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="h-9 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                      >
+                        <option value="all">همه وضعیت‌ها</option>
+                        <option value="active">فقط فعال</option>
+                        <option value="hidden">مخفی‌شده</option>
+                        <option value="vip">فقط ویژه (VIP)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Ads Stream List */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-3 sm:p-4 space-y-2.5">
+                  {filteredAds.length === 0 ? (
+                    <div className="text-center py-16 text-stone-400 space-y-2">
+                      <Layers size={32} className="mx-auto text-stone-300" />
+                      <p className="text-xs font-medium">هیچ آگهی با این فیلترها یافت نشد.</p>
+                    </div>
+                  ) : (
+                    filteredAds.map(ad => {
+                      const isSelected = selectedAdId === ad.id;
+                      const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
+
+                      return (
+                        <div
+                          key={ad.id}
+                          onClick={() => {
+                            setSelectedAdId(ad.id);
+                            setMobileDetailOpen(true);
+                          }}
+                          className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                            isSelected
+                              ? 'bg-white border-zinc-900 ring-2 ring-zinc-900/10 shadow-sm'
+                              : 'bg-white border-[#e5e1d7] hover:border-stone-400 shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            {/* Image thumbnail */}
+                            <div className="h-12 w-12 rounded-xl bg-stone-100 border border-stone-200 overflow-hidden shrink-0">
+                              {ad.images && ad.images[0] ? (
+                                <img src={ad.images[0]} alt="" className="h-full w-full object-cover" />
+                              ) : (
+                                <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
+                                  بدون عکس
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="min-w-0 space-y-1">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                {/* Country Badge */}
+                                <span className="px-2 py-0.2 rounded-full bg-[#ebf4fe] text-[#175cd3] text-[10.5px] font-bold border border-[#c3ddfd]">
+                                  {countryObj.nameFa}
+                                </span>
+
+                                <span className="font-mono text-[10.5px] text-stone-600 font-bold bg-stone-100 px-1.5 py-0.2 rounded border border-stone-200">
+                                  <bdi>{ad.reference_number}</bdi>
+                                </span>
+
+                                {ad.is_featured && (
+                                  <span className="px-2 py-0.2 rounded-full bg-[#fef6e7] text-[#9a6200] text-[10px] font-bold border border-[#fbdca7]">
+                                    VIP ویژه
+                                  </span>
+                                )}
+
+                                {ad.status === 'hidden' && (
+                                  <span className="px-2 py-0.2 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200">
+                                    مخفی
+                                  </span>
+                                )}
+                              </div>
+
+                              <h4 className="text-xs font-bold text-zinc-900 truncate">
+                                {ad.title}
+                              </h4>
+
+                              <div className="flex items-center gap-2.5 text-[11px] text-stone-500">
+                                <span>{ad.city}</span>
+                                <span>•</span>
+                                <span className="font-semibold text-zinc-700">
+                                  {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
+                                </span>
+                                <span>•</span>
+                                <span>{ad.views_count || 1} بازدید</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Quick action buttons */}
+                          <div className="hidden sm:flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              type="button"
+                              onClick={() => toggleFeatured(ad)}
+                              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                                ad.is_featured
+                                  ? 'bg-[#fef6e7] text-[#9a6200] border-[#fbdca7]'
+                                  : 'bg-stone-50 text-stone-500 border-stone-200 hover:text-amber-600'
+                              }`}
+                              title={ad.is_featured ? 'برداشتن VIP' : 'اعطای نشان ویژه VIP'}
+                            >
+                              <Sparkles size={14} />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => toggleStatus(ad)}
+                              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                                ad.status === 'active'
+                                  ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]'
+                                  : 'bg-stone-50 text-stone-500 border-stone-200 hover:text-emerald-600'
+                              }`}
+                              title={ad.status === 'active' ? 'مخفی کردن' : 'فعال‌سازی'}
+                            >
+                              <CheckCircle size={14} />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => deleteAdAdmin(ad.id)}
+                              className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors cursor-pointer"
+                              title="حذف دائمی"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
               </div>
-            )}
 
-            {/* Site Branding Form */}
-            <form onSubmit={saveBrandingSettings} className="rounded-3xl bg-[#0f1626] border border-slate-800/90 p-6 shadow-sm space-y-4">
-              <h3 className="text-xs font-extrabold text-white">مشخصات عمومی سایت و راه‌های پشتیبانی</h3>
+              {/* Right Column: CRM Details for Selected Ad (Desktop Inspector) */}
+              {currentSelectedAd && (
+                <div className="hidden lg:flex w-96 xl:w-[410px] shrink-0 bg-white flex-col overflow-hidden border-s border-[#e5e1d7]">
+                  
+                  {/* Header */}
+                  <div className="p-4 border-b border-[#e5e1d7] bg-stone-50/50 flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] font-mono text-stone-500 uppercase tracking-wider block font-bold">
+                        جزییات و ویرایش آگهی
+                      </span>
+                      <h3 className="text-sm font-black text-zinc-900 truncate max-w-[240px]">
+                        {currentSelectedAd.title}
+                      </h3>
+                    </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => toggleFeatured(currentSelectedAd)}
+                        className={`p-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+                          currentSelectedAd.is_featured
+                            ? 'bg-[#fef6e7] text-[#9a6200] border-[#fbdca7]'
+                            : 'bg-stone-100 text-stone-500 border-stone-200 hover:text-amber-600'
+                        }`}
+                        title="تغییر وضعیت VIP"
+                      >
+                        <Sparkles size={15} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => toggleStatus(currentSelectedAd)}
+                        className={`p-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
+                          currentSelectedAd.status === 'active'
+                            ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]'
+                            : 'bg-stone-100 text-stone-500 border-stone-200 hover:text-emerald-600'
+                        }`}
+                        title="تغییر وضعیت انتشار"
+                      >
+                        <CheckCircle size={15} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => deleteAdAdmin(currentSelectedAd.id)}
+                        className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 cursor-pointer"
+                        title="حذف دائمی"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Details Scrollable Body */}
+                  <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4 text-xs">
+                    
+                    {/* Photo Preview */}
+                    {currentSelectedAd.images && currentSelectedAd.images[0] && (
+                      <div className="aspect-[16/10] w-full rounded-2xl overflow-hidden bg-stone-100 border border-stone-200 shadow-2xs">
+                        <img src={currentSelectedAd.images[0]} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+
+                    {/* 1. Country Switcher for this Ad */}
+                    <div className="p-4 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] shadow-2xs space-y-2">
+                      <label className="block text-[11px] font-bold text-stone-700">
+                        تغییر کشور اختصاصی این آگهی:
+                      </label>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {COUNTRIES.map(c => {
+                          const isCurrent = (currentSelectedAd.country || 'se') === c.id;
+
+                          return (
+                            <button
+                              key={c.id}
+                              type="button"
+                              onClick={() => updateAdCountry(currentSelectedAd.id, c.id)}
+                              className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-all text-center border cursor-pointer ${
+                                isCurrent
+                                  ? 'bg-zinc-900 text-white border-zinc-900 shadow-xs'
+                                  : 'bg-white hover:bg-stone-100 text-zinc-700 border-stone-200'
+                              }`}
+                            >
+                              {c.nameFa}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* 2. Key Metadata & PIN */}
+                    <div className="p-4 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] shadow-2xs space-y-3">
+                      <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+                        <span className="text-stone-500 font-medium">کد پیگیری آگهی:</span>
+                        <button
+                          type="button"
+                          onClick={() => copyText(currentSelectedAd.reference_number, 'ref')}
+                          className="flex items-center gap-1.5 font-mono font-bold text-zinc-900 hover:text-black cursor-pointer"
+                        >
+                          <span>{currentSelectedAd.reference_number}</span>
+                          {copiedRef ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
+                        </button>
+                      </div>
+
+                      <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+                        <span className="text-stone-500 font-medium">رمز ۴ رقمی ویرایش (PIN):</span>
+                        <button
+                          type="button"
+                          onClick={() => copyText(currentSelectedAd.pin_code || '1234', 'pin')}
+                          className="flex items-center gap-1.5 font-mono font-extrabold text-[#9a6200] bg-[#fef6e7] px-2.5 py-0.5 rounded-lg border border-[#fbdca7] cursor-pointer"
+                        >
+                          <span>{currentSelectedAd.pin_code || '1234'}</span>
+                          {copiedPin ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
+                        </button>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-stone-500 font-medium">تاریخ ثبت:</span>
+                        <span className="text-zinc-800 font-medium">
+                          {new Date(currentSelectedAd.created_at || '2026-01-01').toLocaleDateString('fa-IR')}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 3. Seller Contacts */}
+                    <div className="p-4 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] shadow-2xs space-y-2.5">
+                      <span className="text-[11px] font-bold text-stone-700 block">اطلاعات تماس آگهی‌دهنده:</span>
+                      
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-stone-500">
+                          <span>نام:</span>
+                          <span className="font-bold text-zinc-900">{currentSelectedAd.contact_name}</span>
+                        </div>
+
+                        {currentSelectedAd.contact_phone && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-stone-500">تلفن:</span>
+                            <a href={`tel:${currentSelectedAd.contact_phone}`} className="font-mono text-zinc-900 font-semibold flex items-center gap-1 hover:underline">
+                              <Phone size={12} />
+                              <span>{currentSelectedAd.contact_phone}</span>
+                            </a>
+                          </div>
+                        )}
+
+                        {currentSelectedAd.contact_whatsapp && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-stone-500">واتساپ:</span>
+                            <a href={`https://wa.me/${currentSelectedAd.contact_whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="font-mono text-emerald-700 font-semibold flex items-center gap-1 hover:underline">
+                              <span>{currentSelectedAd.contact_whatsapp}</span>
+                            </a>
+                          </div>
+                        )}
+
+                        {currentSelectedAd.contact_telegram && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-stone-500">تلگرام:</span>
+                            <a href={`https://t.me/${currentSelectedAd.contact_telegram.replace('@', '')}`} target="_blank" rel="noreferrer" className="font-mono text-sky-700 font-semibold flex items-center gap-1 hover:underline">
+                              <Send size={12} />
+                              <span>{currentSelectedAd.contact_telegram}</span>
+                            </a>
+                          </div>
+                        )}
+
+                        {currentSelectedAd.contact_email && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-stone-500">ایمیل:</span>
+                            <a href={`mailto:${currentSelectedAd.contact_email}`} className="font-mono text-zinc-800 hover:underline flex items-center gap-1">
+                              <Mail size={12} />
+                              <span>{currentSelectedAd.contact_email}</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 4. Description */}
+                    <div className="p-4 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] shadow-2xs space-y-1.5">
+                      <span className="text-[11px] font-bold text-stone-700 block">متن آگهی:</span>
+                      <p className="text-stone-700 leading-relaxed whitespace-pre-line text-xs font-normal">
+                        {currentSelectedAd.description}
+                      </p>
+                    </div>
+
+                    {/* 5. Live View Link */}
+                    <button
+                      type="button"
+                      onClick={() => window.open(`?ad=${currentSelectedAd.reference_number || currentSelectedAd.id}`, '_blank')}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
+                    >
+                      <ExternalLink size={14} />
+                      <span>مشاهده صفحه اختصاصی آگهی در تب جدید</span>
+                    </button>
+
+                  </div>
+
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {/* ========================================================
+              TAB 3: STRIPE PAYMENT GATEWAY & VIP MONETIZATION SETTINGS
+          ======================================================== */}
+          {activeTab === 'monetization' && (
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full">
+              
+              <div className="border-b border-[#e5e1d7] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">نام برند پرتال</label>
-                  <input
-                    type="text"
-                    value={siteName}
-                    onChange={(e) => setSiteName(e.target.value)}
-                    className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-white focus:border-[#1877F2] focus:outline-none"
-                  />
+                  <h2 className="text-lg font-black text-zinc-900">تنظیمات درگاه پرداخت Stripe و آگهی‌های ویژه</h2>
+                  <p className="text-xs text-stone-500 mt-1">مدیریت کلیدهای Stripe، تعرفه آگهی‌های VIP و مدت زمان نمایش</p>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">شعار سایت</label>
-                  <input
-                    type="text"
-                    value={siteSlogan}
-                    onChange={(e) => setSiteSlogan(e.target.value)}
-                    className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-white focus:border-[#1877F2] focus:outline-none"
-                  />
+                <div className="flex items-center gap-2">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                    stripeSettings.mode === 'live' 
+                      ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]' 
+                      : 'bg-[#fef6e7] text-[#9a6200] border-[#fbdca7]'
+                  }`}>
+                    {stripeSettings.mode === 'live' ? 'درگاه زنده (Live)' : 'درگاه آزمایشی (Test)'}
+                  </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">ایمیل پشتیبانی</label>
-                  <input
-                    type="email"
-                    value={supportEmail}
-                    onChange={(e) => setSupportEmail(e.target.value)}
-                    className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none text-left"
-                    dir="ltr"
-                  />
+              {saveSuccessMsg && (
+                <div className="p-3.5 rounded-2xl bg-[#eaf7ee] border border-[#c4e9cb] text-[#1b7a37] text-xs font-bold flex items-center gap-2">
+                  <CheckCircle size={16} className="text-[#1b7a37]" />
+                  <span>{saveSuccessMsg}</span>
+                </div>
+              )}
+
+              <form onSubmit={saveStripeSettings} className="space-y-6">
+                
+                {/* Stripe Credentials Card */}
+                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                  <h3 className="text-xs font-extrabold text-zinc-900">کلیدهای اتصال Stripe</h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">محیط درگاه (Mode)</label>
+                      <select
+                        value={stripeSettings.mode}
+                        onChange={(e) => setStripeSettings(prev => ({ ...prev, mode: e.target.value }))}
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-medium focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                      >
+                        <option value="test">آزمایشی (Test Mode)</option>
+                        <option value="live">زنده و واقعی (Live Mode)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">فعال بودن درگاه</label>
+                      <select
+                        value={stripeSettings.enabled ? 'true' : 'false'}
+                        onChange={(e) => setStripeSettings(prev => ({ ...prev, enabled: e.target.value === 'true' }))}
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-medium focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                      >
+                        <option value="true">فعال (امکان پرداخت آنلاین فعال)</option>
+                        <option value="false">غیرفعال موقت</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 pt-1">
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">Stripe Publishable Key (کلید عمومی)</label>
+                      <input
+                        type="text"
+                        value={stripeSettings.publishableKey}
+                        onChange={(e) => setStripeSettings(prev => ({ ...prev, publishableKey: e.target.value }))}
+                        placeholder="pk_test_... یا pk_live_..."
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        dir="ltr"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">Stripe Secret Key (کلید محرمانه)</label>
+                      <input
+                        type="password"
+                        value={stripeSettings.secretKey}
+                        onChange={(e) => setStripeSettings(prev => ({ ...prev, secretKey: e.target.value }))}
+                        placeholder="sk_test_... یا sk_live_..."
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        dir="ltr"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">آیدی تلگرام پشتیبانی</label>
-                  <input
-                    type="text"
-                    value={supportTelegram}
-                    onChange={(e) => setSupportTelegram(e.target.value)}
-                    className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none text-left"
-                    dir="ltr"
-                  />
+                {/* Pricing & VIP Configuration */}
+                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                  <h3 className="text-xs font-extrabold text-zinc-900">تعرفه و شرایط آگهی‌های ویژه</h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">مبلغ ارتقا به VIP</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={stripeSettings.vipPrice}
+                        onChange={(e) => setStripeSettings(prev => ({ ...prev, vipPrice: Number(e.target.value) }))}
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">واحد پولی</label>
+                      <select
+                        value={stripeSettings.currency}
+                        onChange={(e) => setStripeSettings(prev => ({ ...prev, currency: e.target.value }))}
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-medium focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                      >
+                        <option value="SEK">SEK (کرون سوئد)</option>
+                        <option value="NOK">NOK (کرون نروژ)</option>
+                        <option value="DKK">DKK (کرون دانمارک)</option>
+                        <option value="EUR">EUR (یورو فنلاند)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">مدت زمان اعتبار</label>
+                      <select
+                        value={stripeSettings.vipDurationDays}
+                        onChange={(e) => setStripeSettings(prev => ({ ...prev, vipDurationDays: Number(e.target.value) }))}
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-medium focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                      >
+                        <option value={7}>۷ روز</option>
+                        <option value={14}>۱۴ روز</option>
+                        <option value={30}>۳۰ روز</option>
+                        <option value={60}>۶۰ روز</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">شماره تماس پشتیبانی</label>
-                  <input
-                    type="text"
-                    value={supportPhone}
-                    onChange={(e) => setSupportPhone(e.target.value)}
-                    placeholder="+46..."
-                    className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-white font-mono focus:border-[#1877F2] focus:outline-none text-left"
-                    dir="ltr"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2">
                 <button
                   type="submit"
                   disabled={savingSettings}
-                  className="h-10 px-5 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                  className="h-11 px-6 rounded-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer"
                 >
-                  <Save size={15} />
-                  <span>ذخیره مشخصات برند</span>
+                  <Save size={16} />
+                  <span>{savingSettings ? 'در حال ذخیره...' : 'ذخیره تنظیمات Stripe'}</span>
                 </button>
-              </div>
-            </form>
+              </form>
 
-            {/* Country-Specific SEO Settings */}
-            <div className="rounded-3xl bg-[#0f1626] border border-slate-800/90 p-6 shadow-sm space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-                <h3 className="text-xs font-extrabold text-white">سئوی تفکیکی برای ۴ کشور اسکاندیناوی</h3>
+            </div>
+          )}
+
+          {/* ========================================================
+              TAB 4: CLOUDFLARE TURNSTILE ANTI-BOT SETTINGS
+          ======================================================== */}
+          {activeTab === 'security' && (
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar max-w-4xl mx-auto w-full">
+              
+              <div className="border-b border-[#e5e1d7] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-black text-zinc-900">سامانه ضد اسپم و آنتی‌بات کلودفلر (Turnstile)</h2>
+                  <p className="text-xs text-stone-500 mt-1">محافظت هوشمند از فرم ورود مدیران و ثبت آگهی‌های کاربران بدون پازل‌های آزاردهنده</p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                    turnstileSettings.enabled 
+                      ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]' 
+                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                  }`}>
+                    {turnstileSettings.enabled ? 'آنتی‌بات فعال' : 'آنتی‌بات غیرفعال'}
+                  </span>
+                </div>
+              </div>
+
+              {saveSuccessMsg && (
+                <div className="p-3.5 rounded-2xl bg-[#eaf7ee] border border-[#c4e9cb] text-[#1b7a37] text-xs font-bold flex items-center gap-2">
+                  <CheckCircle size={16} className="text-[#1b7a37]" />
+                  <span>{saveSuccessMsg}</span>
+                </div>
+              )}
+
+              <form onSubmit={saveTurnstileSettings} className="space-y-6">
                 
-                {/* Country Switcher Tabs */}
-                <div className="flex items-center gap-1 bg-[#070a12] p-1 rounded-xl border border-slate-800">
-                  {COUNTRIES.map(c => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => setSeoActiveCountry(c.id)}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        seoActiveCountry === c.id
-                          ? 'bg-[#1877F2] text-white shadow-xs'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {c.nameFa}
-                    </button>
-                  ))}
+                {/* Toggles & Modes Card */}
+                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                  <h3 className="text-xs font-extrabold text-zinc-900">محدوده محافظت</h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label className="flex items-center justify-between p-4 rounded-2xl bg-stone-50 border border-stone-200 cursor-pointer">
+                      <div>
+                        <span className="text-xs font-bold text-zinc-900 block">فعال‌سازی کلی Turnstile</span>
+                        <span className="text-[11px] text-stone-500">بررسی امنیتی روی فرم‌ها</span>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={turnstileSettings.enabled}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, enabled: e.target.checked }))}
+                        className="h-4 w-4 rounded text-zinc-900 focus:ring-zinc-900 cursor-pointer"
+                      />
+                    </label>
+
+                    <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-1">
+                      <label className="block text-xs font-bold text-stone-700">محیط اجرا (Mode)</label>
+                      <select
+                        value={turnstileSettings.mode}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, mode: e.target.value }))}
+                        className="w-full h-8 rounded-lg bg-white border border-stone-300 px-2.5 text-xs text-zinc-900 font-medium focus:border-zinc-900 focus:outline-none cursor-pointer"
+                      >
+                        <option value="test">آزمایشی (Test Mode)</option>
+                        <option value="live">عملیاتی زنده (Live Production)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <label className="flex items-center justify-between p-4 rounded-2xl bg-stone-50 border border-stone-200 cursor-pointer">
+                      <div className="flex items-center gap-2.5">
+                        <Lock size={15} className="text-amber-600" />
+                        <div>
+                          <span className="text-xs font-bold text-zinc-900 block">محافظت از صفحه ورود مدیریت</span>
+                          <span className="text-[11px] text-stone-500">جلوگیری از حملات ربات‌ها</span>
+                        </div>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={turnstileSettings.protectAdminLogin}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, protectAdminLogin: e.target.checked }))}
+                        className="h-4 w-4 rounded text-zinc-900 focus:ring-zinc-900 cursor-pointer"
+                      />
+                    </label>
+
+                    <label className="flex items-center justify-between p-4 rounded-2xl bg-stone-50 border border-stone-200 cursor-pointer">
+                      <div className="flex items-center gap-2.5">
+                        <Bot size={15} className="text-zinc-700" />
+                        <div>
+                          <span className="text-xs font-bold text-zinc-900 block">محافظت از فرم ثبت آگهی</span>
+                          <span className="text-[11px] text-stone-500">جلوگیری از ارسال آگهی اسپم</span>
+                        </div>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={turnstileSettings.protectPostAd}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, protectPostAd: e.target.checked }))}
+                        className="h-4 w-4 rounded text-zinc-900 focus:ring-zinc-900 cursor-pointer"
+                      />
+                    </label>
+                  </div>
                 </div>
+
+                {/* Cloudflare Keys Card */}
+                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-extrabold text-zinc-900">کلیدهای اختصاصی Cloudflare</h3>
+                    <a
+                      href="https://dash.cloudflare.com/?to=/:account/turnstile"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs font-bold text-blue-600 hover:underline"
+                    >
+                      دریافت کلید رایگان از Cloudflare ↗
+                    </a>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">Turnstile Site Key (کلید عمومی)</label>
+                      <input
+                        type="text"
+                        value={turnstileSettings.siteKey}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, siteKey: e.target.value }))}
+                        placeholder={turnstileSettings.mode === 'test' ? 'در حالت تستی نیاز به وارد کردن کلید نیست' : '0x4AAAAAA...'}
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        dir="ltr"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">Turnstile Secret Key (کلید محرمانه)</label>
+                      <input
+                        type="password"
+                        value={turnstileSettings.secretKey}
+                        onChange={(e) => setTurnstileSettings(prev => ({ ...prev, secretKey: e.target.value }))}
+                        placeholder={turnstileSettings.mode === 'test' ? 'در حالت تستی نیاز به وارد کردن کلید نیست' : '0x4AAAAAA...'}
+                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        dir="ltr"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Preview Widget */}
+                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-3">
+                  <h3 className="text-xs font-extrabold text-zinc-900">تست زنده عملکرد ویجت</h3>
+                  <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col items-center justify-center space-y-2">
+                    <CloudflareTurnstile
+                      theme="light"
+                      siteKey={turnstileSettings.mode === 'live' ? turnstileSettings.siteKey : undefined}
+                      onVerify={(token) => {
+                        triggerToast('تایید با موفقیت انجام شد: ' + token.slice(0, 15) + '...');
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={savingSettings}
+                  className="h-11 px-6 rounded-full bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+                >
+                  <Save size={16} />
+                  <span>{savingSettings ? 'در حال ذخیره...' : 'ذخیره تنظیمات آنتی‌بات'}</span>
+                </button>
+              </form>
+
+            </div>
+          )}
+
+          {/* ========================================================
+              TAB 5: SITE BRANDING, LOGO & SEO FOR EACH COUNTRY
+          ======================================================== */}
+          {activeTab === 'settings' && (
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8 space-y-6 max-w-4xl mx-auto w-full">
+              
+              <div className="border-b border-[#e5e1d7] pb-5">
+                <h2 className="text-lg font-black text-zinc-900">تنظیمات برند و سئوی ۴ کشور اسکاندیناوی</h2>
+                <p className="text-xs text-stone-500 mt-1">مدیریت نام سایت، مشخصات تماس و تایتل/دیسکریپشن گوگل برای هر کشور</p>
               </div>
 
-              <form onSubmit={saveSeoSettings} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    عنوان صفحه گوگل (SEO Meta Title)
-                  </label>
-                  <input
-                    type="text"
-                    value={seoSettings[seoActiveCountry]?.title || ''}
-                    onChange={(e) => setSeoSettings(prev => ({
-                      ...prev,
-                      [seoActiveCountry]: {
-                        ...prev[seoActiveCountry],
-                        title: e.target.value
-                      }
-                    }))}
-                    className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-white focus:border-[#1877F2] focus:outline-none"
-                  />
+              {saveSuccessMsg && (
+                <div className="p-3.5 rounded-2xl bg-[#eaf7ee] border border-[#c4e9cb] text-[#1b7a37] text-xs font-bold flex items-center gap-2">
+                  <CheckCircle size={16} className="text-[#1b7a37]" />
+                  <span>{saveSuccessMsg}</span>
+                </div>
+              )}
+
+              {/* Site Branding Form */}
+              <form onSubmit={saveBrandingSettings} className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-4">
+                <h3 className="text-xs font-extrabold text-zinc-900">مشخصات عمومی سایت و راه‌های پشتیبانی</h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">نام برند پرتال</label>
+                    <input
+                      type="text"
+                      value={siteName}
+                      onChange={(e) => setSiteName(e.target.value)}
+                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">شعار سایت</label>
+                    <input
+                      type="text"
+                      value={siteSlogan}
+                      onChange={(e) => setSiteSlogan(e.target.value)}
+                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    توضیحات متای گوگل (Meta Description)
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={seoSettings[seoActiveCountry]?.description || ''}
-                    onChange={(e) => setSeoSettings(prev => ({
-                      ...prev,
-                      [seoActiveCountry]: {
-                        ...prev[seoActiveCountry],
-                        description: e.target.value
-                      }
-                    }))}
-                    className="w-full rounded-xl bg-[#070a12] border border-slate-800 p-3 text-xs text-white focus:border-[#1877F2] focus:outline-none"
-                  />
-                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">ایمیل پشتیبانی</label>
+                    <input
+                      type="email"
+                      value={supportEmail}
+                      onChange={(e) => setSupportEmail(e.target.value)}
+                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none text-left"
+                      dir="ltr"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                    کلمات کلیدی (Keywords - جدا شده با کاما)
-                  </label>
-                  <input
-                    type="text"
-                    value={seoSettings[seoActiveCountry]?.keywords || ''}
-                    onChange={(e) => setSeoSettings(prev => ({
-                      ...prev,
-                      [seoActiveCountry]: {
-                        ...prev[seoActiveCountry],
-                        keywords: e.target.value
-                      }
-                    }))}
-                    className="w-full h-10 rounded-xl bg-[#070a12] border border-slate-800 px-3 text-xs text-white focus:border-[#1877F2] focus:outline-none"
-                  />
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">آیدی تلگرام پشتیبانی</label>
+                    <input
+                      type="text"
+                      value={supportTelegram}
+                      onChange={(e) => setSupportTelegram(e.target.value)}
+                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none text-left"
+                      dir="ltr"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">شماره تماس پشتیبانی</label>
+                    <input
+                      type="text"
+                      value={supportPhone}
+                      onChange={(e) => setSupportPhone(e.target.value)}
+                      placeholder="+46..."
+                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none text-left"
+                      dir="ltr"
+                    />
+                  </div>
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
                     disabled={savingSettings}
-                    className="h-10 px-5 rounded-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                    className="h-10 px-5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
                   >
                     <Save size={15} />
-                    <span>ذخیره سئوی {COUNTRIES.find(c => c.id === seoActiveCountry)?.nameFa}</span>
+                    <span>ذخیره مشخصات برند</span>
                   </button>
                 </div>
               </form>
+
+              {/* Country-Specific SEO Settings */}
+              <div className="rounded-3xl bg-white border border-[#e5e1d7] p-6 shadow-xs space-y-5">
+                <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+                  <h3 className="text-xs font-extrabold text-zinc-900">سئوی تفکیکی برای ۴ کشور اسکاندیناوی</h3>
+                  
+                  {/* Country Switcher Tabs */}
+                  <div className="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
+                    {COUNTRIES.map(c => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => setSeoActiveCountry(c.id)}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          seoActiveCountry === c.id
+                            ? 'bg-zinc-900 text-white shadow-xs'
+                            : 'text-stone-600 hover:text-zinc-900'
+                        }`}
+                      >
+                        {c.nameFa}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <form onSubmit={saveSeoSettings} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">
+                      عنوان صفحه گوگل (SEO Meta Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={seoSettings[seoActiveCountry]?.title || ''}
+                      onChange={(e) => setSeoSettings(prev => ({
+                        ...prev,
+                        [seoActiveCountry]: {
+                          ...prev[seoActiveCountry],
+                          title: e.target.value
+                        }
+                      }))}
+                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">
+                      توضیحات متای گوگل (Meta Description)
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={seoSettings[seoActiveCountry]?.description || ''}
+                      onChange={(e) => setSeoSettings(prev => ({
+                        ...prev,
+                        [seoActiveCountry]: {
+                          ...prev[seoActiveCountry],
+                          description: e.target.value
+                        }
+                      }))}
+                      className="w-full rounded-xl bg-stone-50 border border-stone-300 p-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">
+                      کلمات کلیدی (Keywords - جدا شده با کاما)
+                    </label>
+                    <input
+                      type="text"
+                      value={seoSettings[seoActiveCountry]?.keywords || ''}
+                      onChange={(e) => setSeoSettings(prev => ({
+                        ...prev,
+                        [seoActiveCountry]: {
+                          ...prev[seoActiveCountry],
+                          keywords: e.target.value
+                        }
+                      }))}
+                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={savingSettings}
+                      className="h-10 px-5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+                    >
+                      <Save size={15} />
+                      <span>ذخیره سئوی {COUNTRIES.find(c => c.id === seoActiveCountry)?.nameFa}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
             </div>
+          )}
 
-          </div>
-        )}
+        </div>
 
-      </div>
+      </main>
 
-      {/* Single Mobile Details Bottom Drawer */}
+      {/* ========================================================
+          SINGLE MOBILE DETAILS DRAWER (Eye-Care Warm Style)
+      ======================================================== */}
       {mobileDetailOpen && currentSelectedAd && (
         <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden">
           <div 
-            className="fixed inset-0 bg-black/70 backdrop-blur-xs"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
             onClick={() => setMobileDetailOpen(false)}
           />
-          <div className="relative w-full max-h-[85vh] bg-[#0f1626] rounded-t-3xl border-t border-slate-800 p-5 overflow-y-auto custom-scrollbar z-10 space-y-4 text-white">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-              <h3 className="text-sm font-extrabold text-white truncate max-w-[240px]">
+          <div className="relative w-full max-h-[85vh] bg-white rounded-t-3xl border-t border-[#e5e1d7] p-5 overflow-y-auto custom-scrollbar z-10 space-y-4 text-zinc-900">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+              <h3 className="text-sm font-black text-zinc-900 truncate max-w-[240px]">
                 {currentSelectedAd.title}
               </h3>
               <button
                 type="button"
                 onClick={() => setMobileDetailOpen(false)}
-                className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800"
+                className="p-1.5 rounded-full text-stone-500 hover:text-zinc-900 hover:bg-stone-100"
               >
                 <X size={18} />
               </button>
@@ -1839,8 +1981,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 onClick={() => toggleFeatured(currentSelectedAd)}
                 className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all border ${
                   currentSelectedAd.is_featured
-                    ? 'bg-amber-950/60 text-amber-300 border-amber-800'
-                    : 'bg-[#070a12] text-slate-300 border-slate-800'
+                    ? 'bg-[#fef6e7] text-[#9a6200] border-[#fbdca7]'
+                    : 'bg-stone-100 text-stone-700 border-stone-200'
                 }`}
               >
                 {currentSelectedAd.is_featured ? 'برداشتن VIP' : 'اعطای VIP'}
@@ -1851,8 +1993,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 onClick={() => toggleStatus(currentSelectedAd)}
                 className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all border ${
                   currentSelectedAd.status === 'active'
-                    ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800'
-                    : 'bg-rose-950/60 text-rose-300 border-rose-800'
+                    ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]'
+                    : 'bg-rose-50 text-rose-700 border-rose-200'
                 }`}
               >
                 {currentSelectedAd.status === 'active' ? 'مخفی کردن' : 'فعال‌سازی'}
@@ -1860,8 +2002,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
 
             {/* Country Selector for this Ad */}
-            <div className="p-3 rounded-2xl bg-[#070a12] border border-slate-800 space-y-2">
-              <label className="block text-[11px] font-bold text-slate-400">تغییر کشور آگهی:</label>
+            <div className="p-3 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] space-y-2">
+              <label className="block text-[11px] font-bold text-stone-700">تغییر کشور آگهی:</label>
               <div className="grid grid-cols-2 gap-1.5">
                 {COUNTRIES.map(c => {
                   const isCurrent = (currentSelectedAd.country || 'se') === c.id;
@@ -1871,7 +2013,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       type="button"
                       onClick={() => updateAdCountry(currentSelectedAd.id, c.id)}
                       className={`py-2 px-2 rounded-xl text-xs font-bold transition-all ${
-                        isCurrent ? 'bg-[#1877F2] text-white shadow-xs' : 'bg-[#0e1422] text-slate-300 border border-slate-800'
+                        isCurrent ? 'bg-zinc-900 text-white shadow-xs' : 'bg-white text-zinc-700 border border-stone-200'
                       }`}
                     >
                       {c.nameFa}
@@ -1882,14 +2024,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
 
             {/* Reference & PIN info */}
-            <div className="p-3.5 rounded-2xl bg-[#070a12] border border-slate-800 space-y-2 text-xs">
+            <div className="p-3.5 rounded-2xl bg-[#faf9f5] border border-[#e5e1d7] space-y-2 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">کد پیگیری:</span>
-                <span className="font-mono font-bold text-white">{currentSelectedAd.reference_number}</span>
+                <span className="text-stone-500">کد پیگیری:</span>
+                <span className="font-mono font-bold text-zinc-900">{currentSelectedAd.reference_number}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">رمز ۴ رقمی (PIN):</span>
-                <span className="font-mono font-bold text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/60">{currentSelectedAd.pin_code || '1234'}</span>
+                <span className="text-stone-500">رمز ۴ رقمی (PIN):</span>
+                <span className="font-mono font-bold text-[#9a6200] bg-[#fef6e7] px-2 py-0.5 rounded border border-[#fbdca7]">{currentSelectedAd.pin_code || '1234'}</span>
               </div>
             </div>
 
@@ -1898,7 +2040,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => window.open(`?ad=${currentSelectedAd.reference_number || currentSelectedAd.id}`, '_blank')}
-                className="w-full py-3 rounded-xl bg-[#131b2e] text-white text-xs font-bold flex items-center justify-center gap-1.5 border border-slate-700"
+                className="w-full py-3 rounded-xl bg-zinc-900 text-white text-xs font-bold flex items-center justify-center gap-1.5"
               >
                 <Eye size={14} />
                 <span>مشاهده صفحه آگهی در سایت</span>
@@ -1907,7 +2049,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => deleteAdAdmin(currentSelectedAd.id)}
-                className="w-full py-3 rounded-xl bg-rose-950/40 text-rose-300 text-xs font-bold flex items-center justify-center gap-1.5 border border-rose-900/60"
+                className="w-full py-3 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold flex items-center justify-center gap-1.5 border border-rose-200"
               >
                 <Trash2 size={14} />
                 <span>حذف دائمی آگهی</span>
