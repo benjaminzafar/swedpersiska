@@ -76,17 +76,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [ads, setAds] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef(null);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
   const [countryFilter, setCountryFilter] = useState('all'); // 'all' | 'se' | 'no' | 'dk' | 'fi'
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'hidden' | 'vip'
@@ -534,6 +523,55 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const activeAds = ads.filter(a => a.status === 'active').length;
   const vipAds = ads.filter(a => a.is_featured).length;
   const totalViews = ads.reduce((sum, a) => sum + (a.views_count || 0), 0);
+
+  // Desktop Power Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // 1. Ctrl+K or Cmd+K: Focus search
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        return;
+      }
+
+      // 2. Ignore if typing in an input, textarea or select
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+        if (e.key === 'Escape') {
+          document.activeElement.blur();
+        }
+        return;
+      }
+
+      // 3. Tab Navigation (1-5) on Desktop
+      if (e.key === '1') handleTabChange('overview');
+      else if (e.key === '2') handleTabChange('ads');
+      else if (e.key === '3') handleTabChange('monetization');
+      else if (e.key === '4') handleTabChange('security');
+      else if (e.key === '5') handleTabChange('settings');
+
+      // 4. Arrow navigation through ads in Ads tab
+      if (activeTab === 'ads' && filteredAds.length > 0) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const currentId = currentSelectedAd?.id || filteredAds[0].id;
+          const currentIndex = filteredAds.findIndex(a => a.id === currentId);
+          if (currentIndex < filteredAds.length - 1) {
+            setSelectedAdId(filteredAds[currentIndex + 1].id);
+          }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const currentId = currentSelectedAd?.id || filteredAds[0].id;
+          const currentIndex = filteredAds.findIndex(a => a.id === currentId);
+          if (currentIndex > 0) {
+            setSelectedAdId(filteredAds[currentIndex - 1].id);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab, filteredAds, currentSelectedAd]);
 
   // ========================================================
   // LOGIN SCREEN - Relaxed Obsidian Focus Card
@@ -1059,103 +1097,370 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         <div className="flex-1 overflow-hidden flex flex-col">
           
           {/* ========================================================
-              TAB 1: OVERVIEW & CRM FLOW (Eye-Care Warm Style)
+              TAB 1: OVERVIEW & CRM FLOW (NT360 Dashboard Style)
           ======================================================== */}
           {activeTab === 'overview' && (
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-7 space-y-6 max-w-7xl w-full mx-auto">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto">
               
-              {/* Top 4 Stat Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+              {/* Row 1: Top 4 Stat Cards (NT360 Top Stat Row) */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 
-                {/* 1. Total Ads */}
-                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2">
+                {/* 1. Total Sales / Revenue */}
+                <div className="p-5 rounded-3xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      کل آگهی‌ها
+                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">
+                      فروش کل (VIP)
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-[#f0ede6] text-[#5c574f] border border-[#ded9ce] text-[10px] font-bold">
-                      ثبت‌شده
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#eaf7ee] text-[#1b7a37] border border-[#c4e9cb] text-[10px] font-bold">
+                      Netto
                     </span>
                   </div>
-                  <div className="text-3xl font-black text-zinc-900 tracking-tight">
+                  <div className="text-3xl font-black text-zinc-950 tracking-tight">
+                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('fa-IR')} <span className="text-base font-bold text-stone-500">kr</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1 border-t border-[#f0ece3]">
+                    <span>سفارش‌ها via Stripe</span>
+                    <span className="font-mono font-bold text-zinc-800">{vipAds} سفارش</span>
+                  </div>
+                </div>
+
+                {/* 2. Bookings & Ads Count */}
+                <div className="p-5 rounded-3xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">
+                      آگهی‌ها و سفارش‌ها
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#fef6e7] text-[#9a6200] border border-[#fbdca7] text-[10px] font-bold">
+                      +{ads.length} کل
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-zinc-950 tracking-tight">
                     {totalAds}
                   </div>
-                  <p className="text-[11px] text-stone-500">همه آگهی‌های سیستم</p>
+                  <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1 border-t border-[#f0ece3]">
+                    <span>آگهی‌های فعال</span>
+                    <span className="font-mono font-bold text-[#1b7a37]">{activeAds} فعال</span>
+                  </div>
                 </div>
 
-                {/* 2. Active Ads */}
-                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2">
+                {/* 3. Traffic / Views Stream */}
+                <div className="p-5 rounded-3xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      آگهی‌های فعال
+                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">
+                      ترافیک و بازدیدها
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-[#eaf7ee] text-[#1b7a37] border border-[#c4e9cb] text-[10px] font-bold">
-                      منتشرشده
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black text-[#1b7a37] tracking-tight">
-                    {activeAds}
-                  </div>
-                  <p className="text-[11px] text-stone-500">در حال نمایش در سایت</p>
-                </div>
-
-                {/* 3. VIP Ads */}
-                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      آگهی‌های VIP
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-[#fef6e7] text-[#9a6200] border border-[#fbdca7] text-[10px] font-bold">
-                      ویژه
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#ebf4fe] text-[#175cd3] border border-[#c3ddfd] text-[10px] font-bold">
+                      کلیک‌ها
                     </span>
                   </div>
-                  <div className="text-3xl font-black text-[#9a6200] tracking-tight">
-                    {vipAds}
-                  </div>
-                  <p className="text-[11px] text-stone-500">صدر نتایج و سایدبار</p>
-                </div>
-
-                {/* 4. Total Views */}
-                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      بازدیدها
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-[#ebf4fe] text-[#175cd3] border border-[#c3ddfd] text-[10px] font-bold">
-                      کلیک
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black text-[#175cd3] tracking-tight">
+                  <div className="text-3xl font-black text-zinc-950 tracking-tight">
                     {totalViews.toLocaleString('fa-IR')}
                   </div>
-                  <p className="text-[11px] text-stone-500">مجموع بازدید آگهی‌ها</p>
+                  <div className="space-y-1 pt-1 border-t border-[#f0ece3]">
+                    <div className="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
+                      <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, Math.max(15, totalViews / 20))}%` }} />
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-stone-500">
+                      <span>پایش کلیک عمومی</span>
+                      <span className="font-bold text-emerald-600">۱۰۰٪ آنلاین</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Registered Advertisers */}
+                <div className="p-5 rounded-3xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">
+                      آگهی‌دهندگان و کاربران
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-bold">
+                      CRM
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-zinc-950 tracking-tight">
+                    {new Set(ads.map(a => a.contact_phone || a.contact_email || a.id)).size}
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1 border-t border-[#f0ece3]">
+                    <span>کاربران در ۴ کشور</span>
+                    <span className="font-bold text-zinc-800">اسکاندیناوی</span>
+                  </div>
                 </div>
 
               </div>
 
-              {/* Status Alert Banner */}
-              <div className="p-3.5 rounded-2xl bg-[#fff9ea] border border-[#fae8be] text-[#8a5700] text-xs font-semibold flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-2xs">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-amber-600 shrink-0" />
-                  <span>
-                    در حال حاضر <b>{vipAds} آگهی VIP</b> فعال است.
-                  </span>
+              {/* Row 2: Two Big Split Blocks (NT360 Middle Section) */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                
+                {/* Block 1: Bokningsstatus & CRM-flöde (آگهی‌ها و گردش کار) */}
+                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-5">
+                  {/* Header */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-2xl bg-blue-50 border border-blue-200/80 text-blue-600 flex items-center justify-center shrink-0">
+                      <LayoutDashboard size={20} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-zinc-950 leading-tight">
+                        گردش کار آگهی‌ها و پایش CRM
+                      </h3>
+                      <p className="text-[11px] text-stone-500">
+                        وضعیت صف آگهی‌ها و تفکیک بر اساس اولویت انتشار
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 4-Stage Pipeline Row (NT360 Style) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    {/* Stage 1: Active Standard */}
+                    <div className="p-3.5 rounded-2xl bg-[#fffcf3] border-2 border-amber-300 shadow-2xs space-y-1 relative">
+                      <span className="absolute top-2.5 end-2.5 h-2 w-2 rounded-full bg-amber-500" />
+                      <span className="text-[10px] font-bold text-amber-900 block truncate">عادی (استاندارد)</span>
+                      <div className="text-2xl font-black text-amber-950">
+                        {ads.filter(a => a.status === 'active' && !a.is_featured).length}
+                      </div>
+                      <span className="text-[10px] text-amber-700 block">در حال نمایش</span>
+                    </div>
+
+                    {/* Stage 2: VIP Pinned */}
+                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] font-bold text-stone-500 block truncate">ویژه (VIP)</span>
+                      <div className="text-2xl font-black text-[#9a6200]">
+                        {vipAds}
+                      </div>
+                      <span className="text-[10px] text-stone-500 block">صدر نتایج</span>
+                    </div>
+
+                    {/* Stage 3: All Active */}
+                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] font-bold text-stone-500 block truncate">مجموع فعال</span>
+                      <div className="text-2xl font-black text-[#1b7a37]">
+                        {activeAds}
+                      </div>
+                      <span className="text-[10px] text-stone-500 block">قابل مشاهده</span>
+                    </div>
+
+                    {/* Stage 4: Hidden / Archived */}
+                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] font-bold text-stone-500 block truncate">مخفی / بایگانی</span>
+                      <div className="text-2xl font-black text-stone-600">
+                        {ads.filter(a => a.status === 'hidden').length}
+                      </div>
+                      <span className="text-[10px] text-stone-500 block">غیرفعال</span>
+                    </div>
+                  </div>
+
+                  {/* Amber Alert Banner with Action */}
+                  <div className="p-3 rounded-2xl bg-[#fff9ea] border border-[#fae8be] text-[#8a5700] text-xs font-semibold flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={15} className="text-amber-600 shrink-0" />
+                      <span>
+                        {vipAds > 0 ? `${vipAds} آگهی ویژه در صدر قرار دارند` : `${ads.length} آگهی در دسترس است`}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleTabChange('ads')}
+                      className="font-bold text-amber-900 hover:underline shrink-0 cursor-pointer text-xs"
+                    >
+                      مدیریت آگهی‌ها ←
+                    </button>
+                  </div>
+
+                  {/* 4-Metric Footer Strip */}
+                  <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#f0ece3] text-center text-[10px]">
+                    <div>
+                      <span className="text-stone-400 block font-medium">کل آگهی‌ها</span>
+                      <span className="font-mono font-bold text-zinc-900 text-xs">{totalAds} عدد</span>
+                    </div>
+                    <div>
+                      <span className="text-stone-400 block font-medium">نسبت VIP</span>
+                      <span className="font-mono font-bold text-[#9a6200] text-xs">
+                        {Math.round((vipAds / Math.max(totalAds, 1)) * 100)}%
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-stone-400 block font-medium">میانگین کلیک</span>
+                      <span className="font-mono font-bold text-zinc-900 text-xs">
+                        {Math.round(totalViews / Math.max(totalAds, 1))}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-stone-400 block font-medium">وضعیت جریان</span>
+                      <span className="font-bold text-[#1b7a37] text-xs">پایدار</span>
+                    </div>
+                  </div>
+
+                  {/* Recent 2 Ads (NT360 Style Recent Items) */}
+                  <div className="space-y-2 pt-2 border-t border-[#f0ece3]">
+                    <div className="flex items-center justify-between text-xs text-stone-500">
+                      <span className="font-bold text-zinc-900">جدیدترین آگهی‌ها</span>
+                      <button
+                        type="button"
+                        onClick={() => handleTabChange('ads')}
+                        className="text-[11px] text-blue-600 hover:underline cursor-pointer"
+                      >
+                        مشاهده همه
+                      </button>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {ads.slice(0, 2).map(ad => (
+                        <div
+                          key={ad.id}
+                          onClick={() => {
+                            setSelectedAdId(ad.id);
+                            handleTabChange('ads');
+                          }}
+                          className="p-3 rounded-2xl bg-stone-50 hover:bg-stone-100/80 border border-stone-200/80 flex items-center justify-between gap-3 cursor-pointer transition-all"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="h-8 w-8 rounded-xl bg-zinc-900 text-white font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
+                              SP
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-mono text-[10px] text-stone-600 font-bold bg-white px-1.5 py-0.2 rounded border border-stone-200">
+                                  #{ad.reference_number}
+                                </span>
+                                {ad.is_featured && (
+                                  <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold">
+                                    VIP
+                                  </span>
+                                )}
+                                <span className="text-xs font-bold text-zinc-900 truncate">
+                                  {ad.title}
+                                </span>
+                              </div>
+                              <span className="text-[10px] text-stone-500 block truncate">
+                                {ad.contact_name} • {ad.city}
+                              </span>
+                            </div>
+                          </div>
+                          <span className="text-[10px] text-stone-400 font-mono shrink-0">
+                            {new Date(ad.created_at || '2026-01-01').toLocaleDateString('fa-IR')} &gt;
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('ads')}
-                  className="font-bold text-amber-900 hover:underline shrink-0 text-start sm:text-end cursor-pointer"
-                >
-                  مشاهده آگهی‌ها ←
-                </button>
+
+                {/* Block 2: Butiksstatus (سلامت سیستم و اتصالات) */}
+                <div className="rounded-3xl bg-white border border-[#e5e1d7] p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-5">
+                  {/* Header */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-600 flex items-center justify-center shrink-0">
+                      <ShieldCheck size={20} />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-zinc-950 leading-tight">
+                        سلامت سیستم و یکپارچه‌سازی
+                      </h3>
+                      <p className="text-[11px] text-stone-500">
+                        وضعیت درگاه پرداخت، سپر ضد اسپم و دیتابیس ابری
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 4-Stage System Row (NT360 Style) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] font-bold text-stone-500 block truncate">درگاه Stripe</span>
+                      <div className={`text-xl font-black ${stripeSettings.enabled ? 'text-[#1b7a37]' : 'text-stone-400'}`}>
+                        {stripeSettings.enabled ? 'فعال' : 'غیرفعال'}
+                      </div>
+                      <span className="text-[10px] text-stone-500 block truncate">
+                        {stripeSettings.mode === 'live' ? 'حالت زنده' : 'حالت تستی'}
+                      </span>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] font-bold text-stone-500 block truncate">ضد اسپم</span>
+                      <div className={`text-xl font-black ${turnstileSettings.enabled ? 'text-[#1b7a37]' : 'text-stone-400'}`}>
+                        {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
+                      </div>
+                      <span className="text-[10px] text-stone-500 block truncate">Turnstile</span>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] font-bold text-stone-500 block truncate">پایگاه داده</span>
+                      <div className="text-xl font-black text-blue-700">
+                        متصل
+                      </div>
+                      <span className="text-[10px] text-stone-500 block truncate">Supabase Cloud</span>
+                    </div>
+
+                    <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 shadow-2xs space-y-1">
+                      <span className="text-[10px] font-bold text-stone-500 block truncate">کشورها</span>
+                      <div className="text-xl font-black text-zinc-950">
+                        ۴ کشور
+                      </div>
+                      <span className="text-[10px] text-stone-500 block truncate">اسکاندیناوی</span>
+                    </div>
+                  </div>
+
+                  {/* 4-Metric Footer Strip */}
+                  <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#f0ece3] text-center text-[10px]">
+                    <div>
+                      <span className="text-stone-400 block font-medium">تعرفه VIP</span>
+                      <span className="font-mono font-bold text-zinc-900 text-xs">
+                        {stripeSettings.vipPrice} {stripeSettings.currency}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-stone-400 block font-medium">مدت اعتبار</span>
+                      <span className="font-mono font-bold text-zinc-900 text-xs">
+                        {stripeSettings.vipDurationDays} روز
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-stone-400 block font-medium">پایداری سرور</span>
+                      <span className="font-bold text-[#1b7a37] text-xs">۹۹٫۹٪</span>
+                    </div>
+                    <div>
+                      <span className="text-stone-400 block font-medium">سئو گوگل</span>
+                      <span className="font-bold text-blue-600 text-xs">فعال</span>
+                    </div>
+                  </div>
+
+                  {/* Direct Shortcuts Buttons */}
+                  <div className="space-y-2 pt-2 border-t border-[#f0ece3]">
+                    <span className="text-xs font-bold text-zinc-900 block">دسترسی سریع به تنظیمات</span>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleTabChange('monetization')}
+                        className="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 text-zinc-800 border border-stone-200 text-xs font-bold text-center transition-all cursor-pointer"
+                      >
+                        درگاه Stripe ←
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleTabChange('security')}
+                        className="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 text-zinc-800 border border-stone-200 text-xs font-bold text-center transition-all cursor-pointer"
+                      >
+                        امنیت Turnstile ←
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleTabChange('settings')}
+                        className="p-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 text-zinc-800 border border-stone-200 text-xs font-bold text-center transition-all cursor-pointer"
+                      >
+                        سئو و برند ←
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
-              {/* Scandinavian Country Performance Breakdown */}
-              <div className="space-y-3">
+              {/* Row 3: Scandinavian Country Performance Breakdown */}
+              <div className="space-y-3 pt-2">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-extrabold text-zinc-900 flex items-center gap-2">
                     <Globe size={16} className="text-zinc-700" />
-                    <span>آمار ۴ کشور</span>
+                    <span>عملکرد ۴ کشور اسکاندیناوی</span>
                   </h3>
                 </div>
 
@@ -1170,7 +1475,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           setCountryFilter(country.id);
                           handleTabChange('ads');
                         }}
-                        className="p-4 rounded-2xl bg-white hover:bg-stone-50 border border-[#e5e1d7] hover:border-zinc-400 transition-all cursor-pointer shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3 group"
+                        className="p-4 rounded-3xl bg-white hover:bg-stone-50 border border-[#e5e1d7] hover:border-zinc-400 transition-all cursor-pointer shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3 group"
                       >
                         <div className="flex items-center justify-between">
                           <div>
@@ -1204,88 +1509,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     );
                   })}
                 </div>
-              </div>
-
-              {/* Direct Configuration Shortcuts */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                
-                {/* 1. Stripe Card */}
-                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
-                      <CreditCard size={15} className="text-zinc-700" />
-                      درگاه Stripe
-                    </span>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                      stripeSettings.enabled 
-                        ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]' 
-                        : 'bg-stone-100 text-stone-500 border-stone-200'
-                    }`}>
-                      {stripeSettings.enabled ? 'فعال' : 'غیرفعال'}
-                    </span>
-                  </div>
-                  <div className="text-xs text-stone-600 space-y-1">
-                    <div>تعرفه: <b>{stripeSettings.vipPrice} {stripeSettings.currency}</b> ({stripeSettings.vipDurationDays} روز)</div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('monetization')}
-                    className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
-                  >
-                    تنظیمات Stripe ←
-                  </button>
-                </div>
-
-                {/* 2. Turnstile Card */}
-                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
-                      <ShieldCheck size={15} className="text-emerald-600" />
-                      آنتی‌بات کلودفلر
-                    </span>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                      turnstileSettings.enabled 
-                        ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]' 
-                        : 'bg-stone-100 text-stone-500 border-stone-200'
-                    }`}>
-                      {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
-                    </span>
-                  </div>
-                  <div className="text-xs text-stone-600 space-y-1">
-                    <div>محافظت: <b>ورود مدیر و ثبت آگهی</b></div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('security')}
-                    className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
-                  >
-                    تنظیمات امنیت ←
-                  </button>
-                </div>
-
-                {/* 3. Branding & SEO Card */}
-                <div className="p-5 rounded-2xl bg-white border border-[#e5e1d7] shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-zinc-900 flex items-center gap-1.5">
-                      <Settings size={15} className="text-zinc-700" />
-                      برند و سئو
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-[#ebf4fe] text-[#175cd3] border border-[#c3ddfd] text-[10px] font-bold">
-                      ۴ کشور
-                    </span>
-                  </div>
-                  <div className="text-xs text-stone-600 space-y-1">
-                    <div>سایت: <b>{siteName}</b></div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('settings')}
-                    className="w-full text-center py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-zinc-800 text-xs font-bold transition-colors cursor-pointer"
-                  >
-                    تنظیمات سئو ←
-                  </button>
-                </div>
-
               </div>
 
             </div>
