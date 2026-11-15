@@ -1025,8 +1025,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       ======================================================== */}
       <main className="flex-1 flex flex-col overflow-hidden">
         
-        {/* Canvas Top Bar (Modern Navbar) */}
-        <header className="h-16 shrink-0 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-20 bg-[#f4f3ee]">
+        {/* Canvas Top Bar (Clean NT360 Navbar Exactly Like Reference) */}
+        <header className="shrink-0 px-4 sm:px-6 lg:px-8 pt-6 pb-3 flex items-center justify-between bg-[#f4f3ee]">
           <div className="flex items-center gap-3 min-w-0">
             {/* Tactile Mobile Menu Button */}
             <button
@@ -1038,58 +1038,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <Menu size={18} />
             </button>
 
-            {/* Clean Bold Title (NT360 Översikt Style) */}
-            <h1 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight leading-tight truncate">
+            {/* Clean Bold Title Exactly Like NT360 Översikt */}
+            <h1 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight leading-none">
               {activeTab === 'overview' && 'پیشخوان'}
               {activeTab === 'ads' && 'آگهی‌ها'}
               {activeTab === 'monetization' && 'درآمد و VIP'}
               {activeTab === 'security' && 'امنیت'}
               {activeTab === 'settings' && 'تنظیمات'}
             </h1>
-          </div>
-
-          {/* Quick Search & Modern Action Pills (NT360 Top Right Style) */}
-          <div className="flex items-center gap-2.5">
-            {/* Pill Search Bar with Ctrl+K */}
-            <div className="relative hidden md:block w-64 lg:w-72">
-              <Search size={14} className="absolute start-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="جستجو در پنل... (Ctrl+K)"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-10 rounded-full bg-white border border-[#dedad0] ps-9 pe-14 text-xs text-zinc-900 placeholder-stone-400 shadow-2xs focus:border-zinc-800 focus:outline-none transition-all"
-              />
-              <kbd className="absolute end-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded-md bg-stone-100 border border-stone-200 text-[9px] font-mono text-stone-500 font-bold pointer-events-none">
-                Ctrl+K
-              </kbd>
-            </div>
-
-            {/* Notification Bell with Blue Circular Badge */}
-            <button
-              type="button"
-              onClick={() => handleTabChange('ads')}
-              className="relative h-10 w-10 rounded-full bg-white border border-[#dedad0] text-stone-700 hover:text-zinc-950 hover:border-stone-400 shadow-2xs flex items-center justify-center cursor-pointer transition-all active:scale-95" 
-              title={`${vipAds} آگهی VIP`}
-            >
-              <Bell size={17} />
-              {vipAds > 0 && (
-                <span className="absolute -top-1 -end-1 h-5 min-w-5 px-1 rounded-full bg-blue-600 text-white text-[10px] font-mono font-bold flex items-center justify-center shadow-xs">
-                  {vipAds}
-                </span>
-              )}
-            </button>
-
-            {/* Refresh Data Button */}
-            <button
-              type="button"
-              onClick={fetchAdminData}
-              className="h-10 w-10 rounded-full bg-white border border-[#dedad0] text-stone-700 hover:text-zinc-950 shadow-2xs flex items-center justify-center cursor-pointer active:scale-95 transition-all"
-              title="بروزرسانی داده‌ها"
-            >
-              <RefreshCw size={15} className={loading ? 'animate-spin text-zinc-950' : ''} />
-            </button>
           </div>
         </header>
 
@@ -1569,6 +1525,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     <div className="relative flex-1">
                       <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
                       <input
+                        ref={searchInputRef}
                         type="text"
                         placeholder="جستجو در عنوان، کد پیگیری، شهر، نام..."
                         value={searchQuery}
