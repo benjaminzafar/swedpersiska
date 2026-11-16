@@ -12,7 +12,6 @@ import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supab
 import { COUNTRIES, CATEGORIES, t } from '../lib/translations';
 
 export default function PostAdModal({ 
-  lang = 'fa', 
   initialCategory = 'bostad', 
   selectedCountry = 'se',
   onClose, 

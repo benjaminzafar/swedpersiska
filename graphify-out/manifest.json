@@ -15,8 +15,8 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1794819656.7216873,
-    "ast_hash": "f4bfba1e2ffccfd1097140d544d26f3b",
+    "mtime": 1794822274.1239748,
+    "ast_hash": "8904cb5210d0ad8933fc9cab77424fb6",
     "semantic_hash": ""
   },
   "src/components/AdCard.jsx": {
@@ -24,14 +24,9 @@
     "ast_hash": "db0ea07fa156f9d60b6a4c14fcd77df1",
     "semantic_hash": ""
   },
-  "src/components/AdDetailModal.jsx": {
-    "mtime": 1794712808.2000093,
-    "ast_hash": "82ae6ab800bc404010058cc74584770f",
-    "semantic_hash": ""
-  },
   "src/components/AdminPanel.jsx": {
-    "mtime": 1794819639.1644144,
-    "ast_hash": "c4f12053753e608d2c6b8ea747139e43",
+    "mtime": 1794823483.851442,
+    "ast_hash": "e27a96cc3564c42e1796c14dea10ee22",
     "semantic_hash": ""
   },
   "src/components/CountryBanner.jsx": {
@@ -55,8 +50,8 @@
     "semantic_hash": ""
   },
   "src/components/PostAdModal.jsx": {
-    "mtime": 1794720737.713269,
-    "ast_hash": "d376e71c1a6b9bdf536b79f9ecc6702c",
+    "mtime": 1794823577.8322837,
+    "ast_hash": "ecdb6f1e3c02801a93f651250b0a135a",
     "semantic_hash": ""
   },
   "src/lib/supabase.js": {
@@ -75,8 +70,8 @@
     "semantic_hash": ""
   },
   "tailwind.config.js": {
-    "mtime": 1794705594.3919811,
-    "ast_hash": "8f81f33faf540195efd25483d2cfe9f0",
+    "mtime": 1794820323.618387,
+    "ast_hash": "529c0b0cf383a554cb453b03609623aa",
     "semantic_hash": ""
   },
   "vercel.json": {
@@ -112,21 +107,6 @@
   "public/icons.svg": {
     "mtime": 1794705526.6716666,
     "ast_hash": "3b4fcfcf393eca4d264dca4a4663bc37",
-    "semantic_hash": ""
-  },
-  "src/assets/hero.png": {
-    "mtime": 1794705526.5811117,
-    "ast_hash": "aead493361b27e7510691c5d7072dfc1",
-    "semantic_hash": ""
-  },
-  "src/assets/react.svg": {
-    "mtime": 1794705526.7051318,
-    "ast_hash": "f0402b67b6ce880f65666bb49e841696",
-    "semantic_hash": ""
-  },
-  "src/assets/vite.svg": {
-    "mtime": 1794705526.7317078,
-    "ast_hash": "9960a24288958394ac50e57ff638b036",
     "semantic_hash": ""
   },
   "src/components/AdDetailPage.jsx": {

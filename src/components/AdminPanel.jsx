@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  LayoutDashboard, 
   LayoutGrid,
   Layers, 
   Layers3,
@@ -8,31 +7,26 @@ import {
   ArchiveRestore,
   ChevronLeft,
   ChevronRight,
-  Settings, 
   SlidersHorizontal,
   LogOut, 
   Trash2, 
   Sparkles, 
   CheckCircle, 
-  CheckCircle2,
   Search, 
   ShieldCheck, 
   Menu, 
   X,
   Copy,
   Check,
-  Globe,
   Globe2,
   Save,
   RefreshCw,
   RotateCcw,
-  CreditCard,
   WalletCards,
   Lock,
   ExternalLink,
   ArrowUpRight,
   TrendingUp,
-  Radio,
   Phone,
   Mail,
   Send,
@@ -336,14 +330,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const topSearchRef = useRef(null);
   const [countryFilter, setCountryFilter] = useState('all'); // 'all' | 'se' | 'no' | 'dk' | 'fi'
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'hidden' | 'vip'
 
-  // Master-Detail CRM Selection & Centered Detail Modal
-  const [selectedAdId, setSelectedAdId] = useState(null);
+  // Centered Detail Modal & Toast State
   const [selectedAdForModal, setSelectedAdForModal] = useState(null);
-  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
-  const [copiedPin, setCopiedPin] = useState(false);
-  const [copiedRef, setCopiedRef] = useState(false);
   const [copiedKey, setCopiedKey] = useState(null);
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
 
@@ -556,9 +545,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       setActiveAds(data || []);
       setActiveTotalCount(count ?? 0);
       setActivePage(page);
-      if (!selectedAdId && data && data.length > 0) {
-        setSelectedAdId(data[0].id);
-      }
     } catch (err) {
       console.error('Error fetching active ads:', err);
     } finally {
@@ -935,10 +921,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         total: Math.max(0, prev.total - 1),
         active: Math.max(0, prev.active - 1)
       }));
-      if (selectedAdId === id) {
-        setSelectedAdId(null);
-        setMobileDetailOpen(false);
-      }
       if (selectedAdForModal && selectedAdForModal.id === id) {
         setSelectedAdForModal(null);
       }
@@ -1060,13 +1042,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopiedKey(keyOrType);
-      if (keyOrType === 'pin') {
-        setCopiedPin(true);
-        setTimeout(() => setCopiedPin(false), 2000);
-      } else if (keyOrType === 'ref') {
-        setCopiedRef(true);
-        setTimeout(() => setCopiedRef(false), 2000);
-      }
       triggerToast(`${label || 'متن'} کپی شد`);
       setTimeout(() => setCopiedKey(null), 2000);
     }
@@ -1082,8 +1057,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const activeAdsCount = counts.active;
   const vipAds = counts.vip;
   const totalViews = counts.totalViews;
-
-  const currentSelectedAd = activeAds.find(a => a.id === selectedAdId) || (activeAds.length > 0 ? activeAds[0] : null);
 
   // Filtered categories
   const filteredCategories = categoriesList.filter(cat => {
@@ -1145,10 +1118,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           setSelectedAdForModal(null);
           return;
         }
-        if (mobileDetailOpen) {
-          setMobileDetailOpen(false);
-          return;
-        }
         if (mobileSidebarOpen) {
           setMobileSidebarOpen(false);
           return;
@@ -1177,34 +1146,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       else if (e.key === '4') handleTabChange('monetization');
       else if (e.key === '5') handleTabChange('security');
       else if (e.key === '6') handleTabChange('settings');
-
-      // 5. Arrow navigation through ads in Ads tab with auto-scroll
-      if (activeTab === 'ads' && activeAds.length > 0) {
-        if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          const currentId = currentSelectedAd?.id || activeAds[0].id;
-          const currentIndex = activeAds.findIndex(a => a.id === currentId);
-          if (currentIndex < activeAds.length - 1) {
-            const nextId = activeAds[currentIndex + 1].id;
-            setSelectedAdId(nextId);
-            document.getElementById(`ad-item-${nextId}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-          }
-        } else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          const currentId = currentSelectedAd?.id || activeAds[0].id;
-          const currentIndex = activeAds.findIndex(a => a.id === currentId);
-          if (currentIndex > 0) {
-            const prevId = activeAds[currentIndex - 1].id;
-            setSelectedAdId(prevId);
-            document.getElementById(`ad-item-${prevId}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-          }
-        }
-      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTab, activeAds, currentSelectedAd, mobileDetailOpen, mobileSidebarOpen, searchQuery, onClose]);
+  }, [categoryModal.isOpen, categoryToDelete, selectedAdForModal, mobileSidebarOpen, searchQuery, categorySearchQuery, onClose]);
 
   // ========================================================
   // LOGIN SCREEN - Relaxed Obsidian Focus Card
@@ -1759,10 +1705,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             {/* Notification Bell (Full 40x40px button with non-overlapping badge) */}
             <button
               type="button"
-              onClick={() => {
-                setStatusFilter('all');
-                handleTabChange('ads');
-              }}
+              onClick={() => handleTabChange('ads')}
               className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-colors shadow-sm active:scale-95 cursor-pointer shrink-0"
               title={`${counts.active} آگهی فعال در سیستم`}
             >
@@ -1877,7 +1820,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
                 {/* Card 2: آگهی‌های ویژه */}
                 <div 
-                  onClick={() => { setStatusFilter('vip'); handleTabChange('ads'); }}
+                  onClick={() => handleTabChange('ads')}
                   className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-md active:scale-[0.99] transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-2">

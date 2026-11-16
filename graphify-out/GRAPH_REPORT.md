@@ -1,16 +1,16 @@
 # Graph Report - swedpersiska  (2026-11-16)
 
 ## Corpus Check
-- 27 files · ~142,185 words
+- 26 files · ~139,920 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 112 nodes · 146 edges · 14 communities (12 shown, 2 thin omitted)
+- 110 nodes · 141 edges · 15 communities (13 shown, 2 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5b6d2771`
+- Built from commit: `277b990a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,12 +26,13 @@
 - [[_COMMUNITY_Community 11|Community 11]]
 - [[_COMMUNITY_Community 12|Community 12]]
 - [[_COMMUNITY_Community 13|Community 13]]
+- [[_COMMUNITY_Community 14|Community 14]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `CATEGORIES` - 10 edges
+1. `CATEGORIES` - 9 edges
 2. `COUNTRIES` - 7 edges
-3. `t` - 7 edges
-4. `supabase` - 6 edges
+3. `supabase` - 6 edges
+4. `t` - 6 edges
 5. `Core Principle` - 6 edges
 6. `scripts` - 5 edges
 7. `ErrorBoundary` - 5 edges
@@ -46,7 +47,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (14 total, 2 thin omitted)
+## Communities (15 total, 2 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.25
@@ -57,8 +58,8 @@ Cohesion: 0.13
 Nodes (14): dependencies, lucide-react, react, react-dom, @supabase/supabase-js, name, private, scripts (+6 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.17
-Nodes (8): AVAILABLE_CATEGORY_ICONS, CATEGORY_ICON_MAP, DEFAULT_CATEGORIES, NORDIC_FLAGS, PostAdModal(), generatePinCode(), generateReferenceNumber(), supabase
+Cohesion: 0.22
+Nodes (4): AVAILABLE_CATEGORY_ICONS, CATEGORY_ICON_MAP, DEFAULT_CATEGORIES, NORDIC_FLAGS
 
 ### Community 3 - "Community 3"
 Cohesion: 0.22
@@ -81,8 +82,12 @@ Cohesion: 0.33
 Nodes (5): 1. Frame-First Layouts, 2. Semantic Tokens Over Hardcoded Values, 3. High-End Master-Detail CRM UX, 4. Tactile Controls & Action Buttons, Astryx Design System & Guidelines (Meta)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.17
+Cohesion: 0.20
 Nodes (5): currentYear, CATEGORY_META, CATEGORIES, COUNTRIES, t
+
+### Community 14 - "Community 14"
+Cohesion: 0.33
+Nodes (4): PostAdModal(), generatePinCode(), generateReferenceNumber(), supabase
 
 ## Knowledge Gaps
 - **50 isolated node(s):** `$schema`, `plugins`, `react/rules-of-hooks`, `react/only-export-components`, `name` (+45 more)
@@ -93,7 +98,7 @@ Nodes (5): currentYear, CATEGORY_META, CATEGORIES, COUNTRIES, t
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `devDependencies` connect `Community 3` to `Community 1`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugins`, `react/rules-of-hooks` to the rest of the system?**
   _50 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**
