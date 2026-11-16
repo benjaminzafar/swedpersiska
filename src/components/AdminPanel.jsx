@@ -24,7 +24,10 @@ import {
   Send,
   Eye,
   Bot,
-  Bell
+  Bell,
+  MapPin,
+  User,
+  Image as ImageIcon
 } from 'lucide-react';
 import CloudflareTurnstile from './CloudflareTurnstile';
 import { supabase } from '../lib/supabase';
