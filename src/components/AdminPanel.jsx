@@ -63,6 +63,40 @@ import CloudflareTurnstile from './CloudflareTurnstile';
 import { supabase } from '../lib/supabase';
 import { CATEGORIES, COUNTRIES } from '../lib/translations';
 
+// Real vector SVG flags for the 4 Nordic Scandinavian countries (flawless on Windows & all OS)
+const NORDIC_FLAGS = {
+  se: (
+    <svg className="w-5 h-3.5 rounded-[3px] shadow-2xs shrink-0 overflow-hidden" viewBox="0 0 16 10" aria-label="پرچم سوئد">
+      <rect width="16" height="10" fill="#006aa7" />
+      <rect width="2" height="10" x="5" fill="#fecc00" />
+      <rect width="16" height="2" y="4" fill="#fecc00" />
+    </svg>
+  ),
+  no: (
+    <svg className="w-5 h-3.5 rounded-[3px] shadow-2xs shrink-0 overflow-hidden" viewBox="0 0 22 16" aria-label="پرچم نروژ">
+      <rect width="22" height="16" fill="#ba0c2f" />
+      <rect width="4" height="16" x="6" fill="#fff" />
+      <rect width="22" height="4" y="6" fill="#fff" />
+      <rect width="2" height="16" x="7" fill="#00205b" />
+      <rect width="22" height="2" y="7" fill="#00205b" />
+    </svg>
+  ),
+  dk: (
+    <svg className="w-5 h-3.5 rounded-[3px] shadow-2xs shrink-0 overflow-hidden" viewBox="0 0 16 10" aria-label="پرچم دانمارک">
+      <rect width="16" height="10" fill="#c8102e" />
+      <rect width="2" height="10" x="5" fill="#fff" />
+      <rect width="16" height="2" y="4" fill="#fff" />
+    </svg>
+  ),
+  fi: (
+    <svg className="w-5 h-3.5 rounded-[3px] shadow-2xs shrink-0 overflow-hidden" viewBox="0 0 18 11" aria-label="پرچم فنلاند">
+      <rect width="18" height="11" fill="#fff" />
+      <rect width="3" height="11" x="5" fill="#003580" />
+      <rect width="18" height="3" y="4" fill="#003580" />
+    </svg>
+  ),
+};
+
 // Category Icon Mapping
 const CATEGORY_ICON_MAP = {
   Home,
@@ -1389,7 +1423,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         <header className="hidden lg:flex items-center justify-between h-15 px-5 bg-white/95 backdrop-blur-md rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] mb-4 sticky top-4 shrink-0 z-20 select-none">
           {/* Right: Active Section Title with Modern Icon Container */}
           <div className="flex items-center gap-3 min-w-[200px] shrink-0">
-            <div className="flex h-9.5 w-9.5 items-center justify-center rounded-xl bg-stone-100/90 text-stone-800 border border-stone-200/80 shadow-2xs">
+            <div className="flex h-9.5 w-9.5 items-center justify-center rounded-xl bg-stone-100 text-stone-800 border border-stone-200/80 shadow-2xs">
               {activeTab === 'overview' && <LayoutGrid size={17} className="text-slate-900" />}
               {activeTab === 'ads' && <Layers3 size={17} className="text-blue-600" />}
               {activeTab === 'categories' && <Shapes size={17} className="text-emerald-600" />}
@@ -1413,7 +1447,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           {/* Left: Actions + Search + Status */}
           <div className="flex items-center gap-3 shrink-0">
             {/* Search Bar */}
-            <div className="relative w-64 xl:w-80">
+            <div className="relative w-60 xl:w-72">
               <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
                 ref={topSearchRef}
@@ -1424,16 +1458,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   if (activeTab !== 'ads') handleTabChange('ads');
                 }}
                 placeholder="جستجو در سامانه مدیریت..."
-                className="w-full h-9.5 ps-9 pe-12 bg-stone-50 hover:bg-stone-100/70 focus:bg-white text-[12px] text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/80 focus:border-stone-400 outline-none transition-all shadow-2xs"
+                className="w-full h-9.5 ps-9 pe-8 bg-stone-50 hover:bg-stone-100/70 focus:bg-white text-[12px] text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/80 focus:border-stone-400 outline-none transition-all shadow-2xs"
               />
-              <span className="absolute end-2.5 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono text-stone-400 bg-stone-200/60 border border-stone-300/40">
-                ⌘K
-              </span>
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute end-11 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
+                  className="absolute end-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
                 >
                   <X size={13} />
                 </button>
@@ -1441,7 +1472,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
 
             {/* Live Online Badge */}
-            <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-xs font-bold flex items-center gap-2 shadow-2xs">
+            <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-xs font-bold flex items-center gap-2 shadow-2xs select-none">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -1472,7 +1503,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             >
               <Bell size={15} className="text-stone-600" />
               {ads.length > 0 && (
-                <span className="absolute -top-1 -start-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[9px] font-mono font-bold text-white ring-2 ring-white shadow-2xs">
+                <span className="absolute -top-1 -end-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-blue-600 px-1 text-[9.5px] font-bold text-white ring-2 ring-white shadow-2xs tabular-nums">
                   {ads.length}
                 </span>
               )}
@@ -1482,7 +1513,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={onClose}
-              className="h-9.5 px-3.5 rounded-xl bg-slate-950 hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95 transition-all group"
+              className="h-9.5 px-3.5 rounded-xl bg-stone-900 hover:bg-black text-white text-xs font-bold flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95 transition-all group"
             >
               <Globe2 size={14} className="text-blue-400 group-hover:rotate-12 transition-transform duration-200" />
               <span>مشاهده سایت</span>
@@ -1564,15 +1595,17 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       </span>
                     </div>
                     <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 border border-blue-200/60">
-                      {activeAds} فعال
+                      <span className="tabular-nums">{activeAds}</span> فعال
                     </span>
                   </div>
-                  <p className="mt-4 text-[28px] sm:text-[32px] font-black tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
+                  <p className="mt-4 text-3xl font-black tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors tabular-nums">
                     {totalAds}
                   </p>
-                  <div className="mt-2 flex items-center justify-between text-[11.5px] text-stone-400 border-t border-stone-100 pt-2">
+                  <div className="mt-3 flex items-center justify-between text-[11.5px] text-stone-500 border-t border-stone-100 pt-2.5">
                     <span>در سراسر کشورهای نوردیک</span>
-                    <span className="font-semibold text-stone-600 font-mono">{ads.filter(a => a.status === 'hidden').length} مخفی</span>
+                    <span className="font-semibold text-stone-700">
+                      <span className="tabular-nums font-bold">{ads.filter(a => a.status === 'hidden').length}</span> مخفی
+                    </span>
                   </div>
                 </div>
 
@@ -1594,12 +1627,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       جایگاه بالا
                     </span>
                   </div>
-                  <p className="mt-4 text-[28px] sm:text-[32px] font-black tracking-tight text-stone-900 group-hover:text-amber-600 transition-colors font-mono">
+                  <p className="mt-4 text-3xl font-black tracking-tight text-stone-900 group-hover:text-amber-600 transition-colors tabular-nums">
                     {vipAds}
                   </p>
-                  <div className="mt-2 flex items-center justify-between text-[11.5px] text-stone-400 border-t border-stone-100 pt-2">
+                  <div className="mt-3 flex items-center justify-between text-[11.5px] text-stone-500 border-t border-stone-100 pt-2.5">
                     <span>دارای اولویت و برچسب طلایی</span>
-                    <span className="font-semibold text-amber-700 font-mono">فعال در پرتال</span>
+                    <span className="font-semibold text-amber-700">فعال در پرتال</span>
                   </div>
                 </div>
 
@@ -1621,12 +1654,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       درگاه آنلاین
                     </span>
                   </div>
-                  <p className="mt-4 text-[26px] sm:text-[30px] font-black tracking-tight text-stone-900 group-hover:text-emerald-600 transition-colors font-mono">
-                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} <span className="text-[15px] font-normal text-stone-500">کرون</span>
+                  <p className="mt-4 text-3xl font-black tracking-tight text-stone-900 group-hover:text-emerald-600 transition-colors tabular-nums">
+                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')}{' '}
+                    <span className="text-sm font-semibold text-stone-500">کرون</span>
                   </p>
-                  <div className="mt-2 flex items-center justify-between text-[11.5px] text-stone-400 border-t border-stone-100 pt-2">
-                    <span>بر اساس تعرفه {stripeSettings.vipPrice || 99} کرون</span>
-                    <span className="font-semibold text-stone-600 font-mono">{vipAds} تراکنش</span>
+                  <div className="mt-3 flex items-center justify-between text-[11.5px] text-stone-500 border-t border-stone-100 pt-2.5">
+                    <span>بر اساس تعرفه <span className="tabular-nums font-bold">{stripeSettings.vipPrice || 99}</span> کرون</span>
+                    <span className="font-semibold text-stone-700"><span className="tabular-nums font-bold">{vipAds}</span> تراکنش</span>
                   </div>
                 </div>
 
@@ -1648,12 +1682,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       ۴ کشور
                     </span>
                   </div>
-                  <p className="mt-4 text-[28px] sm:text-[32px] font-black tracking-tight text-stone-900 group-hover:text-purple-600 transition-colors font-mono">
+                  <p className="mt-4 text-3xl font-black tracking-tight text-stone-900 group-hover:text-purple-600 transition-colors tabular-nums">
                     {totalViews.toLocaleString('sv-SE')}
                   </p>
-                  <div className="mt-2 flex items-center justify-between text-[11.5px] text-stone-400 border-t border-stone-100 pt-2">
+                  <div className="mt-3 flex items-center justify-between text-[11.5px] text-stone-500 border-t border-stone-100 pt-2.5">
                     <span>میانگین هر آگهی:</span>
-                    <span className="font-semibold text-stone-700 font-mono">{totalAds > 0 ? Math.round(totalViews / totalAds) : 0} بازدید</span>
+                    <span className="font-semibold text-stone-700">
+                      <span className="tabular-nums font-bold">{totalAds > 0 ? Math.round(totalViews / totalAds) : 0}</span> بازدید
+                    </span>
                   </div>
                 </div>
 
@@ -1666,61 +1702,49 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     <h3 className="text-sm font-black text-zinc-900">
                       پوشش منطقه‌ای اسکاندیناوی
                     </h3>
-                    <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-stone-200/60 text-stone-700">Nordic 4</span>
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-stone-200/70 text-stone-700">
+                      ۴ کشور نوردیک
+                    </span>
                   </div>
                   <span className="text-xs text-stone-500">برای فیلتر کردن آگهی‌های هر کشور کلیک کنید</span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {COUNTRIES.map(country => {
                     const stats = getCountryStats(country.id);
-                    const countryFlags = {
-                      se: '🇸🇪',
-                      no: '🇳🇴',
-                      dk: '🇩🇰',
-                      fi: '🇫🇮'
-                    };
-                    const countryCodes = {
-                      se: 'SE',
-                      no: 'NO',
-                      dk: 'DK',
-                      fi: 'FI'
-                    };
                     return (
                       <div 
                         key={country.id}
                         onClick={() => { setCountryFilter(country.id); handleTabChange('ads'); }}
-                        className="p-4 sm:p-4.5 rounded-2xl border border-stone-200/80 hover:border-stone-400 bg-white hover:shadow-sm active:scale-[0.99] transition-all cursor-pointer flex flex-col justify-between group text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+                        className="p-4 sm:p-5 rounded-2xl border border-stone-200/80 hover:border-blue-400/80 bg-white hover:shadow-sm active:scale-[0.99] transition-all cursor-pointer flex flex-col justify-between group text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-lg select-none shrink-0">{countryFlags[country.id] || '🌐'}</span>
-                            <div className="flex items-center gap-1.5 truncate">
-                              <span className="font-black text-[13.5px] text-zinc-900 group-hover:text-blue-600 transition-colors truncate">
-                                {country.nameFa}
-                              </span>
-                              <span className="text-[10px] font-mono font-bold text-stone-400 shrink-0">
-                                ({countryCodes[country.id] || country.id.toUpperCase()})
-                              </span>
-                            </div>
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            {NORDIC_FLAGS[country.id]}
+                            <span className="font-extrabold text-[14px] text-stone-900 group-hover:text-blue-600 transition-colors truncate">
+                              {country.nameFa}
+                            </span>
                           </div>
-                          <span className="px-2.5 py-0.5 rounded-md bg-stone-100 group-hover:bg-blue-50 group-hover:text-blue-700 text-stone-700 text-[11px] font-mono font-bold transition-colors shrink-0">
-                            {stats.total} آگهی
+                          <span className="px-2.5 py-0.5 rounded-lg bg-stone-100 group-hover:bg-blue-50 group-hover:text-blue-700 text-stone-700 text-[11px] font-bold transition-colors shrink-0">
+                            <span className="tabular-nums font-bold">{stats.total}</span> آگهی
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-1.5 pt-3 mt-3 border-t border-stone-100 text-center">
-                          <div className="bg-stone-50 group-hover:bg-stone-100/70 rounded-xl py-1.5 px-1 flex flex-col items-center justify-center transition-colors">
-                            <span className="text-[10px] text-stone-400 block font-medium">فعال</span>
-                            <span className="text-[12px] font-bold text-stone-700 font-mono mt-0.5">{stats.active}</span>
+                        <div className="flex items-center justify-between pt-3 mt-3 border-t border-stone-100 text-[11.5px]">
+                          <div className="flex items-center gap-1.5">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
+                            <span className="text-stone-500 font-medium">فعال:</span>
+                            <span className="font-bold text-stone-900 tabular-nums">{stats.active}</span>
                           </div>
-                          <div className="bg-amber-50/70 border border-amber-200/50 rounded-xl py-1.5 px-1 flex flex-col items-center justify-center">
-                            <span className="text-[10px] text-amber-700 block font-medium">ویژه</span>
-                            <span className="text-[12px] font-bold text-amber-700 font-mono mt-0.5">{stats.vip}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0"></span>
+                            <span className="text-amber-700 font-medium">ویژه:</span>
+                            <span className="font-bold text-amber-800 tabular-nums">{stats.vip}</span>
                           </div>
-                          <div className="bg-stone-50 group-hover:bg-stone-100/70 rounded-xl py-1.5 px-1 flex flex-col items-center justify-center transition-colors">
-                            <span className="text-[10px] text-stone-400 block font-medium">بازدید</span>
-                            <span className="text-[12px] font-bold text-stone-700 font-mono mt-0.5">{stats.views}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="h-2 w-2 rounded-full bg-purple-400 shrink-0"></span>
+                            <span className="text-stone-500 font-medium">بازدید:</span>
+                            <span className="font-bold text-stone-900 tabular-nums">{stats.views}</span>
                           </div>
                         </div>
                       </div>
@@ -1749,7 +1773,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       onClick={() => handleTabChange('ads')}
                       className="inline-flex items-center gap-1.5 text-[12px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer group"
                     >
-                      <span>مدیریت همه آگهی‌ها ({totalAds})</span>
+                      <span>مدیریت همه آگهی‌ها (<span className="tabular-nums">{totalAds}</span>)</span>
                       <ArrowUpRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                     </button>
                   </div>
@@ -1767,7 +1791,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           <div className="flex items-center gap-3 min-w-0">
                             <div 
                               onClick={() => setSelectedAdForModal(ad)}
-                              className="w-11 h-11 rounded-xl bg-stone-100 border border-stone-200/80 overflow-hidden shrink-0 cursor-pointer shadow-2xs group-hover:scale-105 transition-transform"
+                              className="w-12 h-12 rounded-xl bg-stone-100 border border-stone-200/80 overflow-hidden shrink-0 cursor-pointer shadow-2xs group-hover:scale-105 transition-transform"
                             >
                               {ad.images && ad.images[0] ? (
                                 <img src={ad.images[0]} alt="" className="w-full h-full object-cover" />
@@ -1779,74 +1803,77 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                             </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-mono font-bold text-[12.5px] text-stone-900 truncate">
+                                <span className="font-mono font-bold text-[11.5px] text-stone-600 bg-stone-100 px-1.5 py-0.2 rounded border border-stone-200/60">
                                   #{ad.reference_number || ad.id.slice(0, 8)}
                                 </span>
-                                <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                                  {countryObj.nameFa}
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200/80">
+                                  {NORDIC_FLAGS[ad.country || 'se']}
+                                  <span>{countryObj.nameFa}</span>
                                 </span>
                                 {ad.is_featured && (
-                                  <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
-                                    ویژه
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70 flex items-center gap-1">
+                                    <Sparkles size={11} className="text-amber-600" />
+                                    <span>ویژه</span>
                                   </span>
                                 )}
                                 {catObj && (
-                                  <span className="text-[10.5px] text-stone-500 font-medium">
+                                  <span className="text-[11px] text-stone-500 font-medium">
                                     · {catObj.fa}
                                   </span>
                                 )}
                               </div>
                               <p 
                                 onClick={() => setSelectedAdForModal(ad)}
-                                className="text-[12.5px] font-bold text-stone-800 hover:text-blue-600 truncate mt-0.5 cursor-pointer"
+                                className="text-[13px] font-bold text-stone-900 hover:text-blue-600 truncate mt-1 cursor-pointer"
                               >
                                 {ad.title}
                               </p>
-                              <div className="flex items-center gap-2 text-[11px] text-stone-400 mt-0.5">
-                                <span>{ad.city || 'اسکاندیناوی'}</span>
+                              <div className="flex items-center gap-2 text-[11.5px] text-stone-500 mt-1">
+                                <span className="font-medium text-stone-600">{ad.city || 'اسکاندیناوی'}</span>
                                 <span>·</span>
-                                <span className="font-semibold text-stone-700 font-mono">
-                                  {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type === 'kr' || !ad.price_type ? 'کرون' : ad.price_type}` : 'توافقی'}
+                                <span className="font-bold text-stone-900 tabular-nums">
+                                  {ad.price ? `${Number(ad.price).toLocaleString()} کرون` : 'توافقی'}
                                 </span>
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1.5 shrink-0">
+                          <div className="flex items-center gap-2 shrink-0">
                             <button
                               type="button"
                               onClick={() => setSelectedAdForModal(ad)}
-                              className="h-8 px-2.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                              title="مشاهده جزئیات کامل"
+                              className="h-8.5 px-3 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11.5px] font-bold flex items-center gap-1.5 cursor-pointer transition-colors active:scale-95"
+                              title="مشاهده جزئیات آگهی"
                             >
-                              <Eye size={13} />
-                              <span>کامل</span>
+                              <Eye size={13} className="text-stone-500" />
+                              <span>مشاهده</span>
                             </button>
 
                             <button
                               type="button"
                               onClick={() => toggleFeatured(ad)}
-                              className={`h-8 w-8 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
+                              className={`h-8.5 w-8.5 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
                                 ad.is_featured
-                                  ? 'bg-amber-50 text-amber-800 border-amber-300'
+                                  ? 'bg-amber-50 text-amber-800 border-amber-300 shadow-2xs'
                                   : 'bg-white hover:bg-stone-50 text-stone-400 border-stone-200'
                               }`}
-                              title={ad.is_featured ? 'حذف نشان ویژه' : 'ویژه کردن'}
+                              title={ad.is_featured ? 'حذف نشان ویژه' : 'ارتقا به ویژه'}
                             >
-                              <Sparkles size={13} className={ad.is_featured ? 'text-amber-600' : 'text-stone-400'} />
+                              <Sparkles size={14} className={ad.is_featured ? 'text-amber-600' : 'text-stone-400'} />
                             </button>
 
                             <button
                               type="button"
                               onClick={() => toggleStatus(ad)}
-                              className={`h-8 w-8 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
+                              className={`h-8.5 px-2.5 rounded-lg border flex items-center gap-1.5 text-[11px] font-bold cursor-pointer transition-all active:scale-95 ${
                                 ad.status === 'active'
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
                                   : 'bg-stone-100 text-stone-500 border-stone-300'
                               }`}
-                              title={ad.status === 'active' ? 'مخفی کردن' : 'فعال‌سازی'}
+                              title={ad.status === 'active' ? 'مخفی کردن آگهی' : 'فعال‌سازی آگهی'}
                             >
-                              <CheckCircle size={13} className={ad.status === 'active' ? 'text-emerald-600' : 'text-stone-400'} />
+                              <span className={`h-2 w-2 rounded-full ${ad.status === 'active' ? 'bg-emerald-500' : 'bg-stone-400'}`} />
+                              <span>{ad.status === 'active' ? 'فعال' : 'مخفی'}</span>
                             </button>
                           </div>
                         </div>
@@ -1873,24 +1900,41 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       </div>
                     </div>
 
-                    <div className="space-y-3">
+                    {/* Revenue Quick Tile */}
+                    <div className="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200/70 flex items-center justify-between">
+                      <div>
+                        <span className="text-[11px] font-bold text-emerald-800 block">درآمد کل از ارتقای آگهی‌ها</span>
+                        <span className="text-[20px] font-black text-emerald-950 tabular-nums">
+                          {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')}{' '}
+                          <span className="text-xs font-bold text-emerald-700">کرون</span>
+                        </span>
+                      </div>
+                      <div className="text-left bg-white/80 px-2.5 py-1.5 rounded-lg border border-emerald-200/60 shadow-2xs">
+                        <span className="text-[10px] font-medium text-emerald-600 block">تراکنش‌های موفق</span>
+                        <span className="text-[13px] font-black text-emerald-800 tabular-nums text-center block">
+                          {vipAds} عدد
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2.5">
                       <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
-                        <span className="text-stone-600 font-semibold">وضعیت اتصال:</span>
-                        <span className="px-2 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className="text-stone-600 font-semibold">وضعیت اتصال درگاه:</span>
+                        <span className="px-2.5 py-0.5 rounded-md font-bold text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200">
                           {stripeSettings.mode === 'live' ? 'متصل (عملیاتی)' : 'متصل (آزمایشی)'}
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
                         <span className="text-stone-600 font-semibold">تعرفه آگهی ویژه:</span>
-                        <span className="font-extrabold text-stone-900 font-mono text-sm">
+                        <span className="font-extrabold text-stone-900 tabular-nums text-sm">
                           {stripeSettings.vipPrice || 99} کرون
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
                         <span className="text-stone-600 font-semibold">مدت اعتبار آگهی ویژه:</span>
-                        <span className="font-bold text-stone-800 font-mono">
+                        <span className="font-bold text-stone-800 tabular-nums">
                           {stripeSettings.vipDurationDays || 30} روز
                         </span>
                       </div>
@@ -1900,12 +1944,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         <span className="font-bold text-stone-700">کارت‌های بین‌المللی (ویزا، مسترکارت)</span>
                       </div>
                     </div>
+
+                    <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-[11.5px] text-stone-400">
+                      <span>شبکه‌های معتبر:</span>
+                      <div className="flex items-center gap-1.5 font-bold text-stone-600 text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-stone-100 border border-stone-200 font-mono">VISA</span>
+                        <span className="px-2 py-0.5 rounded bg-stone-100 border border-stone-200 font-mono">Mastercard</span>
+                        <span className="px-2 py-0.5 rounded bg-stone-100 border border-stone-200 font-mono">Stripe</span>
+                      </div>
+                    </div>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => handleTabChange('monetization')}
-                    className="w-full h-10 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 transition-all shadow-2xs"
+                    className="w-full h-10 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 transition-all shadow-2xs mt-2"
                   >
                     <span>تنظیمات درگاه بانکی و تعرفه‌ها</span>
                     <span>←</span>
