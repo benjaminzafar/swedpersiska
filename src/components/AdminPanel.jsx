@@ -1175,389 +1175,111 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         <div className="flex-1 flex flex-col min-w-0" dir="rtl">
           
           {/* ========================================================
-              TAB 1: COMPLETE PERSIAN OVERVIEW SCREEN
+              TAB 1: COMPLETE PERSIAN OVERVIEW SCREEN (Executive Classifieds)
           ======================================================== */}
           {activeTab === 'overview' && (
             <div className="space-y-5 sm:space-y-6 max-w-7xl w-full animate-in fade-in duration-150 ease-out">
               
-              {/* 1. ROW 1: 3 High-Level Metric Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* 1. ROW 1: 4 Key Executive Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 
-                {/* Card 1: درآمد VIP */}
-                <div 
-                  onClick={() => handleTabChange('monetization')}
-                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
-                      درآمد کل VIP (استرایپ)
-                    </span>
-                    <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
-                      خالص
-                    </span>
-                  </div>
-                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
-                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} kr
-                  </p>
-                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
-                    <span>آگهی‌های ویژه پرداخت‌شده از طریق استرایپ</span>
-                    <span className="font-semibold text-stone-600 font-mono">{vipAds || 0} آگهی</span>
-                  </div>
-                </div>
-
-                {/* Card 2: کل آگهی‌ها */}
+                {/* Card 1: کل آگهی‌ها */}
                 <div 
                   onClick={() => handleTabChange('ads')}
                   className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
-                      کل آگهی‌های ثبت‌شده
+                      کل آگهی‌های پرتال
                     </span>
-                    <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/70 animate-pulse">
-                      +{totalAds} آگهی
+                    <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 border border-blue-200/60">
+                      {activeAds} فعال
                     </span>
                   </div>
                   <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
                     {totalAds}
                   </p>
                   <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
-                    <span>منتشر شده در پرتال</span>
-                    <span className="font-semibold text-stone-600 font-mono">{activeAds} فعال</span>
+                    <span>در سراسر کشورهای نوردیک</span>
+                    <span className="font-semibold text-stone-600 font-mono">{ads.filter(a => a.status === 'hidden').length} مخفی</span>
                   </div>
                 </div>
 
-                {/* Card 3: بازدید و ترافیک */}
+                {/* Card 2: آگهی‌های ویژه VIP */}
+                <div 
+                  onClick={() => { setStatusFilter('vip'); handleTabChange('ads'); }}
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
+                      آگهی‌های ویژه (VIP)
+                    </span>
+                    <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/70 animate-pulse">
+                      جایگاه بالا
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-amber-600 transition-colors font-mono">
+                    {vipAds}
+                  </p>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>دارای برچسب و اولویت طلایی</span>
+                    <span className="font-semibold text-amber-700 font-mono">فعال در پرتال</span>
+                  </div>
+                </div>
+
+                {/* Card 3: درآمد کل VIP (استرایپ) */}
+                <div 
+                  onClick={() => handleTabChange('monetization')}
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
+                      درآمد ارتقای VIP
+                    </span>
+                    <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
+                      Stripe
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-emerald-600 transition-colors font-mono">
+                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} kr
+                  </p>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>بر اساس تعرفه {stripeSettings.vipPrice || 99} kr</span>
+                    <span className="font-semibold text-stone-600 font-mono">{vipAds} تراکنش</span>
+                  </div>
+                </div>
+
+                {/* Card 4: بازدید و ترافیک کل */}
                 <div 
                   onClick={() => handleTabChange('ads')}
                   className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
-                      بازدید و ترافیک کل
+                      بازدید و تعامل کل
                     </span>
                     <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
-                      ۴ کشور اسکاندیناوی
+                      ۴ کشور
                     </span>
                   </div>
                   <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
                     {totalViews.toLocaleString('sv-SE')}
                   </p>
-                  <div className="mt-2">
-                    <div className="flex items-center justify-between text-[11px] font-medium text-stone-500">
-                      <span>{activeAds} از {totalAds} آگهی فعال در حال نمایش</span>
-                      <span className="font-bold text-stone-900 font-mono">۱۰۰٪</span>
-                    </div>
-                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
-                      <div className="h-full rounded-full bg-emerald-500 transition-all duration-500 w-full" />
-                    </div>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>میانگین به ازای هر آگهی:</span>
+                    <span className="font-semibold text-stone-700 font-mono">{totalAds > 0 ? Math.round(totalViews / totalAds) : 0} بازدید</span>
                   </div>
                 </div>
 
               </div>
 
-              {/* 2. ROW 2: TWIN OPERATIONAL GRID */}
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
-                
-                {/* RIGHT COLUMN: آگهی‌ها و دسته‌بندی‌ها */}
-                <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
-                  <div className="flex items-center justify-between border-b border-stone-100 pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 shadow-2xs">
-                        <Layers size={20} strokeWidth={2} />
-                      </div>
-                      <div>
-                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">آگهی‌ها و دسته‌بندی‌ها</h2>
-                        <p className="text-[12px] text-stone-500">وضعیت آگهی‌های ثبت‌شده در سراسر کشورهای اسکاندیناوی</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleTabChange('ads')}
-                      className="hidden sm:inline-flex items-center gap-1 text-[12px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer"
-                    >
-                      <span>همه آگهی‌ها</span>
-                      <span>←</span>
-                    </button>
-                  </div>
-
-                  {/* 4 Status Cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => { setStatusFilter('all'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-stone-200/80 bg-stone-50/60 hover:bg-stone-100/70 p-3 text-right transition-all cursor-pointer group active:scale-[0.98]"
-                    >
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">کل آگهی‌ها</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{totalAds}</p>
-                      <span className="text-[10.5px] font-medium text-stone-500">در دیتابیس</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => { setStatusFilter('active'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100/70 p-3 text-right transition-all cursor-pointer group active:scale-[0.98]"
-                    >
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">فعال</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-emerald-950 font-mono">{activeAds}</p>
-                      <span className="text-[10.5px] font-bold text-emerald-700">قابل مشاهده</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => { setStatusFilter('vip'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-amber-300 bg-amber-50/70 hover:bg-amber-100/70 p-3 text-right transition-all cursor-pointer group active:scale-[0.98]"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">آگهی‌های VIP</span>
-                        <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-                      </div>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-amber-950 font-mono">{vipAds}</p>
-                      <span className="text-[10.5px] font-bold text-amber-700">جایگاه ویژه</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => { setStatusFilter('hidden'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-stone-200/80 bg-stone-50/60 hover:bg-stone-100/70 p-3 text-right transition-all cursor-pointer group active:scale-[0.98]"
-                    >
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">مخفی / آرشیو</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{ads.filter(a => a.status === 'hidden').length}</p>
-                      <span className="text-[10.5px] font-medium text-stone-500">غیرفعال‌شده</span>
-                    </button>
-                  </div>
-
-                  {/* Popular Categories */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
-                        دسته‌بندی‌های پرطرفدار
-                      </span>
-                      <span className="text-[11px] text-stone-400 font-medium">برای فیلتر کردن کلیک کنید</span>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {CATEGORIES.filter(c => c.id !== 'all').slice(0, 4).map(cat => {
-                        const count = ads.filter(a => a.category === cat.id).length;
-                        return (
-                          <button
-                            key={cat.id}
-                            type="button"
-                            onClick={() => {
-                              setCategoryFilter(cat.id);
-                              handleTabChange('ads');
-                            }}
-                            className="flex items-center justify-between p-2.5 rounded-xl border border-stone-200/70 bg-stone-50/50 hover:bg-stone-100/80 hover:border-stone-300 transition-all text-right cursor-pointer group"
-                          >
-                            <div className="min-w-0 pl-1">
-                              <span className="text-[11.5px] font-semibold text-stone-800 block truncate group-hover:text-black">
-                                {cat.fa}
-                              </span>
-                              <span className="text-[10px] text-stone-400 uppercase font-mono">
-                                {cat.id}
-                              </span>
-                            </div>
-                            <span className="px-1.5 py-0.5 rounded text-[10.5px] font-mono font-bold bg-white border border-stone-200 text-stone-700">
-                              {count}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Recent Ads List */}
-                  <div className="space-y-2 pt-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
-                        آخرین آگهی‌های ثبت‌شده
-                      </span>
-                      <span className="text-[11px] text-stone-400 font-medium">کلیک برای مشاهده جزئیات</span>
-                    </div>
-
-                    <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
-                      {ads.slice(0, 4).map(ad => {
-                        const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
-                        return (
-                          <div
-                            key={ad.id}
-                            onClick={() => setSelectedAdForModal(ad)}
-                            className="w-full p-3 flex items-center justify-between gap-3 text-right hover:bg-blue-50/30 transition-colors group cursor-pointer active:scale-[0.99]"
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className="w-10 h-10 rounded-xl bg-stone-100 border border-stone-200 overflow-hidden shrink-0">
-                                {ad.images && ad.images[0] ? (
-                                  <img src={ad.images[0]} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-stone-300">
-                                    <ImageIcon size={18} />
-                                  </div>
-                                )}
-                              </div>
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-mono font-bold text-[12.5px] text-stone-900 truncate">
-                                    #{ad.reference_number || ad.id.slice(0, 8)}
-                                  </span>
-                                  <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                                    {countryObj.nameFa}
-                                  </span>
-                                  {ad.is_featured && (
-                                    <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
-                                      VIP
-                                    </span>
-                                  )}
-                                  <span className="text-xs text-stone-700 truncate font-semibold">
-                                    {ad.contact_name || 'آگهی‌دهنده'}
-                                  </span>
-                                </div>
-                                <p className="text-[11.5px] text-stone-500 truncate mt-0.5">
-                                  {ad.title} · {ad.city}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-left shrink-0">
-                              <span className="text-xs font-bold text-stone-900 font-mono block">
-                                {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
-                              </span>
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded border inline-block mt-0.5 ${
-                                ad.status === 'active'
-                                  ? 'text-emerald-700 bg-emerald-50 border-emerald-200/60'
-                                  : 'text-stone-600 bg-stone-100 border-stone-200/60'
-                              }`}>
-                                {ad.status === 'active' ? 'فعال' : 'مخفی'}
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {ads.length === 0 && (
-                        <div className="py-6 text-center text-xs text-stone-400">
-                          هنوز آگهی‌ای در سیستم ثبت نشده است.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* LEFT COLUMN: درگاه و ارتقای VIP */}
-                <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
-                  <div className="flex items-center gap-3 border-b border-stone-100 pb-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
-                      <CreditCard size={20} strokeWidth={2} />
-                    </div>
-                    <div>
-                      <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">درگاه پرداخت و VIP</h2>
-                      <p className="text-[12px] text-stone-500">تراکنش‌ها، ارتقای ویژه و وضعیت اتصال به Stripe</p>
-                    </div>
-                  </div>
-
-                  {/* 4 Status Cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <div className="rounded-xl border border-amber-300 bg-amber-50/70 p-3 text-right">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">VIP فعال</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-amber-950 font-mono">{vipAds}</p>
-                      <span className="text-[10.5px] font-bold text-amber-700">آگهی‌های ویژه</span>
-                    </div>
-
-                    <div className="rounded-xl border border-blue-200/80 bg-blue-50/50 p-3 text-right">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-800">درگاه Stripe</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-blue-950 font-mono">
-                        {stripeSettings.mode === 'live' ? 'اصلی' : 'تستی'}
-                      </p>
-                      <span className="text-[10.5px] font-medium text-blue-700">۱۰۰٪ متصل</span>
-                    </div>
-
-                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-right">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">تعرفه VIP</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{stripeSettings.vipPrice || 99} kr</p>
-                      <span className="text-[10.5px] font-medium text-stone-400">به ازای هر آگهی</span>
-                    </div>
-
-                    <div className="rounded-xl border border-emerald-300 bg-emerald-50/70 p-3 text-right">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">کل درآمد</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-emerald-950 font-mono">
-                        {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} kr
-                      </p>
-                      <span className="text-[10.5px] font-bold text-emerald-700">از طریق Stripe</span>
-                    </div>
-                  </div>
-
-                  {/* Financial Snapshot Metrics */}
-                  <div className="bg-stone-50 rounded-xl p-3 border border-stone-200/60 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                    <div>
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">تعرفه میانگین</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{stripeSettings.vipPrice || 99} kr</span>
-                    </div>
-                    <div className="border-e sm:border-x border-stone-200/80">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">درگاه بانکی</span>
-                      <span className="text-[13px] font-extrabold text-emerald-700 font-mono">۱۰۰٪ فعال</span>
-                    </div>
-                    <div className="border-t sm:border-t-0 sm:border-s border-stone-200/80 pt-2 sm:pt-0">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">خریدهای VIP</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{vipAds} عدد</span>
-                    </div>
-                    <div className="border-t sm:border-t-0 border-stone-200/80 pt-2 sm:pt-0">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">روش پرداخت</span>
-                      <span className="text-[13px] font-extrabold text-stone-900">کارت / استرایپ</span>
-                    </div>
-                  </div>
-
-                  {/* Recent VIP Transactions */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
-                        آخرین تراکنش‌های VIP
-                      </span>
-                      <span className="text-[11px] text-stone-400 font-medium">پرداخت‌های موفق Stripe</span>
-                    </div>
-
-                    <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
-                      {ads.filter(a => a.is_featured).slice(0, 4).map(ad => (
-                        <div 
-                          key={ad.id} 
-                          onClick={() => setSelectedAdForModal(ad)}
-                          className="w-full p-3 flex items-center justify-between gap-3 text-right hover:bg-stone-50/80 transition-colors cursor-pointer"
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200/80">
-                              VIP
-                            </div>
-                            <div className="min-w-0">
-                              <span className="font-mono font-bold text-[13px] text-stone-900 truncate block">
-                                VIP #{ad.reference_number || ad.id.slice(0, 8)}
-                              </span>
-                              <p className="text-[11px] text-stone-400 truncate">{ad.title}</p>
-                            </div>
-                          </div>
-                          <div className="text-left shrink-0">
-                            <span className="text-xs font-bold text-stone-900 font-mono block">
-                              {stripeSettings.vipPrice || 99} kr
-                            </span>
-                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60 inline-block mt-0.5">
-                              پرداخت با Stripe
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                      {ads.filter(a => a.is_featured).length === 0 && (
-                        <div className="py-6 text-center text-xs text-stone-400">
-                          هنوز خرید VIP انجام نشده است. پس از ارتقای آگهی‌ها توسط کاربران، تراکنش‌ها در اینجا نمایش داده می‌شوند.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* 3. ROW 3: NORDIC REGIONAL BREAKDOWN */}
+              {/* 2. ROW 2: NORDIC REGIONAL BREAKDOWN (4 Scandinavian Countries) */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-black text-zinc-900">
-                    پوشش منطقه‌ای اسکاندیناوی (Nordic Regional Breakdown)
+                    پوشش منطقه‌ای اسکاندیناوی (Nordic Regional Coverage)
                   </h3>
-                  <span className="text-xs text-stone-500">آمار زنده آگهی‌ها به تفکیک سوئد، نروژ، دانمارک و فنلاند</span>
+                  <span className="text-xs text-stone-500">برای فیلتر کردن آگهی‌های هر کشور کلیک کنید</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1567,7 +1289,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <div 
                         key={country.id}
                         onClick={() => { setCountryFilter(country.id); handleTabChange('ads'); }}
-                        className="p-4 rounded-2xl border border-stone-200/80 hover:border-zinc-900 bg-white hover:shadow-xs transition-all cursor-pointer space-y-2.5 group text-right"
+                        className="p-4 rounded-2xl border border-stone-200/80 hover:border-zinc-900 bg-white hover:shadow-xs transition-all cursor-pointer space-y-2.5 group text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-xs text-zinc-900 group-hover:text-black">
@@ -1586,6 +1308,191 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     );
                   })}
                 </div>
+              </div>
+
+              {/* 3. ROW 3: LATEST SUBMITTED ADS & STRIPE STATUS (Focused Classified Operations) */}
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 sm:gap-6">
+                
+                {/* RIGHT COLUMN (2/3 width): آخرین آگهی‌های پرتال */}
+                <div className="xl:col-span-2 rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 shadow-2xs">
+                        <Layers size={20} strokeWidth={2} />
+                      </div>
+                      <div>
+                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">آخرین آگهی‌های ثبت‌شده در پرتال</h2>
+                        <p className="text-[12px] text-stone-500">مشاهده سریع و بررسی آگهی‌های نیازمندی‌های کاربران</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleTabChange('ads')}
+                      className="inline-flex items-center gap-1 text-[12px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer"
+                    >
+                      <span>مدیریت همه آگهی‌ها ({totalAds})</span>
+                      <span>←</span>
+                    </button>
+                  </div>
+
+                  {/* Ads List */}
+                  <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
+                    {ads.slice(0, 5).map(ad => {
+                      const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
+                      const catObj = CATEGORIES.find(c => c.id === ad.category);
+                      return (
+                        <div
+                          key={ad.id}
+                          className="w-full p-3.5 flex items-center justify-between gap-3 text-right hover:bg-stone-50/70 transition-colors group"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div 
+                              onClick={() => setSelectedAdForModal(ad)}
+                              className="w-11 h-11 rounded-xl bg-stone-100 border border-stone-200/80 overflow-hidden shrink-0 cursor-pointer shadow-2xs group-hover:scale-105 transition-transform"
+                            >
+                              {ad.images && ad.images[0] ? (
+                                <img src={ad.images[0]} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-stone-300">
+                                  <ImageIcon size={18} />
+                                </div>
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-mono font-bold text-[12.5px] text-stone-900 truncate">
+                                  #{ad.reference_number || ad.id.slice(0, 8)}
+                                </span>
+                                <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                  {countryObj.nameFa}
+                                </span>
+                                {ad.is_featured && (
+                                  <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
+                                    VIP
+                                  </span>
+                                )}
+                                {catObj && (
+                                  <span className="text-[10.5px] text-stone-500 font-medium">
+                                    · {catObj.fa}
+                                  </span>
+                                )}
+                              </div>
+                              <p 
+                                onClick={() => setSelectedAdForModal(ad)}
+                                className="text-[12.5px] font-bold text-stone-800 hover:text-blue-600 truncate mt-0.5 cursor-pointer"
+                              >
+                                {ad.title}
+                              </p>
+                              <div className="flex items-center gap-2 text-[11px] text-stone-400 mt-0.5">
+                                <span>{ad.city || 'اسکاندیناوی'}</span>
+                                <span>·</span>
+                                <span className="font-semibold text-stone-700 font-mono">
+                                  {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedAdForModal(ad)}
+                              className="h-8 px-2.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                              title="مشاهده جزئیات کامل"
+                            >
+                              <Eye size={13} />
+                              <span>کامل</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => toggleFeatured(ad)}
+                              className={`h-8 w-8 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
+                                ad.is_featured
+                                  ? 'bg-amber-50 text-amber-800 border-amber-300'
+                                  : 'bg-white hover:bg-stone-50 text-stone-400 border-stone-200'
+                              }`}
+                              title={ad.is_featured ? 'حذف نشان VIP' : 'ویژه کردن'}
+                            >
+                              <Sparkles size={13} className={ad.is_featured ? 'text-amber-600' : 'text-stone-400'} />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => toggleStatus(ad)}
+                              className={`h-8 w-8 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
+                                ad.status === 'active'
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                  : 'bg-stone-100 text-stone-500 border-stone-300'
+                              }`}
+                              title={ad.status === 'active' ? 'مخفی کردن' : 'فعال‌سازی'}
+                            >
+                              <CheckCircle size={13} className={ad.status === 'active' ? 'text-emerald-600' : 'text-stone-400'} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {ads.length === 0 && (
+                      <div className="py-8 text-center text-xs text-stone-400">
+                        هنوز آگهی‌ای در سیستم ثبت نشده است.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* LEFT COLUMN (1/3 width): وضعیت درگاه بانکی و ارتقای VIP */}
+                <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col justify-between space-y-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 border-b border-stone-100 pb-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
+                        <CreditCard size={20} strokeWidth={2} />
+                      </div>
+                      <div>
+                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">درگاه Stripe و VIP</h2>
+                        <p className="text-[12px] text-stone-500">وضعیت درگاه بانکی و تعرفه ارتقا</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
+                        <span className="text-stone-600 font-semibold">وضعیت اتصال:</span>
+                        <span className="px-2 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          {stripeSettings.mode === 'live' ? 'متصل (زنده / Live)' : 'متصل (تستی / Test)'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
+                        <span className="text-stone-600 font-semibold">تعرفه آگهی ویژه:</span>
+                        <span className="font-extrabold text-stone-900 font-mono text-sm">
+                          {stripeSettings.vipPrice || 99} {stripeSettings.currency || 'SEK'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
+                        <span className="text-stone-600 font-semibold">مدت زمان اعتبار VIP:</span>
+                        <span className="font-bold text-stone-800 font-mono">
+                          {stripeSettings.vipDurationDays || 30} روز
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
+                        <span className="text-stone-600 font-semibold">روش‌های پرداخت:</span>
+                        <span className="font-bold text-stone-700">کارت‌های بین‌المللی (ویزا، مسترکارت)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange('monetization')}
+                    className="w-full h-10 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 transition-all shadow-2xs"
+                  >
+                    <span>تنظیمات درگاه بانکی و تعرفه‌ها</span>
+                    <span>←</span>
+                  </button>
+                </div>
+
               </div>
 
             </div>
