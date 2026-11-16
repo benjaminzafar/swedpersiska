@@ -241,16 +241,17 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Active view: 'overview' | 'ads' | 'categories' | 'monetization' | 'security' | 'settings' with URL & localStorage persistence
+  // Active view: 'overview' | 'ads' | 'archive' | 'categories' | 'monetization' | 'security' | 'settings' with URL & localStorage persistence
   const [activeTab, setActiveTab] = useState(() => {
     try {
+      const validTabs = ['overview', 'ads', 'archive', 'categories', 'monetization', 'security', 'settings'];
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
-      if (tabParam && ['overview', 'ads', 'categories', 'monetization', 'security', 'settings'].includes(tabParam)) {
+      if (tabParam && validTabs.includes(tabParam)) {
         return tabParam;
       }
       const saved = localStorage.getItem('swedpersiska_admin_tab');
-      if (saved && ['overview', 'ads', 'categories', 'monetization', 'security', 'settings'].includes(saved)) {
+      if (saved && validTabs.includes(saved)) {
         return saved;
       }
     } catch {}
@@ -262,6 +263,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     playFeedback('click');
     setActiveTab(tab);
     setMobileSidebarOpen(false);
+    if (tab === 'archive' && !archiveLoaded) {
+      fetchArchiveAds(1);
+    }
     try {
       localStorage.setItem('swedpersiska_admin_tab', tab);
       const url = new URL(window.location.href);
@@ -827,6 +831,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }
   }, [isAuthenticated]);
 
+  // Lazy-load archive when archive tab is opened
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'archive' && !archiveLoaded) {
+      fetchArchiveAds(1);
+    }
+  }, [isAuthenticated, activeTab, archiveLoaded]);
+
   // Update country of an ad
   const updateAdCountry = async (adId, newCountry) => {
     playFeedback('click');
@@ -931,6 +942,15 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     } catch (err) {
       alert('خطا در بازیابی آگهی: ' + err.message);
     }
+  };
+
+  // Toggle status helper for modal action button
+  const toggleStatus = (ad) => {
+    if (!ad) return;
+    if (ad.status === 'active') {
+      return archiveAd(ad);
+    }
+    return restoreAd(ad);
   };
 
   // Permanent Delete
@@ -3001,7 +3021,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     <option value="all">همه وضعیت‌ها ({categoriesList.length})</option>
                     <option value="active">فقط فعال ({categoriesList.filter(c => c.enabled !== false).length})</option>
                     <option value="disabled">فقط غیرفعال ({categoriesList.filter(c => c.enabled === false).length})</option>
-                    <option value="has_ads">دارای آگهی ({categoriesList.filter(c => ads.some(a => a.category === c.id)).length})</option>
+                    <option value="has_ads">دارای آگهی ({categoriesList.filter(c => (categoryCounts[c.id] || 0) > 0).length})</option>
                   </select>
                 </div>
 

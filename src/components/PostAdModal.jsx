@@ -111,7 +111,7 @@ export default function PostAdModal({
             reference_number: refNum,
             pin_code: finalPin,
             title: title.trim(),
-            title_fa: titleFa.trim() || title.trim(),
+            title_fa: title.trim(),
             category,
             country: adCountry,
             city,
