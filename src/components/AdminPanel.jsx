@@ -428,7 +428,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       return;
     }
     if (!rawId) {
-      setCategoryModal(prev => ({ ...prev, errorMsg: 'لطفاً شناسه انگلیسی (Slug) را وارد نمایید.' }));
+      setCategoryModal(prev => ({ ...prev, errorMsg: 'لطفاً شناسه یکتای دسته‌بندی را وارد نمایید.' }));
       return;
     }
 
@@ -512,7 +512,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     // Check Cloudflare Anti-Bot if enabled
     if (turnstileSettings.enabled !== false && turnstileSettings.protectAdminLogin !== false) {
       if (!adminTurnstileToken) {
-        setLoginError('لطفاً تاییدیه امنیتی کلودفلر (Turnstile) را تیک بزنید.');
+        setLoginError('لطفاً تاییدیه امنیتی ضدبات را تکمیل کنید.');
         return;
       }
     }
@@ -1161,10 +1161,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <CreditCard size={16} strokeWidth={activeTab === 'monetization' ? 2.4 : 1.75} className={activeTab === 'monetization' ? 'text-slate-950 shrink-0' : 'text-stone-400 shrink-0'} />
-                  <span className="truncate">درگاه و VIP</span>
+                  <span className="truncate">درگاه پرداخت</span>
                 </div>
                 <span className="flex h-4 min-w-4 items-center justify-center rounded px-1.5 text-[9.5px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                  VIP
+                  تعرفه
                 </span>
               </button>
             </div>
@@ -1275,7 +1275,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 { id: 'overview', label: 'داشبورد', icon: LayoutDashboard, badge: null },
                 { id: 'ads', label: 'مدیریت آگهی‌ها', icon: Layers, badge: ads.length },
                 { id: 'categories', label: 'دسته‌بندی‌ها', icon: FolderTree, badge: categoriesList.length },
-                { id: 'monetization', label: 'درگاه و VIP', icon: CreditCard, badge: 'VIP' },
+                { id: 'monetization', label: 'درگاه پرداخت', icon: CreditCard, badge: 'تعرفه' },
                 { id: 'security', label: 'امنیت سیستم', icon: ShieldCheck, badge: turnstileSettings.enabled ? 'فعال' : 'غیرفعال' },
                 { id: 'settings', label: 'تنظیمات سایت', icon: Settings, badge: null },
               ].map(item => {
@@ -1345,7 +1345,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               {activeTab === 'overview' && 'داشبورد مدیریت'}
               {activeTab === 'ads' && 'مدیریت آگهی‌ها'}
               {activeTab === 'categories' && 'مدیریت دسته‌بندی‌ها'}
-              {activeTab === 'monetization' && 'درگاه بانکی و تعرفه VIP'}
+              {activeTab === 'monetization' && 'درگاه پرداخت و تعرفه‌ها'}
               {activeTab === 'security' && 'امنیت و فایروال'}
               {activeTab === 'settings' && 'تنظیمات کلی سایت'}
             </span>
@@ -1364,7 +1364,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   setSearchQuery(e.target.value);
                   if (activeTab !== 'ads') handleTabChange('ads');
                 }}
-                placeholder="جستجو در مدیریت... (Ctrl+K)"
+                placeholder="جستجو در سامانه مدیریت..."
                 className="w-full h-9 ps-9 pe-8 bg-stone-50 hover:bg-stone-100/70 focus:bg-white text-[12px] text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/80 focus:border-stone-400 outline-none transition-all shadow-2xs"
               />
               {searchQuery && (
@@ -1441,7 +1441,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   {activeTab === 'overview' && 'داشبورد'}
                   {activeTab === 'ads' && 'مدیریت آگهی‌ها'}
                   {activeTab === 'categories' && 'دسته‌بندی‌ها'}
-                  {activeTab === 'monetization' && 'درگاه و VIP'}
+                  {activeTab === 'monetization' && 'درگاه پرداخت'}
                   {activeTab === 'security' && 'امنیت سیستم'}
                   {activeTab === 'settings' && 'تنظیمات سایت'}
                 </span>
@@ -1505,14 +1505,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </div>
                 </div>
 
-                {/* Card 2: آگهی‌های ویژه VIP */}
+                {/* Card 2: آگهی‌های ویژه */}
                 <div 
                   onClick={() => { setStatusFilter('vip'); handleTabChange('ads'); }}
                   className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
-                      آگهی‌های ویژه (VIP)
+                      آگهی‌های ویژه
                     </span>
                     <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/70 animate-pulse">
                       جایگاه بالا
@@ -1527,24 +1527,24 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </div>
                 </div>
 
-                {/* Card 3: درآمد کل VIP (استرایپ) */}
+                {/* Card 3: درآمد کل ویژه */}
                 <div 
                   onClick={() => handleTabChange('monetization')}
                   className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
-                      درآمد ارتقای VIP
+                      درآمد ارتقای ویژه
                     </span>
                     <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
-                      Stripe
+                      درگاه آنلاین
                     </span>
                   </div>
                   <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-emerald-600 transition-colors font-mono">
-                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} kr
+                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} کرون
                   </p>
                   <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
-                    <span>بر اساس تعرفه {stripeSettings.vipPrice || 99} kr</span>
+                    <span>بر اساس تعرفه {stripeSettings.vipPrice || 99} کرون</span>
                     <span className="font-semibold text-stone-600 font-mono">{vipAds} تراکنش</span>
                   </div>
                 </div>
@@ -1577,7 +1577,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-black text-zinc-900">
-                    پوشش منطقه‌ای اسکاندیناوی (Nordic Regional Coverage)
+                    پوشش منطقه‌ای اسکاندیناوی
                   </h3>
                   <span className="text-xs text-stone-500">برای فیلتر کردن آگهی‌های هر کشور کلیک کنید</span>
                 </div>
@@ -1593,7 +1593,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-xs text-zinc-900 group-hover:text-black">
-                            {country.nameFa} ({country.name})
+                            {country.nameFa}
                           </span>
                           <span className="px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 text-[10px] font-mono font-bold">
                             {stats.total} آگهی
@@ -1601,7 +1601,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         </div>
                         <div className="flex items-center justify-between text-xs pt-1 border-t border-stone-100">
                           <span className="text-stone-500 text-[11px]">{stats.active} فعال</span>
-                          <span className="text-amber-700 font-bold text-[11px]">{stats.vip} VIP</span>
+                          <span className="text-amber-700 font-bold text-[11px]">{stats.vip} ویژه</span>
                           <span className="text-stone-600 font-mono text-[11px]">{stats.views} بازدید</span>
                         </div>
                       </div>
@@ -1668,7 +1668,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                 </span>
                                 {ad.is_featured && (
                                   <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
-                                    VIP
+                                    ویژه
                                   </span>
                                 )}
                                 {catObj && (
@@ -1687,7 +1687,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                 <span>{ad.city || 'اسکاندیناوی'}</span>
                                 <span>·</span>
                                 <span className="font-semibold text-stone-700 font-mono">
-                                  {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
+                                  {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type === 'kr' || !ad.price_type ? 'کرون' : ad.price_type}` : 'توافقی'}
                                 </span>
                               </div>
                             </div>
@@ -1712,7 +1712,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                   ? 'bg-amber-50 text-amber-800 border-amber-300'
                                   : 'bg-white hover:bg-stone-50 text-stone-400 border-stone-200'
                               }`}
-                              title={ad.is_featured ? 'حذف نشان VIP' : 'ویژه کردن'}
+                              title={ad.is_featured ? 'حذف نشان ویژه' : 'ویژه کردن'}
                             >
                               <Sparkles size={13} className={ad.is_featured ? 'text-amber-600' : 'text-stone-400'} />
                             </button>
@@ -1741,7 +1741,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </div>
                 </div>
 
-                {/* LEFT COLUMN (1/3 width): وضعیت درگاه بانکی و ارتقای VIP */}
+                {/* LEFT COLUMN (1/3 width): وضعیت درگاه بانکی و ارتقای ویژه */}
                 <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col justify-between space-y-4">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 border-b border-stone-100 pb-4">
@@ -1749,8 +1749,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         <CreditCard size={20} strokeWidth={2} />
                       </div>
                       <div>
-                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">درگاه Stripe و VIP</h2>
-                        <p className="text-[12px] text-stone-500">وضعیت درگاه بانکی و تعرفه ارتقا</p>
+                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">درگاه پرداخت و تعرفه‌ها</h2>
+                        <p className="text-[12px] text-stone-500">وضعیت درگاه پرداخت و تعرفه ارتقا</p>
                       </div>
                     </div>
 
@@ -1758,19 +1758,19 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
                         <span className="text-stone-600 font-semibold">وضعیت اتصال:</span>
                         <span className="px-2 py-0.5 rounded font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          {stripeSettings.mode === 'live' ? 'متصل (زنده / Live)' : 'متصل (تستی / Test)'}
+                          {stripeSettings.mode === 'live' ? 'متصل (عملیاتی)' : 'متصل (آزمایشی)'}
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
                         <span className="text-stone-600 font-semibold">تعرفه آگهی ویژه:</span>
                         <span className="font-extrabold text-stone-900 font-mono text-sm">
-                          {stripeSettings.vipPrice || 99} {stripeSettings.currency || 'SEK'}
+                          {stripeSettings.vipPrice || 99} کرون
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/60 text-xs">
-                        <span className="text-stone-600 font-semibold">مدت زمان اعتبار VIP:</span>
+                        <span className="text-stone-600 font-semibold">مدت اعتبار آگهی ویژه:</span>
                         <span className="font-bold text-stone-800 font-mono">
                           {stripeSettings.vipDurationDays || 30} روز
                         </span>
@@ -2014,7 +2014,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                     <span>{ad.city || 'نامشخص'}</span>
                                   </div>
                                   <span className="font-extrabold text-stone-900 font-mono text-[12px] block">
-                                    {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
+                                    {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type === 'kr' || !ad.price_type ? 'کرون' : ad.price_type}` : 'توافقی'}
                                   </span>
                                 </div>
                               </td>
@@ -2042,10 +2042,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                         href={`https://wa.me/${ad.contact_whatsapp.replace(/[^0-9]/g, '')}`}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="h-6 w-6 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 flex items-center justify-center text-[10px] font-bold"
+                                        className="h-6 px-1.5 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 flex items-center justify-center text-[10px] font-bold"
                                         title={`واتساپ: ${ad.contact_whatsapp}`}
                                       >
-                                        W
+                                        واتساپ
                                       </a>
                                     )}
                                     {ad.contact_telegram && (
@@ -2093,7 +2093,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                   {ad.is_featured && (
                                     <span className="flex items-center justify-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-extrabold border border-amber-300">
                                       <Sparkles size={10} className="text-amber-600" />
-                                      <span>VIP</span>
+                                      <span>ویژه</span>
                                     </span>
                                   )}
                                 </div>
@@ -2122,7 +2122,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                         ? 'bg-amber-50 text-amber-800 border-amber-300'
                                         : 'bg-white hover:bg-stone-50 text-stone-400 border-stone-200'
                                     }`}
-                                    title={ad.is_featured ? 'حذف نشان VIP' : 'ویژه کردن (VIP)'}
+                                    title={ad.is_featured ? 'حذف نشان ویژه' : 'ویژه کردن آگهی'}
                                   >
                                     <Sparkles size={13} className={ad.is_featured ? 'text-amber-600' : 'text-stone-400'} />
                                   </button>
@@ -2270,7 +2270,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     <Search size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
                     <input
                       type="text"
-                      placeholder="جستجو در عنوان، شناسه (slug) یا آیکون..."
+                      placeholder="جستجو در عنوان، شناسه یا آیکون..."
                       value={categorySearchQuery}
                       onChange={(e) => setCategorySearchQuery(e.target.value)}
                       className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 ps-9 pe-8 text-xs text-zinc-900 placeholder:text-stone-400 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
@@ -2324,7 +2324,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         <tr className="bg-stone-50/90 border-b border-stone-200/80 text-[11.5px] font-bold text-stone-500 select-none">
                           <th className="py-3 px-3 text-center w-14">آیکون</th>
                           <th className="py-3 px-3 min-w-[200px]">عنوان دسته‌بندی</th>
-                          <th className="py-3 px-3 min-w-[150px]">شناسه یکتا (Slug)</th>
+                          <th className="py-3 px-3 min-w-[150px]">شناسه یکتا</th>
                           <th className="py-3 px-3 min-w-[130px] text-center">آگهی‌های ثبت‌شده</th>
                           <th className="py-3 px-3 text-center w-24">وضعیت</th>
                           <th className="py-3 px-3 text-center w-28">نوع دسته</th>
@@ -2466,7 +2466,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               
               <div className="border-b border-stone-200/80 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-base font-black text-zinc-900">درگاه Stripe و VIP</h2>
+                  <h2 className="text-base font-black text-zinc-900">درگاه پرداخت و تعرفه‌ها</h2>
                   <p className="text-xs text-stone-500 mt-0.5">تنظیمات پرداخت و ارتقای آگهی</p>
                 </div>
 
@@ -2476,7 +2476,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80' 
                       : 'bg-amber-50 text-amber-800 border-amber-200/80'
                   }`}>
-                    {stripeSettings.mode === 'live' ? 'زنده (Live)' : 'تستی (Test)'}
+                    {stripeSettings.mode === 'live' ? 'عملیاتی' : 'آزمایشی'}
                   </span>
                 </div>
               </div>
@@ -2492,7 +2492,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 
                 {/* Stripe Credentials Card */}
                 <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
-                  <h3 className="text-xs font-extrabold text-zinc-900">اطلاعات اتصال Stripe</h3>
+                  <h3 className="text-xs font-extrabold text-zinc-900">اطلاعات درگاه پرداخت اینترنتی</h3>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -2502,8 +2502,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, mode: e.target.value }))}
                         className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-medium focus:border-stone-400 focus:outline-none transition-all cursor-pointer shadow-2xs"
                       >
-                        <option value="test">آزمایشی (Test)</option>
-                        <option value="live">واقعی (Live)</option>
+                        <option value="test">آزمایشی</option>
+                        <option value="live">عملیاتی و واقعی</option>
                       </select>
                     </div>
 
@@ -2522,7 +2522,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
                   <div className="space-y-3 pt-1">
                     <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1.5">Publishable Key (کلید عمومی)</label>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">کلید عمومی درگاه (Publishable Key)</label>
                       <input
                         type="text"
                         value={stripeSettings.publishableKey}
@@ -2534,7 +2534,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1.5">Secret Key (کلید محرمانه)</label>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">کلید محرمانه درگاه (Secret Key)</label>
                       <input
                         type="password"
                         value={stripeSettings.secretKey}
@@ -2549,7 +2549,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
                 {/* Pricing & VIP Configuration */}
                 <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
-                  <h3 className="text-xs font-extrabold text-zinc-900">تعرفه آگهی VIP</h3>
+                  <h3 className="text-xs font-extrabold text-zinc-900">تعرفه آگهی ویژه</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
@@ -2570,10 +2570,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, currency: e.target.value }))}
                         className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-medium focus:border-stone-400 focus:outline-none transition-all cursor-pointer shadow-2xs"
                       >
-                        <option value="SEK">SEK (سوئد)</option>
-                        <option value="NOK">NOK (نروژ)</option>
-                        <option value="DKK">DKK (دانمارک)</option>
-                        <option value="EUR">EUR (فنلاند)</option>
+                        <option value="SEK">کرون سوئد (SEK)</option>
+                        <option value="NOK">کرون نروژ (NOK)</option>
+                        <option value="DKK">کرون دانمارک (DKK)</option>
+                        <option value="EUR">یورو فنلاند (EUR)</option>
                       </select>
                     </div>
 
@@ -2615,7 +2615,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <div className="border-b border-stone-200/80 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-base font-black text-zinc-900">امنیت و آنتی‌بات</h2>
-                  <p className="text-xs text-stone-500 mt-0.5">تنظیمات محافظت کلودفلر Turnstile</p>
+                  <p className="text-xs text-stone-500 mt-0.5">تنظیمات سپر امنیتی ضدبات</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -2645,7 +2645,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <label className="flex items-center justify-between p-4 rounded-xl bg-stone-50 hover:bg-stone-100/70 border border-stone-200/80 cursor-pointer transition-all shadow-2xs">
                       <div>
-                        <span className="text-xs font-bold text-zinc-900 block">فعال بودن Turnstile</span>
+                        <span className="text-xs font-bold text-zinc-900 block">فعال‌بودن سپر ضدبات</span>
                         <span className="text-[11px] text-stone-500">بررسی امنیتی فرم‌ها</span>
                       </div>
                       <input
@@ -2663,8 +2663,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         onChange={(e) => setTurnstileSettings(prev => ({ ...prev, mode: e.target.value }))}
                         className="w-full h-8 rounded-lg bg-white border border-stone-200/80 px-2.5 text-xs text-zinc-900 font-medium focus:border-stone-400 focus:outline-none transition-all cursor-pointer"
                       >
-                        <option value="test">آزمایشی (Test)</option>
-                        <option value="live">واقعی (Live)</option>
+                        <option value="test">آزمایشی</option>
+                        <option value="live">عملیاتی و واقعی</option>
                       </select>
                     </div>
                   </div>
@@ -2707,7 +2707,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 {/* Cloudflare Keys Card */}
                 <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-extrabold text-zinc-900">کلیدهای Turnstile</h3>
+                    <h3 className="text-xs font-extrabold text-zinc-900">کلیدهای اختصاصی ضدبات</h3>
                     <a
                       href="https://dash.cloudflare.com/?to=/:account/turnstile"
                       target="_blank"
@@ -2720,7 +2720,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1.5">Site Key (کلید عمومی)</label>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">کلید عمومی سایت (Site Key)</label>
                       <input
                         type="text"
                         value={turnstileSettings.siteKey}
@@ -2732,7 +2732,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1.5">Secret Key (کلید محرمانه)</label>
+                      <label className="block text-xs font-bold text-stone-700 mb-1.5">کلید محرمانه سیستم (Secret Key)</label>
                       <input
                         type="password"
                         value={turnstileSettings.secretKey}
@@ -2891,7 +2891,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <form onSubmit={saveSeoSettings} className="space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                      عنوان صفحه (Title)
+                      عنوان صفحه در نتایج جستجو
                     </label>
                     <input
                       type="text"
@@ -2909,7 +2909,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
                   <div>
                     <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                      توضیحات (Description)
+                      توضیحات متاتگ (خلاصه سایت)
                     </label>
                     <textarea
                       rows={3}
@@ -2927,7 +2927,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
                   <div>
                     <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                      کلمات کلیدی (Keywords)
+                      کلمات کلیدی جستجو
                     </label>
                     <input
                       type="text"
@@ -2991,7 +2991,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 {selectedAdForModal.is_featured && (
                   <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[11px] font-extrabold border border-amber-300 flex items-center gap-1">
                     <Sparkles size={11} className="text-amber-600" />
-                    <span>VIP ویژه</span>
+                    <span>آگهی ویژه</span>
                   </span>
                 )}
                 <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${
@@ -3092,7 +3092,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
                   <span className="text-[11px] font-bold text-stone-400 uppercase">قیمت / مبلغ</span>
                   <div className="text-sm font-extrabold text-stone-900 font-mono">
-                    {selectedAdForModal.price ? `${Number(selectedAdForModal.price).toLocaleString()} ${selectedAdForModal.price_type || 'kr'}` : 'توافقی'}
+                    {selectedAdForModal.price ? `${Number(selectedAdForModal.price).toLocaleString()} کرون` : 'توافقی'}
                   </div>
                 </div>
               </div>
@@ -3203,7 +3203,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   }`}
                 >
                   <Sparkles size={14} className={selectedAdForModal.is_featured ? 'text-amber-600' : 'text-stone-400'} />
-                  <span>{selectedAdForModal.is_featured ? 'VIP فعال است' : 'تبدیل به VIP'}</span>
+                  <span>{selectedAdForModal.is_featured ? 'آگهی ویژه است' : 'تبدیل به ویژه'}</span>
                 </button>
 
                 {/* Toggle Status */}
@@ -3317,7 +3317,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               {/* Slug */}
               <div>
                 <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                  شناسه انگلیسی یکتا (Slug) <span className="text-rose-500">*</span>
+                  شناسه یکتا (حروف انگلیسی) <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
