@@ -113,7 +113,7 @@ export default function App() {
   const [adminOpen, setAdminOpen] = useState(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      return params.get('admin') === '1' || params.get('admin') === 'true';
+      return params.get('admin') === '1' || params.get('admin') === 'true' || params.get('modal') === 'admin';
     } catch {
       return false;
     }
@@ -215,7 +215,7 @@ export default function App() {
         const params = new URLSearchParams(window.location.search);
 
         // 1. Admin Panel
-        const isAdmin = params.get('admin') === '1' || params.get('admin') === 'true';
+        const isAdmin = params.get('admin') === '1' || params.get('admin') === 'true' || params.get('modal') === 'admin';
         setAdminOpen(isAdmin);
 
         // 2. Modals
