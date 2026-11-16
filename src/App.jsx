@@ -488,6 +488,20 @@ export default function App() {
   // Featured ads subset
   const featuredAds = filteredAds.filter(a => a.is_featured);
 
+  // Dedicated Full-Page Admin Mode (eliminates inside scrolling, double scrollbars & background DOM conflicts)
+  if (adminOpen) {
+    return (
+      <ErrorBoundary>
+        <AdminPanel
+          onClose={handleCloseAdmin}
+          onRefreshAds={() => {
+            fetchAds();
+          }}
+        />
+      </ErrorBoundary>
+    );
+  }
+
   return (
     <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 overflow-x-hidden w-full max-w-full pb-16 md:pb-0 ${lang === 'fa' ? 'font-vazir' : ''}`}>
       
@@ -837,19 +851,6 @@ export default function App() {
             showToast(lang === 'fa' ? 'آگهی بروزرسانی شد.' : 'Annonsen har uppdaterats.');
           }}
         />
-      )}
-
-      {/* MODAL 4: Admin Panel */}
-      {adminOpen && (
-        <ErrorBoundary>
-          <AdminPanel
-            onClose={handleCloseAdmin}
-            onRefreshAds={() => {
-              fetchAds();
-              fetchSettings();
-            }}
-          />
-        </ErrorBoundary>
       )}
 
     </div>

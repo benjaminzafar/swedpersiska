@@ -762,9 +762,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   // - Pure Crisp White Cards (#ffffff) with Warm Borders
   // ========================================================
   return (
-    <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] text-zinc-900 font-vazir select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-0 sm:p-4" 
+    <main 
+      className="admin-scope min-h-screen bg-[#f4f1ea] text-zinc-900 font-vazir select-none flex flex-col lg:flex-row p-0 sm:p-4 gap-4" 
       dir="rtl"
+      data-testid="admin-page"
     >
       
       {/* Dynamic Island Toast */}
@@ -1036,7 +1037,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       {/* ========================================================
           2. MAIN CONTENT AREA (PADDED RIGHT FOR DESKTOP SIDEBAR)
       ======================================================== */}
-      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200 lg:pr-[264px] lg:pl-0 px-2.5 pb-8 sm:px-0 sm:pb-8">
+      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200 lg:pr-[280px] lg:pl-0 px-2.5 pb-8 sm:px-0 sm:pb-8">
         
         {/* Top Desktop Nav Bar */}
         <header className="hidden lg:flex items-center justify-between h-14 px-5 bg-white rounded-2xl border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4 sticky top-4 shrink-0 z-20 select-none">
@@ -2752,6 +2753,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         </div>
       )}
 
-    </div>
+    </main>
   );
 }
