@@ -776,7 +776,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </div>
               <div className="flex flex-col">
                 <span className="font-extrabold text-[13px] tracking-tight leading-none text-white">SWEDPERSISKA</span>
-                <span className="text-[10px] text-stone-400 font-mono tracking-wider uppercase mt-0.5">Admin CRM</span>
+                <span className="text-[10px] text-stone-400 font-mono tracking-wider uppercase mt-0.5">Admin Portal</span>
               </div>
             </div>
           </div>
@@ -807,11 +807,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </button>
             </div>
 
-            {/* Group 2: Försäljning & Ärenden */}
+            {/* Group 2: Annonser & VIP */}
             <div className="space-y-0.5">
               <div className="px-2 pt-1.5 pb-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-                  Försäljning & Ärenden
+                  Annonser &amp; VIP
                 </span>
               </div>
 
@@ -826,7 +826,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Layers size={16} strokeWidth={activeTab === 'ads' ? 2.4 : 1.75} className={activeTab === 'ads' ? 'text-slate-950 shrink-0' : 'text-stone-400 shrink-0'} />
-                  <span className="truncate">Annonser & Ärenden</span>
+                  <span className="truncate">Annonser</span>
                 </div>
                 {ads.length > 0 && (
                   <span className={`flex h-4 min-w-4 items-center justify-center rounded px-1.5 text-[9.5px] font-bold ${
@@ -945,7 +945,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-extrabold text-xs text-white">SWEDPERSISKA</span>
-                  <span className="text-[10px] text-stone-400 font-mono">Admin CRM</span>
+                  <span className="text-[10px] text-stone-400 font-mono">Admin Portal</span>
                 </div>
               </div>
               <button
@@ -960,9 +960,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <div className="flex-1 overflow-y-auto p-3 space-y-1">
               {[
                 { id: 'overview', label: 'Översikt', icon: LayoutDashboard, badge: null },
-                { id: 'ads', label: 'Annonser & Ärenden', icon: Layers, badge: ads.length },
+                { id: 'ads', label: 'Annonser', icon: Layers, badge: ads.length },
                 { id: 'monetization', label: 'VIP & Betalning', icon: CreditCard, badge: 'VIP' },
-                { id: 'security', label: 'Säkerhet & Drift', icon: ShieldCheck, badge: turnstileSettings.enabled ? 'Aktiv' : 'Av' },
+                { id: 'security', label: 'Säkerhet', icon: ShieldCheck, badge: turnstileSettings.enabled ? 'Aktiv' : 'Av' },
                 { id: 'settings', label: 'Inställningar', icon: Settings, badge: null },
               ].map(item => {
                 const Icon = item.icon;
@@ -1029,9 +1029,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           <div className="flex items-center min-w-[150px] shrink-0">
             <span className="font-bold text-stone-900 tracking-tight text-[15.5px]">
               {activeTab === 'overview' && 'Översikt'}
-              {activeTab === 'ads' && 'Annonser & Ärenden'}
+              {activeTab === 'ads' && 'Annonser'}
               {activeTab === 'monetization' && 'VIP & Betalning'}
-              {activeTab === 'security' && 'Säkerhet & Drift'}
+              {activeTab === 'security' && 'Säkerhet'}
               {activeTab === 'settings' && 'Inställningar'}
             </span>
           </div>
@@ -1243,120 +1243,122 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
                 
                 {/* ========================================================= */}
-                {/* LEFT COLUMN: ANNONSFLÖDE & MODERERING */}
+                {/* LEFT COLUMN: ANNONSER & KATEGORIER (PURE CLASSIFIEDS) */}
                 {/* ========================================================= */}
                 <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
                   {/* Section Header */}
-                  <div className="flex items-center gap-3 border-b border-stone-100 pb-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 shadow-2xs">
-                      <Layers size={20} strokeWidth={2} />
-                    </div>
-                    <div>
-                      <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">Annonsflöde &amp; Granskning</h2>
-                      <p className="text-[12px] text-stone-500">Kvalitetsgranskning och status för annonser i Norden</p>
-                    </div>
-                  </div>
-
-                  {/* 4 Pipeline Stages (Left-to-Right) */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {/* 1. Väntar kontakt */}
-                    <button
-                      type="button"
-                      onClick={() => { setStatusFilter('all'); handleTabChange('ads'); }}
-                      className="rounded-xl border p-3 text-left transition-all cursor-pointer group active:scale-[0.98] border-amber-300 bg-amber-50/70 hover:bg-amber-100/70"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold text-stone-700 uppercase tracking-wider">Väntar kontakt</span>
-                        <span className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 shadow-2xs">
+                        <Layers size={20} strokeWidth={2} />
                       </div>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-amber-950 font-mono">
-                        {ads.filter(a => a.status !== 'active').length || totalAds}
-                      </p>
-                      <span className="text-[10.5px] font-bold text-amber-700">Kräver åtgärd</span>
-                    </button>
-
-                    {/* 2. Aktiva annonser */}
-                    <button
-                      type="button"
-                      onClick={() => { setStatusFilter('active'); handleTabChange('ads'); }}
-                      className="rounded-xl border p-3 text-left transition-all cursor-pointer group active:scale-[0.98] border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100/60"
-                    >
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Aktiva</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-emerald-950 font-mono">{activeAds}</p>
-                      <span className="text-[10.5px] font-bold text-emerald-700">Synliga i Norden</span>
-                    </button>
-
-                    {/* 3. VIP-annonser */}
-                    <button
-                      type="button"
-                      onClick={() => { setStatusFilter('vip'); handleTabChange('ads'); }}
-                      className="rounded-xl border p-3 text-left transition-all cursor-pointer group active:scale-[0.98] border-blue-300 bg-blue-50/70 hover:bg-blue-100/60"
-                    >
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-800">VIP-status</span>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-blue-950 font-mono">{vipAds}</p>
-                      <span className="text-[10.5px] font-bold text-blue-700">Topplacering</span>
-                    </button>
-
-                    {/* 4. Arkiverade */}
-                    <button
-                      type="button"
-                      onClick={() => { setStatusFilter('hidden'); handleTabChange('ads'); }}
-                      className="rounded-xl border p-3 text-left transition-all cursor-pointer group active:scale-[0.98] border-stone-200/80 bg-stone-50/70 hover:bg-stone-100/60"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">Arkiverade</span>
+                      <div>
+                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">Annonser &amp; Utbud</h2>
+                        <p className="text-[12px] text-stone-500">Översikt över publicerade annonser och kategorier i Norden</p>
                       </div>
-                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{ads.filter(a => a.status === 'hidden').length}</p>
-                      <span className="text-[10.5px] font-medium text-stone-400">Dolda / avslutade</span>
-                    </button>
-                  </div>
-
-                  {/* Urgent Follow-Up Alert Banner */}
-                  <div className="rounded-xl border border-amber-300 bg-amber-50/90 p-3 flex items-center justify-between gap-3 shadow-2xs">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <Phone size={16} className="text-amber-700 shrink-0" />
-                      <p className="text-[12px] font-medium text-amber-950 truncate">
-                        <span className="font-bold">{totalAds} annonser</span> i systemet redo för granskning och hantering
-                      </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleTabChange('ads')}
-                      className="shrink-0 text-[11.5px] font-bold text-amber-800 hover:text-amber-950 hover:underline cursor-pointer"
+                      className="hidden sm:inline-flex items-center gap-1 text-[12px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer"
                     >
-                      Gå till Annonser →
+                      <span>Alla annonser</span>
+                      <span>→</span>
                     </button>
                   </div>
 
-                  {/* Operations Snapshot (Matching CCTV-BUSINESS) */}
-                  <div className="bg-stone-50 rounded-xl p-3 border border-stone-200/60 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                    <div>
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Aktiva ärenden</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{totalAds} st</span>
-                    </div>
-                    <div className="border-l sm:border-x border-stone-200/80">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">VIP-grad</span>
-                      <span className="text-[13px] font-extrabold text-blue-700 font-mono">{totalAds > 0 ? Math.round((vipAds / totalAds) * 100) : 0}%</span>
-                    </div>
-                    <div className="border-t sm:border-t-0 sm:border-r border-stone-200/80 pt-2 sm:pt-0">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Att granska</span>
-                      <span className="text-[13px] font-extrabold text-amber-900 font-mono">{ads.filter(a => a.status !== 'active').length || totalAds} st</span>
-                    </div>
-                    <div className="border-t sm:border-t-0 border-stone-200/80 pt-2 sm:pt-0">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Systemhälsa</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 flex items-center justify-center gap-1">
-                        <span className="text-amber-500 font-bold">★</span> 5.0
-                      </span>
-                    </div>
+                  {/* 4 Status Cards (Annonsstatus) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => { setStatusFilter('all'); handleTabChange('ads'); }}
+                      className="rounded-xl border border-stone-200/80 bg-stone-50/60 hover:bg-stone-100/70 p-3 text-left transition-all cursor-pointer group active:scale-[0.98]"
+                    >
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">Totalt</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{totalAds}</p>
+                      <span className="text-[10.5px] font-medium text-stone-500">I systemet</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setStatusFilter('active'); handleTabChange('ads'); }}
+                      className="rounded-xl border border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100/70 p-3 text-left transition-all cursor-pointer group active:scale-[0.98]"
+                    >
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Aktiva</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-emerald-950 font-mono">{activeAds}</p>
+                      <span className="text-[10.5px] font-bold text-emerald-700">Synliga på sajten</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setStatusFilter('vip'); handleTabChange('ads'); }}
+                      className="rounded-xl border border-amber-300 bg-amber-50/70 hover:bg-amber-100/70 p-3 text-left transition-all cursor-pointer group active:scale-[0.98]"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">VIP-annonser</span>
+                        <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                      </div>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-amber-950 font-mono">{vipAds}</p>
+                      <span className="text-[10.5px] font-bold text-amber-700">Topplacering</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setStatusFilter('hidden'); handleTabChange('ads'); }}
+                      className="rounded-xl border border-stone-200/80 bg-stone-50/60 hover:bg-stone-100/70 p-3 text-left transition-all cursor-pointer group active:scale-[0.98]"
+                    >
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">Dolda</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{ads.filter(a => a.status === 'hidden').length}</p>
+                      <span className="text-[10.5px] font-medium text-stone-500">Inaktiverade</span>
+                    </button>
                   </div>
 
-                  {/* Recent Bookings List (Exact CCTV-BUSINESS Match) */}
+                  {/* Category Distribution Pills / Strip */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
-                        Senaste annonser &amp; CRM-ärenden
+                        Populära kategorier
                       </span>
-                      <span className="text-[11px] text-stone-400 font-medium">Klicka för att öppna i annonspanel</span>
+                      <span className="text-[11px] text-stone-400 font-medium">Klicka för att filtrera</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {CATEGORIES.filter(c => c.id !== 'all').slice(0, 4).map(cat => {
+                        const count = ads.filter(a => a.category === cat.id).length;
+                        return (
+                          <button
+                            key={cat.id}
+                            type="button"
+                            onClick={() => {
+                              setCategoryFilter(cat.id);
+                              handleTabChange('ads');
+                            }}
+                            className="flex items-center justify-between p-2.5 rounded-xl border border-stone-200/70 bg-stone-50/50 hover:bg-stone-100/80 hover:border-stone-300 transition-all text-left cursor-pointer group"
+                          >
+                            <div className="min-w-0 pr-1">
+                              <span className="text-[11.5px] font-semibold text-stone-800 block truncate group-hover:text-black">
+                                {cat.fa}
+                              </span>
+                              <span className="text-[10px] text-stone-400 uppercase font-mono capitalize">
+                                {cat.id}
+                              </span>
+                            </div>
+                            <span className="px-1.5 py-0.5 rounded text-[10.5px] font-mono font-bold bg-white border border-stone-200 text-stone-700">
+                              {count}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Recent Ads List */}
+                  <div className="space-y-2 pt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                        Senaste publicerade annonser
+                      </span>
+                      <span className="text-[11px] text-stone-400 font-medium">Klicka för att granska</span>
                     </div>
 
                     <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
@@ -1379,11 +1381,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                 <span className="font-mono font-bold text-[13px] text-stone-900 truncate">
                                   #{ad.reference_number || ad.id.slice(0, 8)}
                                 </span>
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
-                                  {ad.is_featured ? 'VIP' : 'Åtgärd'}
-                                </span>
+                                {ad.is_featured && (
+                                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
+                                    VIP
+                                  </span>
+                                )}
                                 <span className="text-xs text-stone-700 truncate font-semibold">
-                                  {ad.contact_name || 'Kund'}
+                                  {ad.contact_name || 'Annonsör'}
                                 </span>
                               </div>
                               <p className="text-[11px] text-stone-400 truncate mt-0.5">
@@ -1398,13 +1402,18 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded border inline-block mt-0.5 ${
                               ad.status === 'active'
                                 ? 'text-emerald-700 bg-emerald-50 border-emerald-200/60'
-                                : 'text-amber-800 bg-amber-50 border-amber-200/60'
+                                : 'text-stone-600 bg-stone-100 border-stone-200/60'
                             }`}>
-                              {ad.status === 'active' ? 'Aktiv' : 'Granskas'}
+                              {ad.status === 'active' ? 'Aktiv' : 'Dold'}
                             </span>
                           </div>
                         </button>
                       ))}
+                      {ads.length === 0 && (
+                        <div className="py-6 text-center text-xs text-stone-400">
+                          Inga annonser ännu.
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
