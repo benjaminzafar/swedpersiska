@@ -9,7 +9,7 @@ import {
   Briefcase,
   GraduationCap,
   Tag,
-  Globe,
+  Globe2,
   MapPin,
   Search,
   X
@@ -238,7 +238,7 @@ export default function Navbar({
               className="flex items-center gap-1.5 h-10 px-3.5 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200/90 text-slate-700 hover:text-slate-950 text-[13px] font-semibold transition-all active:scale-95 cursor-pointer shadow-2xs group"
               title="انتخاب کشور در اسکاندیناوی"
             >
-              <Globe size={15} className="text-slate-500 group-hover:text-[#1877F2] transition-colors" />
+              <Globe2 size={15} className="text-slate-500 group-hover:text-[#1877F2] transition-colors" />
               <span>انتخاب کشور</span>
             </button>
 

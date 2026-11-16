@@ -118,6 +118,7 @@ export default function App() {
       return false;
     }
   });
+  const [adminClosing, setAdminClosing] = useState(false);
   const [siteName, setSiteName] = useState('سوئد پرشیا');
   const [logoUrl, setLogoUrl] = useState('');
 
@@ -367,13 +368,17 @@ export default function App() {
   };
 
   const handleCloseAdmin = () => {
-    setAdminOpen(false);
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('admin');
-      url.searchParams.delete('tab');
-      window.history.replaceState({}, '', url.toString());
-    } catch {}
+    setAdminClosing(true);
+    setTimeout(() => {
+      setAdminOpen(false);
+      setAdminClosing(false);
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('admin');
+        url.searchParams.delete('tab');
+        window.history.replaceState({}, '', url.toString());
+      } catch {}
+    }, 250);
   };
 
   const handleCategoryChange = (catId) => {
@@ -488,23 +493,29 @@ export default function App() {
   // Featured ads subset
   const featuredAds = filteredAds.filter(a => a.is_featured);
 
-  // Dedicated Full-Page Admin Mode (eliminates inside scrolling, double scrollbars & background DOM conflicts)
-  if (adminOpen) {
-    return (
-      <ErrorBoundary>
-        <AdminPanel
-          onClose={handleCloseAdmin}
-          onRefreshAds={() => {
-            fetchAds();
-          }}
-        />
-      </ErrorBoundary>
-    );
-  }
-
   return (
     <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 overflow-x-hidden w-full max-w-full pb-16 md:pb-0 ${lang === 'fa' ? 'font-vazir' : ''}`}>
       
+      {/* Smooth Fullscreen Admin Portal (Soft dissolve transition, zero page reload, zero jump in face) */}
+      {adminOpen && (
+        <div 
+          className={`fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] transition-all duration-250 ease-out ${
+            adminClosing 
+              ? 'opacity-0 scale-[0.99] pointer-events-none' 
+              : 'opacity-100 scale-100 animate-in fade-in duration-200 ease-out'
+          }`}
+        >
+          <ErrorBoundary>
+            <AdminPanel
+              onClose={handleCloseAdmin}
+              onRefreshAds={() => {
+                fetchAds();
+              }}
+            />
+          </ErrorBoundary>
+        </div>
+      )}
+
       {/* Geolocation Scandinavian Detection Pop-Up Modal */}
       <CountryBanner
         isOpen={countryModalOpen}
