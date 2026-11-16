@@ -24,9 +24,7 @@ import {
   Send,
   Eye,
   Bot,
-  Bell,
-  ShoppingBag,
-  CalendarCheck
+  Bell
 } from 'lucide-react';
 import CloudflareTurnstile from './CloudflareTurnstile';
 import { supabase } from '../lib/supabase';
@@ -744,13 +742,15 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
   // ========================================================
   // MAIN ADMIN WORKSPACE:
-  // - Eye-Care Warm Tone Canvas (#f4f1ea)
-  // - Dark Charcoal Sidebar (#11141a)
+  // - Eye-Care Warm Tone Canvas (#f4f3ee)
+  // - Dark Charcoal Sidebar (#111217)
   // - Pure Crisp White Cards (#ffffff) with Warm Borders
   // ========================================================
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] text-zinc-900 font-sans select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-0 sm:p-4" dir="ltr">
-      <div className="w-full min-h-screen flex flex-col lg:flex-row gap-4 bg-[#f4f1ea]">
+    <div 
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] text-zinc-900 font-sans select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-0 sm:p-4" 
+      dir="ltr"
+    >
       
       {/* Dynamic Island Toast */}
       {actionSuccessMsg && (
@@ -1019,14 +1019,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          2. MAIN CONTENT AREA (Vinthem Luxury Navbar & Canvas Frame)
+          2. MAIN CONTENT AREA (Exact CCTV-BUSINESS Placements & Zero Trapped Scroll)
       ======================================================== */}
-      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200 lg:pl-[260px] px-2.5 pb-6 sm:px-0 sm:pb-6">
+      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200 lg:pl-[260px] px-2.5 pb-8 sm:px-0 sm:pb-8">
         
-        {/* Top Desktop Nav Bar (Exact CCTV-BUSINESS Vinthem Header - Flush & Level with Sidebar at y = 16px) */}
-        <header className="hidden lg:flex items-center justify-between h-14 px-5 bg-white rounded-2xl border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4 sticky top-4 z-20 shrink-0 select-none">
-          {/* Left: Active Section Title */}
-          <div className="flex items-center gap-3">
+        {/* Top Desktop Nav Bar (Exact CCTV-BUSINESS Vinthem Header - Aligned at y = 16px) */}
+        <header className="hidden lg:flex items-center justify-between h-14 px-5 bg-white rounded-2xl border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4 sticky top-0 shrink-0 z-20 select-none">
+          {/* Left: Active Section Title (Clean & Calm) */}
+          <div className="flex items-center min-w-[150px] shrink-0">
             <span className="font-bold text-stone-900 tracking-tight text-[15.5px]">
               {activeTab === 'overview' && 'Översikt'}
               {activeTab === 'ads' && 'Annonser & Ärenden'}
@@ -1036,7 +1036,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </span>
           </div>
 
-          {/* Right: Search Bar + Refresh + Notification Bell */}
+          {/* Right: Search Bar + Live Status + Refresh + Notification Bell + Actions */}
           <div className="flex items-center gap-3 shrink-0">
             {/* Search Bar */}
             <div className="relative w-64 xl:w-72">
@@ -1063,14 +1063,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               )}
             </div>
 
+            {/* Live Online Badge */}
+            <span className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>System 100% online</span>
+            </span>
+
             {/* Refresh Button */}
             <button
               type="button"
               onClick={fetchAdminData}
-              className="h-9 w-9 rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-colors shadow-2xs active:scale-95 flex items-center justify-center text-xs font-semibold cursor-pointer"
+              className="h-9 px-3 rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-colors shadow-2xs active:scale-95 flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
               title="Uppdatera data"
             >
               <RefreshCw size={14} className={loading ? 'animate-spin text-blue-600' : ''} />
+              <span className="hidden xl:inline">Uppdatera</span>
             </button>
 
             {/* Notification Bell */}
@@ -1081,7 +1088,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 handleTabChange('ads');
               }}
               className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-900 hover:bg-stone-50 transition-colors shadow-2xs active:scale-95 cursor-pointer"
-              title={`${ads.length} ärenden`}
+              title={`${ads.length} aktiva annonser`}
             >
               <Bell size={16} />
               {ads.length > 0 && (
@@ -1089,6 +1096,16 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   {ads.length}
                 </span>
               )}
+            </button>
+
+            {/* Live Site Link Button */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="h-9 px-3.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95 transition-all"
+            >
+              <ExternalLink size={13} />
+              <span>Webbplats</span>
             </button>
           </div>
         </header>
@@ -1135,155 +1152,166 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           </div>
         </header>
 
-        {/* Content Tabs Area - Natural Height, Direct Single-Scroll Architecture */}
+        {/* ========================================================
+            3. CONTENT CANVAS (Natural LTR Flow, NO Inside Scroll!)
+        ======================================================== */}
         <div className="flex-1 flex flex-col min-w-0" dir="ltr">
           
           {/* ========================================================
-              TAB 1: COMPLETE NT360 OVERVIEW SCREEN (Exact CCTV-BUSINESS LTR Flow)
+              TAB 1: COMPLETE CCTV-BUSINESS OVERVIEW SCREEN
           ======================================================== */}
           {activeTab === 'overview' && (
-            <div className="space-y-6 max-w-7xl w-full animate-in fade-in duration-150 ease-out">
+            <div className="space-y-5 sm:space-y-6 max-w-7xl w-full animate-in fade-in duration-150 ease-out">
               
-              {/* 1. Top 3 Scandinavian KPI Cards (Exact CCTV-BUSINESS Row 1: Left -> Center -> Right) */}
+              {/* 1. ROW 1: 3 High-Level Metric Cards (Astryx Frame) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 
-                {/* Card 1: TOTAL FÖRSÄLJNING (Left) */}
-                <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
+                {/* Card 1: TOTAL FÖRSÄLJNING */}
+                <div 
+                  onClick={() => handleTabChange('monetization')}
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-left shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
                       TOTAL FÖRSÄLJNING
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
+                    <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
                       Netto
                     </span>
                   </div>
-
-                  <div className="pt-1">
-                    <div className="text-3xl font-black text-zinc-950 tracking-tight font-mono">
-                      {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} kr
-                    </div>
-                    <span className="text-xs text-stone-500 block mt-1">
-                      Betalda ordrar via Stripe ({vipAds || 0} st)
-                    </span>
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-bold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
+                    {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} kr
+                  </p>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>Betalda ordrar via Stripe</span>
+                    <span className="font-semibold text-stone-600 font-mono">{vipAds || 0} st</span>
                   </div>
                 </div>
 
-                {/* Card 2: BOKNINGAR & OFFERTER (Center) */}
-                <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      BOKNINGAR & OFFERTER
+                {/* Card 2: BOKNINGAR & OFFERTER */}
+                <div 
+                  onClick={() => handleTabChange('ads')}
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-left shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
+                      BOKNINGAR &amp; OFFERTER
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-bold border border-amber-200">
+                    <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/70 animate-pulse">
                       +{totalAds} nya
                     </span>
                   </div>
-
-                  <div className="pt-1">
-                    <div className="text-3xl font-black text-zinc-950 tracking-tight font-mono">
-                      {totalAds}
-                    </div>
-                    <span className="text-xs text-stone-500 block mt-1">
-                      {activeAds} aktiva • {vipAds} VIP-ordrar
-                    </span>
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-bold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
+                    {totalAds}
+                  </p>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>Slutförda uppdrag</span>
+                    <span className="font-semibold text-stone-600 font-mono">{activeAds} st</span>
                   </div>
                 </div>
 
-                {/* Card 3: WEBBORDERFLÖDE (Right) */}
-                <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
+                {/* Card 3: WEBBORDERFLÖDE */}
+                <div 
+                  onClick={() => handleTabChange('ads')}
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-left shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
                       WEBBORDERFLÖDE
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 text-[10px] font-bold border border-teal-200">
+                    <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
                       Alla klara
                     </span>
                   </div>
-
-                  <div className="pt-1 space-y-2">
-                    <div className="text-3xl font-black text-zinc-950 tracking-tight font-mono">
-                      {totalViews.toLocaleString('sv-SE')} <span className="text-sm font-bold text-stone-400">visningar</span>
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-bold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
+                    {totalViews.toLocaleString('sv-SE')}
+                  </p>
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between text-[11px] font-medium text-stone-500">
+                      <span>{activeAds} av {totalAds} levererade</span>
+                      <span className="font-bold text-stone-900 font-mono">100%</span>
                     </div>
-                    <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
-                      <div className="bg-emerald-500 h-full rounded-full w-full" />
-                    </div>
-                    <div className="flex items-center justify-between text-[11px] text-stone-500">
-                      <span>0 i kö</span>
-                      <span className="font-bold text-emerald-600">100% driftstatus</span>
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
+                      <div className="h-full rounded-full bg-emerald-500 transition-all duration-500 w-full" />
                     </div>
                   </div>
                 </div>
 
               </div>
 
-              {/* 2. Signature CCTV-BUSINESS Twin Operational Grid (Row 2: Left CRM Flöde | Right Butiksstatus) */}
+              {/* 2. ROW 2: TWIN OPERATIONAL GRID (Exact CCTV-BUSINESS Match) */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
                 
+                {/* ========================================================= */}
                 {/* LEFT COLUMN: BOKNINGSSTATUS & CRM-FLÖDE */}
+                {/* ========================================================= */}
                 <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
                   {/* Section Header */}
-                  <div className="flex items-center justify-between border-b border-stone-100 pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 shadow-2xs">
-                        <CalendarCheck size={20} strokeWidth={2} />
-                      </div>
-                      <div>
-                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">Bokningsstatus & CRM-flöde</h2>
-                        <p className="text-[12px] text-stone-500">Arbetsbelastning och kundärenden genom säljtratten</p>
-                      </div>
+                  <div className="flex items-center gap-3 border-b border-stone-100 pb-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 shadow-2xs">
+                      <Layers size={20} strokeWidth={2} />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => handleTabChange('ads')}
-                      className="text-xs font-bold text-[#0073ea] hover:underline flex items-center gap-1 cursor-pointer shrink-0"
-                    >
-                      <span>Gå till Bokningar</span>
-                      <span>→</span>
-                    </button>
+                    <div>
+                      <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">Bokningsstatus &amp; CRM-flöde</h2>
+                      <p className="text-[12px] text-stone-500">Arbetsbelastning och kundärenden genom säljtratten</p>
+                    </div>
                   </div>
 
-                  {/* 4 Pipeline Stages (Exact LTR: Left -> Right) */}
+                  {/* 4 Pipeline Stages (Left-to-Right) */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {/* Stage 1: Väntar kontakt */}
-                    <div 
+                    {/* 1. Väntar kontakt */}
+                    <button
+                      type="button"
                       onClick={() => { setStatusFilter('all'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-amber-300 bg-amber-50/70 hover:bg-amber-100/70 p-3 text-left transition-all cursor-pointer space-y-1"
+                      className="rounded-xl border p-3 text-left transition-all cursor-pointer group active:scale-[0.98] border-amber-300 bg-amber-50/70 hover:bg-amber-100/70"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-[11px] font-bold text-stone-700 uppercase tracking-wider">Väntar kontakt</span>
                         <span className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
                       </div>
-                      <p className="mt-1 text-[20px] font-extrabold text-amber-950 font-mono">
+                      <p className="mt-1.5 text-[20px] font-extrabold text-amber-950 font-mono">
                         {ads.filter(a => a.status !== 'active').length || totalAds}
                       </p>
-                      <span className="text-[10.5px] font-bold text-amber-700 block">
-                        Ring kund direkt
-                      </span>
-                    </div>
+                      <span className="text-[10.5px] font-bold text-amber-700">Ring kund direkt</span>
+                    </button>
 
-                    {/* Stage 2: Följ upp offert */}
-                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">Följ upp offert</span>
-                      <p className="mt-1 text-[20px] font-extrabold text-stone-900 font-mono">{vipAds}</p>
-                      <span className="text-[10.5px] text-stone-400 block">Offert ute hos kund</span>
-                    </div>
+                    {/* 2. Följ upp offert */}
+                    <button
+                      type="button"
+                      onClick={() => { setStatusFilter('vip'); handleTabChange('ads'); }}
+                      className="rounded-xl border p-3 text-left transition-all cursor-pointer group active:scale-[0.98] border-blue-300 bg-blue-50/70 hover:bg-blue-100/60"
+                    >
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-800">Följ upp offert</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-blue-950 font-mono">{vipAds}</p>
+                      <span className="text-[10.5px] font-bold text-blue-700">Offert ute hos kund</span>
+                    </button>
 
-                    {/* Stage 3: Inbokat montage */}
-                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">Inbokat montage</span>
-                      <p className="mt-1 text-[20px] font-extrabold text-stone-900 font-mono">{COUNTRIES.length}</p>
-                      <span className="text-[10.5px] text-stone-400 block">Montör planerad</span>
-                    </div>
+                    {/* 3. Inbokat montage */}
+                    <button
+                      type="button"
+                      onClick={() => handleTabChange('ads')}
+                      className="rounded-xl border p-3 text-left transition-all cursor-pointer group active:scale-[0.98] border-purple-300 bg-purple-50/70 hover:bg-purple-100/60"
+                    >
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-purple-800">Inbokat montage</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-purple-950 font-mono">{COUNTRIES.length}</p>
+                      <span className="text-[10.5px] font-bold text-purple-700">Montör planerad</span>
+                    </button>
 
-                    {/* Stage 4: Klara jobb */}
-                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">Klara jobb</span>
-                      <p className="mt-1 text-[20px] font-extrabold text-stone-900 font-mono">{activeAds}</p>
-                      <span className="text-[10.5px] text-stone-400 block">{activeAds} slutförda</span>
-                    </div>
+                    {/* 4. Klara jobb */}
+                    <button
+                      type="button"
+                      onClick={() => { setStatusFilter('active'); handleTabChange('ads'); }}
+                      className="rounded-xl border p-3 text-left transition-all cursor-pointer group active:scale-[0.98] border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100/60"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">Klara jobb</span>
+                      </div>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{activeAds}</p>
+                      <span className="text-[10.5px] font-medium text-stone-400">{activeAds} slutförda</span>
+                    </button>
                   </div>
 
-                  {/* Yellow Alert Strip */}
+                  {/* Urgent Follow-Up Alert Banner */}
                   <div className="rounded-xl border border-amber-300 bg-amber-50/90 p-3 flex items-center justify-between gap-3 shadow-2xs">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <Phone size={16} className="text-amber-700 shrink-0" />
@@ -1300,7 +1328,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </button>
                   </div>
 
-                  {/* CRM Operations Snapshot (4 Metrics) */}
+                  {/* Operations Snapshot (Matching CCTV-BUSINESS) */}
                   <div className="bg-stone-50 rounded-xl p-3 border border-stone-200/60 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
                     <div>
                       <span className="block text-[10.5px] font-bold uppercase text-stone-400">Aktiva ärenden</span>
@@ -1316,14 +1344,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </div>
                     <div className="border-t sm:border-t-0 border-stone-200/80 pt-2 sm:pt-0">
                       <span className="block text-[10.5px] font-bold uppercase text-stone-400">Kundnöjdhet</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 flex items-center justify-center gap-1 font-mono">
-                        <span className="text-amber-500 font-bold">★</span> 4,9
+                      <span className="text-[13px] font-extrabold text-stone-900 flex items-center justify-center gap-1">
+                        <span className="text-amber-500 font-bold">★</span> 5.0
                       </span>
                     </div>
                   </div>
 
-                  {/* Recent Bookings List */}
-                  <div className="space-y-2 pt-1">
+                  {/* Recent Bookings List (Exact CCTV-BUSINESS Match) */}
+                  <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
                         Senaste bokningar &amp; CRM-ärenden
@@ -1332,162 +1360,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     </div>
 
                     <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
-                      {ads.slice(0, 3).map((ad) => {
-                        const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
-                        return (
-                          <div
-                            key={ad.id}
-                            onClick={() => {
-                              setSelectedAdId(ad.id);
-                              handleTabChange('ads');
-                            }}
-                            className="w-full p-3 flex items-center justify-between gap-3 text-left hover:bg-stone-50/80 transition-colors group cursor-pointer active:scale-[0.99]"
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs group-hover:bg-blue-600 transition-colors">
-                                <CalendarCheck size={15} />
-                              </div>
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-mono font-bold text-[13px] text-stone-900 truncate">
-                                    #{ad.reference_number || ad.id.slice(0, 8)}
-                                  </span>
-                                  <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-amber-100 text-amber-900 border border-amber-200 shrink-0">
-                                    {ad.is_featured ? 'VIP' : 'Åtgärd'}
-                                  </span>
-                                  <span className="text-[11.5px] text-stone-500 truncate">
-                                    {ad.contact_name || 'Kund'}
-                                  </span>
-                                </div>
-                                <p className="text-[11px] text-stone-400 truncate">
-                                  {ad.title} · <span className="font-semibold text-stone-600">{ad.city} ({countryObj.name})</span>
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 shrink-0">
-                              <div className="text-right">
-                                <span className="font-bold text-[13px] text-stone-900 block font-mono">
-                                  {new Date(ad.created_at || '2026-01-01').toLocaleDateString('sv-SE')}
-                                </span>
-                                <span className={`inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                                  ad.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-800'
-                                }`}>
-                                  {ad.status === 'active' ? 'Klar' : 'Väntar kontakt'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* RIGHT COLUMN: BUTIKSSTATUS (Shop & Store Operations) */}
-                <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
-                  {/* Section Header */}
-                  <div className="flex items-center justify-between border-b border-stone-100 pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
-                        <ShoppingBag size={20} strokeWidth={2} />
-                      </div>
-                      <div>
-                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">Butiksstatus</h2>
-                        <p className="text-[12px] text-stone-500">Orderflöde, lagerhälsa och Stripe-betalningar</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleTabChange('monetization')}
-                      className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1 cursor-pointer shrink-0"
-                    >
-                      <span>Gå till Kassa</span>
-                      <span>→</span>
-                    </button>
-                  </div>
-
-                  {/* 4 Fulfillment Stages Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {/* Att packa */}
-                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left space-y-1">
-                      <span className="text-[11px] font-bold text-stone-700 uppercase tracking-wider">Att packa</span>
-                      <p className="mt-1 text-[20px] font-extrabold text-stone-900 font-mono">0</p>
-                      <span className="text-[10.5px] font-medium text-stone-400">Inga i kö</span>
-                    </div>
-
-                    {/* På väg */}
-                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">På väg</span>
-                      <p className="mt-1 text-[20px] font-extrabold text-stone-900 font-mono">0</p>
-                      <span className="text-[10.5px] font-medium text-stone-400">Med PostNord</span>
-                    </div>
-
-                    {/* Levererade */}
-                    <div className="rounded-xl border border-emerald-300 bg-emerald-50/70 p-3 text-left space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Levererade</span>
-                      <p className="mt-1 text-[20px] font-extrabold text-emerald-950 font-mono">{vipAds || 0}</p>
-                      <span className="text-[10.5px] font-bold text-emerald-700">{vipAds || 0} aktiva</span>
-                    </div>
-
-                    {/* Lagerstatus */}
-                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">Lagerstatus</span>
-                      <p className="mt-1 text-[20px] font-extrabold text-stone-900 font-mono">Normal</p>
-                      <span className="text-[10.5px] font-medium text-stone-400">100% aktiv</span>
-                    </div>
-                  </div>
-
-                  {/* Blue Stripe Direct Alert Strip */}
-                  <div className="rounded-xl border border-blue-200 bg-blue-50/90 p-3 flex items-center justify-between gap-3 shadow-2xs">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <CreditCard size={16} className="text-[#0073ea] shrink-0" />
-                      <p className="text-[12px] font-medium text-blue-950 truncate">
-                        <span className="font-bold">Stripe Kassa aktiv</span> • {stripeSettings.currency || 'SEK'} direktkoppling
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleTabChange('monetization')}
-                      className="shrink-0 text-[11.5px] font-bold text-[#0073ea] hover:text-blue-900 hover:underline cursor-pointer"
-                    >
-                      Stripe Inställningar →
-                    </button>
-                  </div>
-
-                  {/* Store Operations Snapshot */}
-                  <div className="bg-stone-50 rounded-xl p-3 border border-stone-200/60 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                    <div>
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Snittorder</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{stripeSettings.vipPrice || 99} kr</span>
-                    </div>
-                    <div className="border-l sm:border-x border-stone-200/80">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Stripe Kassa</span>
-                      <span className="text-[13px] font-extrabold text-emerald-700 font-mono">100% betald</span>
-                    </div>
-                    <div className="border-t sm:border-t-0 sm:border-r border-stone-200/80 pt-2 sm:pt-0">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">VIP-köp</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{vipAds || 0} st</span>
-                    </div>
-                    <div className="border-t sm:border-t-0 border-stone-200/80 pt-2 sm:pt-0">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Kundservice</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">100% snabb</span>
-                    </div>
-                  </div>
-
-                  {/* Recent Store Orders Feed */}
-                  <div className="space-y-2 pt-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
-                        Senaste webbutikordrar
-                      </span>
-                      <span className="text-[11px] text-stone-400 font-medium">Stripe ordrar</span>
-                    </div>
-
-                    <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
-                      {ads.filter(a => a.is_featured).slice(0, 3).map((ad) => (
-                        <div
+                      {ads.slice(0, 4).map(ad => (
+                        <button
                           key={ad.id}
+                          type="button"
                           onClick={() => {
                             setSelectedAdId(ad.id);
                             handleTabChange('ads');
@@ -1495,24 +1371,133 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           className="w-full p-3 flex items-center justify-between gap-3 text-left hover:bg-stone-50/80 transition-colors group cursor-pointer active:scale-[0.99]"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700 border border-amber-200/80 text-xs font-bold font-mono">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs group-hover:bg-blue-600 transition-colors">
+                              <Layers size={15} />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono font-bold text-[13px] text-stone-900 truncate">
+                                  #{ad.reference_number || ad.id.slice(0, 8)}
+                                </span>
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
+                                  {ad.is_featured ? 'VIP' : 'Åtgärd'}
+                                </span>
+                                <span className="text-xs text-stone-700 truncate font-semibold">
+                                  {ad.contact_name || 'Kund'}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-stone-400 truncate mt-0.5">
+                                {ad.title} · {ad.city}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className="text-[11px] text-stone-400 block font-mono">
+                              {new Date(ad.created_at || '2026-01-01').toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })}
+                            </span>
+                            <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60 inline-block mt-0.5">
+                              Väntar kontakt
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* ========================================================= */}
+                {/* RIGHT COLUMN: BUTIKSSTATUS & VIP-KASSA */}
+                {/* ========================================================= */}
+                <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
+                  {/* Section Header */}
+                  <div className="flex items-center gap-3 border-b border-stone-100 pb-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
+                      <CreditCard size={20} strokeWidth={2} />
+                    </div>
+                    <div>
+                      <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">Butiksstatus &amp; VIP-kassa</h2>
+                      <p className="text-[12px] text-stone-500">Orderflöde, lagerhälsa och Stripe-betalningar</p>
+                    </div>
+                  </div>
+
+                  {/* 4 Store Stages */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">Att packa</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">0</p>
+                      <span className="text-[10.5px] font-medium text-stone-400">Inga i kö</span>
+                    </div>
+
+                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">På väg</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">0</p>
+                      <span className="text-[10.5px] font-medium text-stone-400">Med PostNord</span>
+                    </div>
+
+                    <div className="rounded-xl border border-emerald-300 bg-emerald-50/70 p-3 text-left">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Levererade</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-emerald-950 font-mono">{vipAds}</p>
+                      <span className="text-[10.5px] font-bold text-emerald-700">{vipAds} VIP aktiva</span>
+                    </div>
+
+                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">Lagerstatus</span>
+                      <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">Normal</p>
+                      <span className="text-[10.5px] font-medium text-stone-400">100% tillgänglig</span>
+                    </div>
+                  </div>
+
+                  {/* Store Snapshot Metrics */}
+                  <div className="bg-stone-50 rounded-xl p-3 border border-stone-200/60 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                    <div>
+                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Snittorder</span>
+                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{stripeSettings.vipPrice} kr</span>
+                    </div>
+                    <div className="border-l sm:border-x border-stone-200/80">
+                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Stripe Kassa</span>
+                      <span className="text-[13px] font-extrabold text-emerald-700 font-mono">100% betald</span>
+                    </div>
+                    <div className="border-t sm:border-t-0 sm:border-r border-stone-200/80 pt-2 sm:pt-0">
+                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">VIP-köp</span>
+                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{vipAds} st</span>
+                    </div>
+                    <div className="border-t sm:border-t-0 border-stone-200/80 pt-2 sm:pt-0">
+                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Kundservice</span>
+                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">100% snabb</span>
+                    </div>
+                  </div>
+
+                  {/* Recent Store Orders */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                        Senaste webbutikordrar &amp; VIP
+                      </span>
+                      <span className="text-[11px] text-stone-400 font-medium">Stripe ordrar</span>
+                    </div>
+
+                    <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
+                      {ads.filter(a => a.is_featured).slice(0, 4).map(ad => (
+                        <div key={ad.id} className="w-full p-3 flex items-center justify-between gap-3 text-left hover:bg-stone-50/80 transition-colors">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200/80">
                               VIP
                             </div>
                             <div className="min-w-0">
-                              <span className="font-mono font-bold text-[13px] text-stone-900 truncate block">
+                              <span className="font-mono font-bold text-[13px] text-stone-900 truncate">
                                 VIP #{ad.reference_number || ad.id.slice(0, 8)}
                               </span>
                               <p className="text-[11px] text-stone-400 truncate">{ad.title}</p>
                             </div>
                           </div>
-                          <span className="font-mono font-bold text-[13px] text-stone-900 shrink-0">
-                            {stripeSettings.vipPrice || 99} kr
+                          <span className="text-xs font-bold text-stone-900 font-mono">
+                            {stripeSettings.vipPrice} kr
                           </span>
                         </div>
                       ))}
                       {ads.filter(a => a.is_featured).length === 0 && (
-                        <div className="py-8 text-center text-stone-400 text-[12.5px]">
-                          Inga webborder ännu. När kunder handlar eller köper VIP visas de direkt här.
+                        <div className="py-6 text-center text-xs text-stone-400">
+                          Inga webborder ännu. När kunder uppgraderar till VIP syns de här.
                         </div>
                       )}
                     </div>
@@ -1521,26 +1506,22 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
               </div>
 
-              {/* 3. Nordic 4 Countries Health Grid (Row 3: Marknadsöversikt LTR) */}
+              {/* 3. ROW 3: NORDIC REGIONAL BREAKDOWN */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-zinc-900">
-                    Nordic Regional Coverage (Marknadsöversikt)
+                  <h3 className="text-sm font-black text-zinc-900">
+                    Nordisk räckvidd (Nordic Regional Breakdown)
                   </h3>
-                  <span className="text-xs text-stone-500">Realtidsstatus för Norden</span>
+                  <span className="text-xs text-stone-500">Live statistik för Sverige, Norge, Danmark, Finland</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   {COUNTRIES.map(country => {
                     const stats = getCountryStats(country.id);
-
                     return (
                       <div 
                         key={country.id}
-                        onClick={() => {
-                          setCountryFilter(country.id);
-                          handleTabChange('ads');
-                        }}
+                        onClick={() => { setCountryFilter(country.id); handleTabChange('ads'); }}
                         className="p-4 rounded-2xl border border-stone-200/80 hover:border-zinc-900 bg-white hover:shadow-xs transition-all cursor-pointer space-y-2.5 group"
                       >
                         <div className="flex items-center justify-between">
@@ -1551,11 +1532,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                             {stats.total} annonser
                           </span>
                         </div>
-
                         <div className="flex items-center justify-between text-xs pt-1 border-t border-stone-100">
                           <span className="text-stone-500 text-[11px]">{stats.active} aktiva</span>
                           <span className="text-amber-700 font-bold text-[11px]">{stats.vip} VIP</span>
-                          <span className="text-stone-600 font-mono text-[11px]">{stats.views} klick</span>
+                          <span className="text-stone-600 font-mono text-[11px]">{stats.views} visningar</span>
                         </div>
                       </div>
                     );
@@ -1671,7 +1651,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Ads Stream List */}
-                <div className="flex-1 overflow-y-auto [scrollbar-width:thin] p-3 sm:p-4 space-y-2.5">
+                <div className="flex-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-3 sm:p-4 space-y-2.5">
                   {filteredAds.length === 0 ? (
                     <div className="text-center py-16 text-stone-400 space-y-2">
                       <Layers size={32} className="mx-auto text-stone-300" />
@@ -1851,7 +1831,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </div>
 
                   {/* Details Scrollable Body */}
-                  <div className="flex-1 overflow-y-auto [scrollbar-width:thin] p-5 space-y-4 text-xs">
+                  <div className="flex-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-5 space-y-4 text-xs">
                     
                     {/* Photo Preview */}
                     {currentSelectedAd.images && currentSelectedAd.images[0] && (
@@ -2512,7 +2492,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             className="fixed inset-0 bg-black/40 backdrop-blur-md animate-in fade-in duration-200"
             onClick={() => setMobileDetailOpen(false)}
           />
-          <div className="relative w-full max-h-[88vh] bg-white rounded-t-[28px] border-t border-black/[0.08] p-5 pb-8 overflow-y-auto custom-scrollbar z-10 space-y-4 text-zinc-900 shadow-2xl animate-in slide-in-from-bottom duration-250 ease-out">
+          <div className="relative w-full max-h-[88vh] bg-white rounded-t-[28px] border-t border-black/[0.08] p-5 pb-8 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden z-10 space-y-4 text-zinc-900 shadow-2xl animate-in slide-in-from-bottom duration-250 ease-out">
             {/* Tactile Grab Handle */}
             <div className="w-12 h-1.5 bg-stone-300 rounded-full mx-auto -mt-1 mb-2 shrink-0" />
 
@@ -2614,7 +2594,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         </div>
       )}
 
-      </div>
     </div>
   );
 }
