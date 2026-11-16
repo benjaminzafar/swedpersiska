@@ -1340,51 +1340,51 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           1. DESKTOP FLOATING SIDEBAR (EXPANDED TO 315px LUXURY WIDTH)
       ======================================================== */}
       <aside
-        className="lg:fixed lg:top-4 lg:bottom-4 lg:right-4 lg:left-auto lg:w-[315px] bg-[#11141a] text-white rounded-2xl px-4 pb-4 pt-0 hidden lg:flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.16)] border border-stone-800/80 select-none z-30 transition-all duration-200 ease-out"
+        className="lg:fixed lg:top-4 lg:bottom-4 lg:right-4 lg:left-auto lg:w-[315px] bg-[#11141a] text-white rounded-2xl p-4 hidden lg:flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.16)] border border-stone-800/80 select-none z-30 transition-all duration-200 ease-out"
         data-testid="admin-sidebar"
       >
         {/* Top Header / Brand */}
-        <div className="flex flex-col w-full">
-          <div className="flex h-15 items-center px-2 border-b border-stone-800/80 shrink-0">
-            <div className="flex items-center gap-3 group cursor-pointer w-full" onClick={onClose} title="مشاهده وب‌سایت">
-              <div className="relative flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-white to-stone-200 text-slate-950 shadow-sm font-black text-xs transition-transform duration-200 group-hover:scale-105 active:scale-95 border border-white/20">
+        <div className="flex flex-col w-full min-h-0 flex-1">
+          <div className="flex h-16 items-center justify-between px-2 pb-3 border-b border-stone-800/90 shrink-0">
+            <div className="flex items-center gap-3 group cursor-pointer min-w-0" onClick={onClose} title="مشاهده وب‌سایت">
+              <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-white via-stone-100 to-stone-300 text-slate-950 shadow-md font-black text-sm transition-transform duration-200 group-hover:scale-105 active:scale-95 border border-white/30">
                 <span>SP</span>
-                <span className="absolute -bottom-0.5 -start-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-[#11141a]" />
+                <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-[#11141a]" />
               </div>
               <div className="flex flex-col min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-black text-[13.5px] tracking-tight leading-none text-white">سوئد پرشیا</span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white/10 text-stone-300">ADMIN</span>
-                </div>
-                <span className="text-[10px] text-stone-400 font-medium tracking-wide mt-1 truncate">سامانه مدیریت نیازمندی‌ها</span>
+                <span className="font-black text-[15px] tracking-tight leading-tight text-white truncate">سوئد پرشیا</span>
+                <span className="text-[11px] text-stone-400 font-medium mt-0.5 truncate">سامانه مدیریت نیازمندی‌ها</span>
               </div>
             </div>
+            <span className="text-[10px] font-extrabold px-2 py-1 rounded-lg bg-white/10 text-stone-200 border border-white/10 shrink-0">
+              ADMIN
+            </span>
           </div>
 
           {/* Navigation Group Items */}
-          <div className="flex-1 overflow-y-auto no-scrollbar py-3 space-y-3.5 max-h-[calc(100vh-185px)]">
+          <div className="flex-1 overflow-y-auto no-scrollbar py-3.5 space-y-4">
             
             {/* Group 1: داشبورد */}
-            <div className="space-y-1">
-              <div className="px-2 pt-1 pb-1">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500">
+            <div className="space-y-1.5">
+              <div className="px-2">
+                <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-400">
                   داشبورد اصلی
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => handleTabChange('overview')}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
                   activeTab === 'overview'
-                    ? 'bg-white text-slate-950 shadow-sm font-bold'
+                    ? 'bg-white text-slate-950 shadow-md font-bold'
                     : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                    activeTab === 'overview' ? 'bg-slate-950 text-white shadow-2xs' : 'bg-white/5 text-stone-400 group-hover:text-white group-hover:bg-white/10'
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                    activeTab === 'overview' ? 'bg-slate-950 text-white shadow-sm' : 'bg-white/10 text-stone-300 group-hover:text-white group-hover:bg-white/15'
                   }`}>
-                    <LayoutGrid size={16} strokeWidth={activeTab === 'overview' ? 2.4 : 1.9} />
+                    <LayoutGrid size={17} strokeWidth={activeTab === 'overview' ? 2.3 : 1.9} />
                   </div>
                   <span className="truncate">داشبورد</span>
                 </div>
@@ -1392,9 +1392,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
 
             {/* Group 2: مدیریت و درآمد */}
-            <div className="space-y-1">
-              <div className="px-2 pt-1 pb-1">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500">
+            <div className="space-y-1.5">
+              <div className="px-2">
+                <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-400">
                   مدیریت و درآمد
                 </span>
               </div>
@@ -1403,22 +1403,22 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => handleTabChange('ads')}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
                   activeTab === 'ads'
-                    ? 'bg-white text-slate-950 shadow-sm font-bold'
+                    ? 'bg-white text-slate-950 shadow-md font-bold'
                     : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                    activeTab === 'ads' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-white/5 text-stone-400 group-hover:text-blue-400 group-hover:bg-white/10'
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                    activeTab === 'ads' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white/10 text-stone-300 group-hover:text-blue-400 group-hover:bg-white/15'
                   }`}>
-                    <Layers3 size={16} strokeWidth={activeTab === 'ads' ? 2.4 : 1.9} />
+                    <Layers3 size={17} strokeWidth={activeTab === 'ads' ? 2.3 : 1.9} />
                   </div>
                   <span className="truncate">آگهی‌های فعال</span>
                 </div>
                 {counts.active > 0 && (
-                  <span className={`flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-[10.5px] font-mono font-bold ${
+                  <span className={`flex h-6 min-w-[26px] items-center justify-center rounded-lg px-2 text-[11px] tabular-nums font-bold ${
                     activeTab === 'ads' ? 'bg-slate-900 text-white' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                   }`}>
                     {counts.active}
@@ -1430,22 +1430,22 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => handleTabChange('archive')}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
                   activeTab === 'archive'
-                    ? 'bg-white text-slate-950 shadow-sm font-bold'
+                    ? 'bg-white text-slate-950 shadow-md font-bold'
                     : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                    activeTab === 'archive' ? 'bg-slate-700 text-white shadow-2xs' : 'bg-white/5 text-stone-400 group-hover:text-stone-200 group-hover:bg-white/10'
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                    activeTab === 'archive' ? 'bg-slate-700 text-white shadow-sm' : 'bg-white/10 text-stone-300 group-hover:text-stone-100 group-hover:bg-white/15'
                   }`}>
-                    <Archive size={16} strokeWidth={activeTab === 'archive' ? 2.4 : 1.9} />
+                    <Archive size={17} strokeWidth={activeTab === 'archive' ? 2.3 : 1.9} />
                   </div>
                   <span className="truncate">بایگانی و تاریخچه</span>
                 </div>
                 {counts.archive > 0 && (
-                  <span className={`flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-[10.5px] font-mono font-bold ${
+                  <span className={`flex h-6 min-w-[26px] items-center justify-center rounded-lg px-2 text-[11px] tabular-nums font-bold ${
                     activeTab === 'archive' ? 'bg-slate-900 text-white' : 'bg-white/10 text-stone-300 border border-white/15'
                   }`}>
                     {counts.archive}
@@ -1456,21 +1456,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => handleTabChange('categories')}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
                   activeTab === 'categories'
-                    ? 'bg-white text-slate-950 shadow-sm font-bold'
+                    ? 'bg-white text-slate-950 shadow-md font-bold'
                     : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                    activeTab === 'categories' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-white/5 text-stone-400 group-hover:text-emerald-400 group-hover:bg-white/10'
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                    activeTab === 'categories' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white/10 text-stone-300 group-hover:text-emerald-400 group-hover:bg-white/15'
                   }`}>
-                    <Shapes size={16} strokeWidth={activeTab === 'categories' ? 2.4 : 1.9} />
+                    <Shapes size={17} strokeWidth={activeTab === 'categories' ? 2.3 : 1.9} />
                   </div>
                   <span className="truncate">دسته‌بندی‌ها</span>
                 </div>
-                <span className={`flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-[10.5px] font-mono font-bold ${
+                <span className={`flex h-6 min-w-[26px] items-center justify-center rounded-lg px-2 text-[11px] tabular-nums font-bold ${
                   activeTab === 'categories' ? 'bg-slate-900 text-white' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                 }`}>
                   {categoriesList.length}
@@ -1480,21 +1480,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => handleTabChange('monetization')}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
                   activeTab === 'monetization'
-                    ? 'bg-white text-slate-950 shadow-sm font-bold'
+                    ? 'bg-white text-slate-950 shadow-md font-bold'
                     : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                    activeTab === 'monetization' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-white/5 text-stone-400 group-hover:text-amber-400 group-hover:bg-white/10'
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                    activeTab === 'monetization' ? 'bg-amber-600 text-white shadow-sm' : 'bg-white/10 text-stone-300 group-hover:text-amber-400 group-hover:bg-white/15'
                   }`}>
-                    <WalletCards size={16} strokeWidth={activeTab === 'monetization' ? 2.4 : 1.9} />
+                    <WalletCards size={17} strokeWidth={activeTab === 'monetization' ? 2.3 : 1.9} />
                   </div>
                   <span className="truncate">درگاه پرداخت</span>
                 </div>
-                <span className={`flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-[10px] font-bold ${
+                <span className={`flex h-6 min-w-[26px] items-center justify-center rounded-lg px-2 text-[10.5px] font-bold ${
                   activeTab === 'monetization' ? 'bg-slate-900 text-white' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                 }`}>
                   تعرفه
@@ -1503,9 +1503,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
 
             {/* Group 3: سیستم و امنیت */}
-            <div className="space-y-1">
-              <div className="px-2 pt-1 pb-1">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-stone-500">
+            <div className="space-y-1.5">
+              <div className="px-2">
+                <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-stone-400">
                   سیستم و امنیت
                 </span>
               </div>
@@ -1513,21 +1513,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => handleTabChange('security')}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
                   activeTab === 'security'
-                    ? 'bg-white text-slate-950 shadow-sm font-bold'
+                    ? 'bg-white text-slate-950 shadow-md font-bold'
                     : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                    activeTab === 'security' ? 'bg-cyan-600 text-white shadow-2xs' : 'bg-white/5 text-stone-400 group-hover:text-cyan-400 group-hover:bg-white/10'
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                    activeTab === 'security' ? 'bg-cyan-600 text-white shadow-sm' : 'bg-white/10 text-stone-300 group-hover:text-cyan-400 group-hover:bg-white/15'
                   }`}>
-                    <ShieldCheck size={16} strokeWidth={activeTab === 'security' ? 2.4 : 1.9} />
+                    <ShieldCheck size={17} strokeWidth={activeTab === 'security' ? 2.3 : 1.9} />
                   </div>
                   <span className="truncate">امنیت سیستم</span>
                 </div>
-                <span className={`flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-[10px] font-bold ${
+                <span className={`flex h-6 min-w-[26px] items-center justify-center rounded-lg px-2 text-[10.5px] font-bold ${
                   turnstileSettings.enabled ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/35' : 'bg-white/10 text-stone-400'
                 }`}>
                   {turnstileSettings.enabled ? 'فعال' : 'غیرفعال'}
@@ -1537,17 +1537,17 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={() => handleTabChange('settings')}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13.5px] transition-all duration-150 active:scale-[0.99] cursor-pointer group ${
                   activeTab === 'settings'
-                    ? 'bg-white text-slate-950 shadow-sm font-bold'
+                    ? 'bg-white text-slate-950 shadow-md font-bold'
                     : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                    activeTab === 'settings' ? 'bg-purple-600 text-white shadow-2xs' : 'bg-white/5 text-stone-400 group-hover:text-purple-400 group-hover:bg-white/10'
+                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                    activeTab === 'settings' ? 'bg-purple-600 text-white shadow-sm' : 'bg-white/10 text-stone-300 group-hover:text-purple-400 group-hover:bg-white/15'
                   }`}>
-                    <SlidersHorizontal size={16} strokeWidth={activeTab === 'settings' ? 2.4 : 1.9} />
+                    <SlidersHorizontal size={17} strokeWidth={activeTab === 'settings' ? 2.3 : 1.9} />
                   </div>
                   <span className="truncate">تنظیمات سایت</span>
                 </div>
@@ -1558,26 +1558,26 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         </div>
 
         {/* Bottom Actions */}
-        <div className="pt-2.5 border-t border-stone-800/80 w-full shrink-0">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="pt-3 border-t border-stone-800/90 w-full shrink-0">
+          <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[12px] font-semibold text-stone-200 bg-white/5 hover:bg-white/10 hover:text-white border border-stone-800/80 active:scale-95 transition-all text-center cursor-pointer group"
+              className="h-10 flex items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-bold text-stone-100 bg-white/10 hover:bg-white/15 hover:text-white border border-white/10 active:scale-95 transition-all text-center cursor-pointer group"
               title="مشاهده وب‌سایت"
             >
-              <Globe2 size={14} className="text-blue-400 group-hover:rotate-12 transition-transform duration-200 shrink-0" />
-              <span className="truncate">سایت</span>
-              <ArrowUpRight size={11} className="text-stone-400 group-hover:text-white transition-colors" />
+              <Globe2 size={15} className="text-blue-400 group-hover:rotate-12 transition-transform duration-200 shrink-0" />
+              <span className="truncate">مشاهده سایت</span>
+              <ArrowUpRight size={12} className="text-stone-400 group-hover:text-white transition-colors shrink-0" />
             </button>
 
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[12px] font-semibold text-rose-300 bg-rose-950/25 hover:bg-rose-950/45 border border-rose-900/40 active:scale-95 transition-all text-center cursor-pointer"
+              className="h-10 flex items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-bold text-rose-300 bg-rose-950/35 hover:bg-rose-950/55 border border-rose-800/40 active:scale-95 transition-all text-center cursor-pointer"
               title="خروج از حساب"
             >
-              <LogOut size={14} className="shrink-0" />
+              <LogOut size={15} className="shrink-0" />
               <span className="truncate">خروج</span>
             </button>
           </div>
@@ -1592,28 +1592,28 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             onClick={() => setMobileSidebarOpen(false)}
           />
           
-          <div className="relative z-10 w-68 max-w-[85vw] h-full bg-[#11141a] text-white flex flex-col border-s border-stone-800/80 shadow-2xl animate-in slide-in-from-right duration-250 ease-out">
-            <div className="flex h-14 items-center justify-between px-3.5 border-b border-stone-800/80 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="relative h-8.5 w-8.5 rounded-xl bg-white text-zinc-950 font-black text-xs flex items-center justify-center shadow-sm">
+          <div className="relative z-10 w-72 max-w-[85vw] h-full bg-[#11141a] text-white flex flex-col border-s border-stone-800/80 shadow-2xl animate-in slide-in-from-right duration-250 ease-out">
+            <div className="flex h-16 items-center justify-between px-4 border-b border-stone-800/80 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="relative h-10 w-10 rounded-xl bg-white text-zinc-950 font-black text-xs flex items-center justify-center shadow-sm">
                   SP
-                  <span className="absolute -bottom-0.5 -start-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-[#11141a]" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-[#11141a]" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-extrabold text-[13px] text-white">سوئد پرشیا</span>
-                  <span className="text-[10px] text-stone-400">سامانه مدیریت نیازمندی‌ها</span>
+                  <span className="font-extrabold text-[13.5px] text-white">سوئد پرشیا</span>
+                  <span className="text-[10.5px] text-stone-400">سامانه مدیریت نیازمندی‌ها</span>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen(false)}
-                className="h-8 w-8 flex items-center justify-center rounded-xl bg-white/5 text-stone-400 hover:text-white cursor-pointer active:scale-90"
+                className="h-9 w-9 flex items-center justify-center rounded-xl bg-white/10 text-stone-300 hover:text-white cursor-pointer active:scale-90"
               >
-                <X size={17} />
+                <X size={18} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+            <div className="flex-1 overflow-y-auto p-3.5 space-y-1.5">
               {[
                 { id: 'overview', label: 'داشبورد', icon: LayoutGrid, badge: null, color: 'bg-slate-950' },
                 { id: 'ads', label: 'آگهی‌های فعال', icon: Layers3, badge: counts.active, color: 'bg-blue-600' },
@@ -1637,16 +1637,16 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                        isActive ? `${item.color} text-white shadow-2xs` : 'bg-white/5 text-stone-400'
+                    <div className="flex items-center gap-3">
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                        isActive ? `${item.color} text-white shadow-sm` : 'bg-white/10 text-stone-300'
                       }`}>
-                        <Icon size={15} strokeWidth={isActive ? 2.4 : 1.9} />
+                        <Icon size={16} strokeWidth={isActive ? 2.3 : 1.9} />
                       </div>
                       <span>{item.label}</span>
                     </div>
                     {item.badge !== null && (
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ${
+                      <span className={`px-2 py-0.5 rounded-md text-[10.5px] tabular-nums font-bold ${
                         isActive ? 'bg-slate-900 text-white' : 'bg-white/10 text-stone-300'
                       }`}>
                         {item.badge}
@@ -1657,7 +1657,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               })}
             </div>
 
-            <div className="p-3 border-t border-stone-800/80 space-y-2">
+            <div className="p-3.5 border-t border-stone-800/80 space-y-2">
               <button
                 type="button"
                 onClick={onClose}
@@ -1687,20 +1687,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       <div className="flex-1 w-full flex flex-col min-w-0 transition-all duration-200 lg:pr-[331px] lg:pl-0 px-2.5 pb-8 sm:px-0 sm:pb-8">
         
         {/* Top Desktop Nav Bar */}
-        <header className="hidden lg:flex items-center justify-between h-16 px-6 bg-white/95 backdrop-blur-md rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] mb-4.5 sticky top-4 shrink-0 z-20 select-none">
-          {/* Right: Active Section Title with Modern Icon Container */}
-          <div className="flex items-center gap-3 min-w-[200px] shrink-0">
-            <div className="flex h-9.5 w-9.5 items-center justify-center rounded-xl bg-stone-100 text-stone-800 border border-stone-200/80 shadow-2xs">
-              {activeTab === 'overview' && <LayoutGrid size={17} className="text-slate-900" />}
-              {activeTab === 'ads' && <Layers3 size={17} className="text-blue-600" />}
-              {activeTab === 'archive' && <Archive size={17} className="text-slate-700" />}
-              {activeTab === 'categories' && <Shapes size={17} className="text-emerald-600" />}
-              {activeTab === 'monetization' && <WalletCards size={17} className="text-amber-600" />}
-              {activeTab === 'security' && <ShieldCheck size={17} className="text-cyan-600" />}
-              {activeTab === 'settings' && <SlidersHorizontal size={17} className="text-purple-600" />}
+        <header className="hidden lg:flex items-center justify-between h-[68px] px-5 bg-white/95 backdrop-blur-md rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] mb-5 sticky top-4 shrink-0 z-20 select-none gap-4">
+          {/* Right: Active Section Title + Quick Navigation Pills */}
+          <div className="flex items-center gap-3.5 shrink-0">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-stone-100 text-stone-800 border border-stone-200/90 shadow-sm shrink-0">
+              {activeTab === 'overview' && <LayoutGrid size={19} className="text-slate-900" />}
+              {activeTab === 'ads' && <Layers3 size={19} className="text-blue-600" />}
+              {activeTab === 'archive' && <Archive size={19} className="text-slate-700" />}
+              {activeTab === 'categories' && <Shapes size={19} className="text-emerald-600" />}
+              {activeTab === 'monetization' && <WalletCards size={19} className="text-amber-600" />}
+              {activeTab === 'security' && <ShieldCheck size={19} className="text-cyan-600" />}
+              {activeTab === 'settings' && <SlidersHorizontal size={19} className="text-purple-600" />}
             </div>
             <div className="flex flex-col">
-              <span className="font-extrabold text-stone-900 tracking-tight text-[15.5px] leading-tight">
+              <span className="font-black text-stone-900 tracking-tight text-[15.5px] leading-tight">
                 {activeTab === 'overview' && 'داشبورد مدیریت'}
                 {activeTab === 'ads' && 'مدیریت آگهی‌های فعال'}
                 {activeTab === 'archive' && 'بایگانی و تاریخچه آگهی‌ها'}
@@ -1709,15 +1709,45 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 {activeTab === 'security' && 'امنیت و فایروال'}
                 {activeTab === 'settings' && 'تنظیمات کلی سایت'}
               </span>
-              <span className="text-[10.5px] text-stone-400 font-medium">سوئد پرشیا • سامانه نیازمندی‌ها</span>
+              <span className="text-[11px] text-stone-500 font-medium mt-0.5">سوئد پرشیا • سامانه نیازمندی‌ها</span>
+            </div>
+
+            {/* Quick Navigation Pills inside Top Navbar to fill empty center space */}
+            <div className="hidden 2xl:flex items-center gap-1 bg-stone-100/90 p-1 rounded-xl border border-stone-200/80 ms-3">
+              {[
+                { id: 'overview', label: 'نمای کلی', icon: LayoutGrid },
+                { id: 'ads', label: 'آگهی‌ها', icon: Layers3, count: counts.active },
+                { id: 'archive', label: 'بایگانی', icon: Archive },
+                { id: 'categories', label: 'دسته‌ها', icon: Shapes },
+                { id: 'monetization', label: 'پرداخت', icon: WalletCards },
+                { id: 'settings', label: 'تنظیمات', icon: SlidersHorizontal },
+              ].map(tab => {
+                const TabIcon = tab.icon;
+                const isCurr = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => handleTabChange(tab.id)}
+                    className={`h-8 px-2.5 rounded-lg text-[11.5px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      isCurr
+                        ? 'bg-white text-stone-950 shadow-sm border border-stone-200/80'
+                        : 'text-stone-600 hover:text-stone-900 hover:bg-white/60'
+                    }`}
+                  >
+                    <TabIcon size={13} className={isCurr ? 'text-blue-600' : 'text-stone-400'} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Left: Actions + Search + Status */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Search Bar */}
-            <div className="relative w-60 xl:w-72">
-              <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+          {/* Center-Left: Expanded Search Bar + Status & Action Buttons */}
+          <div className="flex items-center justify-end gap-2.5 flex-1 min-w-0">
+            {/* Search Bar (Expands smoothly to fill available navbar space) */}
+            <div className="relative flex-1 max-w-md min-w-[180px]">
+              <Search size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
                 ref={topSearchRef}
                 type="search"
@@ -1728,8 +1758,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   if (activeTab !== 'ads') handleTabChange('ads');
                   fetchActiveAds(1, val, countryFilter, categoryFilter);
                 }}
-                placeholder="جستجو در سامانه مدیریت..."
-                className="w-full h-9.5 ps-9 pe-8 bg-stone-50 hover:bg-stone-100/70 focus:bg-white text-[12px] text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/80 focus:border-stone-400 outline-none transition-all shadow-2xs"
+                placeholder="جستجو در عنوان، کد رهگیری یا شهر آگهی..."
+                className="w-full h-10 pr-10 pl-9 bg-stone-50 hover:bg-stone-100/80 focus:bg-white text-xs text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/90 focus:border-blue-500 outline-none transition-all shadow-sm"
               />
               {searchQuery && (
                 <button
@@ -1738,18 +1768,18 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     setSearchQuery('');
                     fetchActiveAds(1, '', countryFilter, categoryFilter);
                   }}
-                  className="absolute end-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-700 rounded-md cursor-pointer"
                 >
-                  <X size={13} />
+                  <X size={14} />
                 </button>
               )}
             </div>
 
             {/* Live Online Badge */}
-            <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-xs font-bold flex items-center gap-2 shadow-2xs select-none">
-              <span className="relative flex h-2 w-2">
+            <span className="h-10 px-3.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-xs font-bold flex items-center gap-2 shadow-sm select-none shrink-0">
+              <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
               <span className="text-[11.5px]">سیستم ۱۰۰٪ آنلاین</span>
             </span>
@@ -1758,26 +1788,26 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={fetchAdminData}
-              className="h-9.5 px-3 rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-all shadow-2xs active:scale-95 flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
+              className="h-10 px-3.5 rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-all shadow-sm active:scale-95 flex items-center gap-2 text-xs font-bold cursor-pointer shrink-0"
               title="بروزرسانی داده‌ها"
             >
-              <RotateCcw size={14} className={loading ? 'animate-spin text-blue-600' : 'text-stone-500'} />
+              <RotateCcw size={15} className={loading ? 'animate-spin text-blue-600' : 'text-stone-500'} />
               <span className="hidden xl:inline">بروزرسانی</span>
             </button>
 
-            {/* Notification Bell */}
+            {/* Notification Bell (Full 40x40px button with non-overlapping badge) */}
             <button
               type="button"
               onClick={() => {
                 setStatusFilter('all');
                 handleTabChange('ads');
               }}
-              className="relative flex h-9.5 w-9.5 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-900 hover:bg-stone-50 transition-all shadow-2xs active:scale-95 cursor-pointer"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
               title={`${counts.active} آگهی فعال در سیستم`}
             >
-              <Bell size={15} className="text-stone-600" />
+              <Bell size={17} className="text-stone-700" />
               {counts.active > 0 && (
-                <span className="absolute -top-1 -end-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-blue-600 px-1 text-[9.5px] font-bold text-white ring-2 ring-white shadow-2xs tabular-nums">
+                <span className="absolute -top-1.5 -left-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1.5 text-[10px] font-bold text-white ring-2 ring-white shadow-sm tabular-nums">
                   {counts.active}
                 </span>
               )}
@@ -1787,11 +1817,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={onClose}
-              className="h-9.5 px-3.5 rounded-xl bg-stone-900 hover:bg-black text-white text-xs font-bold flex items-center gap-2 shadow-2xs cursor-pointer active:scale-95 transition-all group"
+              className="h-10 px-4 rounded-xl bg-stone-900 hover:bg-black text-white text-xs font-bold flex items-center gap-2 shadow-sm cursor-pointer active:scale-95 transition-all group shrink-0"
             >
-              <Globe2 size={14} className="text-blue-400 group-hover:rotate-12 transition-transform duration-200" />
+              <Globe2 size={15} className="text-blue-400 group-hover:rotate-12 transition-transform duration-200" />
               <span>مشاهده سایت</span>
-              <ArrowUpRight size={12} className="text-stone-400 group-hover:text-white transition-colors" />
+              <ArrowUpRight size={13} className="text-stone-400 group-hover:text-white transition-colors" />
             </button>
           </div>
         </header>
@@ -2006,20 +2036,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         </div>
 
                         <div className="flex items-center justify-between pt-3 mt-3 border-t border-stone-100 text-[11.5px] gap-2">
-                          <div className="flex items-center gap-1 min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0">
                             <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
                             <span className="text-stone-500 font-medium">فعال:</span>
-                            <span className="font-bold text-stone-900 font-mono tabular-nums">{stats.active}</span>
+                            <span className="font-bold text-stone-900 tabular-nums">{stats.active}</span>
                           </div>
-                          <div className="flex items-center gap-1 min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0">
                             <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0"></span>
                             <span className="text-amber-700 font-medium">ویژه:</span>
-                            <span className="font-bold text-amber-800 font-mono tabular-nums">{stats.vip}</span>
+                            <span className="font-bold text-amber-800 tabular-nums">{stats.vip}</span>
                           </div>
-                          <div className="flex items-center gap-1 min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0">
                             <span className="h-2 w-2 rounded-full bg-purple-400 shrink-0"></span>
                             <span className="text-stone-500 font-medium">بازدید:</span>
-                            <span className="font-bold text-stone-900 font-mono tabular-nums">{Number(stats.views).toLocaleString('sv-SE')}</span>
+                            <span className="font-bold text-stone-900 tabular-nums">{Number(stats.views).toLocaleString('sv-SE')}</span>
                           </div>
                         </div>
                       </div>
@@ -2035,7 +2065,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <div className="xl:col-span-2 rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
                   <div className="flex items-center justify-between border-b border-stone-100 pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-200/60 shadow-2xs">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-200/60 shadow-sm">
                         <Layers3 size={20} strokeWidth={2} />
                       </div>
                       <div>
@@ -2048,7 +2078,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       onClick={() => handleTabChange('ads')}
                       className="inline-flex items-center gap-1.5 text-[12px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer group"
                     >
-                      <span>مدیریت همه آگهی‌ها (<span className="tabular-nums font-mono font-bold">{counts.active}</span>)</span>
+                      <span>مدیریت همه آگهی‌ها (<span className="tabular-nums font-bold">{counts.active}</span>)</span>
                       <ArrowUpRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                     </button>
                   </div>
@@ -2066,7 +2096,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           <div className="flex items-center gap-3 min-w-0">
                             <div 
                               onClick={() => setSelectedAdForModal(ad)}
-                              className="w-12 h-12 rounded-xl bg-stone-100 border border-stone-200/80 overflow-hidden shrink-0 cursor-pointer shadow-2xs group-hover:scale-105 transition-transform"
+                              className="w-12 h-12 rounded-xl bg-stone-100 border border-stone-200/80 overflow-hidden shrink-0 cursor-pointer shadow-sm group-hover:scale-105 transition-transform"
                             >
                               {ad.images && ad.images[0] ? (
                                 <img src={ad.images[0]} alt="" className="w-full h-full object-cover" />
@@ -2078,8 +2108,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                             </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span dir="ltr" className="inline-block font-mono font-bold text-[11.5px] text-stone-700 bg-stone-100 px-2 py-0.5 rounded-md border border-stone-200/70 shadow-2xs">
-                                  #{ad.reference_number || ad.id.slice(0, 8)}
+                                <span dir="ltr" className="inline-flex items-center font-mono font-bold text-[11.5px] text-stone-700 bg-stone-100 px-2 py-0.5 rounded-md border border-stone-200/70 shadow-sm">
+                                  <span>#</span>
+                                  <span>{ad.reference_number || ad.id.slice(0, 8)}</span>
                                 </span>
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200/80">
                                   {NORDIC_FLAGS[ad.country || 'se']}
@@ -2106,7 +2137,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                               <div className="flex items-center gap-2 text-[11.5px] text-stone-500 mt-1">
                                 <span className="font-medium text-stone-600">{ad.city || 'اسکاندیناوی'}</span>
                                 <span>·</span>
-                                <span className="font-bold text-stone-900 font-mono tabular-nums">
+                                <span className="font-bold text-stone-900 tabular-nums">
                                   {ad.price ? `${Number(ad.price).toLocaleString('sv-SE')} کرون` : 'توافقی'}
                                 </span>
                               </div>
@@ -2117,19 +2148,19 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                             <button
                               type="button"
                               onClick={() => setSelectedAdForModal(ad)}
-                              className="h-8.5 px-3 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11.5px] font-bold flex items-center gap-1.5 cursor-pointer transition-colors active:scale-95"
+                              className="h-9 px-3 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11.5px] font-bold flex items-center gap-1.5 cursor-pointer transition-colors active:scale-95"
                               title="مشاهده جزئیات آگهی"
                             >
-                              <Eye size={13} className="text-stone-500" />
+                              <Eye size={14} className="text-stone-500" />
                               <span>مشاهده</span>
                             </button>
 
                             <button
                               type="button"
                               onClick={() => toggleFeatured(ad)}
-                              className={`h-8.5 w-8.5 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
+                              className={`h-9 w-9 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
                                 ad.is_featured
-                                  ? 'bg-amber-50 text-amber-800 border-amber-300 shadow-2xs'
+                                  ? 'bg-amber-50 text-amber-800 border-amber-300 shadow-sm'
                                   : 'bg-white hover:bg-stone-50 text-stone-400 border-stone-200'
                               }`}
                               title={ad.is_featured ? 'حذف نشان ویژه' : 'ارتقا به ویژه'}
@@ -2140,7 +2171,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                             <button
                               type="button"
                               onClick={() => archiveAd(ad)}
-                              className="h-8.5 px-2.5 rounded-lg border border-stone-200 bg-white hover:bg-stone-100 text-stone-600 flex items-center gap-1.5 text-[11px] font-bold cursor-pointer transition-all active:scale-95"
+                              className="h-9 px-3 rounded-lg border border-stone-200 bg-white hover:bg-stone-100 text-stone-600 flex items-center gap-1.5 text-[11px] font-bold cursor-pointer transition-all active:scale-95"
                               title="انتقال به بایگانی و تاریخچه"
                             >
                               <Archive size={13} className="text-stone-500" />
@@ -2427,11 +2458,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                       className="font-mono text-[11px] font-bold text-stone-800 bg-stone-100 hover:bg-stone-200 px-1.5 py-0.5 rounded border border-stone-200 flex items-center gap-1 cursor-pointer transition-colors"
                                       title="کپی کد پیگیری"
                                     >
-                                      <span>#{ad.reference_number || ad.id.slice(0, 8)}</span>
+                                      <span dir="ltr" className="inline-flex items-center">
+                                        <span>#</span>
+                                        <span>{ad.reference_number || ad.id.slice(0, 8)}</span>
+                                      </span>
                                       {copiedKey === `ref-${ad.id}` ? <Check size={10} className="text-emerald-600" /> : <Copy size={10} className="text-stone-400" />}
                                     </button>
 
-                                    <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/70">
+                                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/70">
                                       {countryObj.nameFa}
                                     </span>
                                   </div>
@@ -2440,10 +2474,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                     <button
                                       type="button"
                                       onClick={() => copyText(ad.pin_code || '1234', `pin-${ad.id}`, 'رمز ویرایش')}
-                                      className="font-mono text-[10.5px] font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200 flex items-center gap-1 cursor-pointer transition-colors"
+                                      className="tabular-nums text-[10.5px] font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200 flex items-center gap-1 cursor-pointer transition-colors"
                                       title="کپی رمز ویرایش"
                                     >
-                                      <span>رمز: {ad.pin_code || '1234'}</span>
+                                      <span>رمز: <span className="font-mono">{ad.pin_code || '1234'}</span></span>
                                       {copiedKey === `pin-${ad.id}` ? <Check size={10} className="text-emerald-600" /> : <Copy size={10} className="text-amber-600" />}
                                     </button>
                                   </div>
@@ -2462,11 +2496,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                   </span>
                                   <div className="flex items-center gap-2 mt-1 text-[11px] text-stone-400">
                                     {catObj && (
-                                      <span className="px-1.5 py-0.2 rounded bg-stone-100 text-stone-600 font-medium text-[10.5px]">
+                                      <span className="px-1.5 py-0.5 rounded bg-stone-100 text-stone-600 font-medium text-[10.5px]">
                                         {catObj.fa}
                                       </span>
                                     )}
-                                    <span className="font-mono text-[10px]">
+                                    <span className="tabular-nums text-[10px]" dir="ltr">
                                       {new Date(ad.created_at || '2026-01-01').toLocaleDateString('sv-SE')}
                                     </span>
                                   </div>
@@ -2480,8 +2514,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                     <MapPin size={12} className="text-stone-400 shrink-0" />
                                     <span>{ad.city || 'نامشخص'}</span>
                                   </div>
-                                  <span className="font-extrabold text-stone-900 font-mono text-[12px] block">
-                                    {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type === 'kr' || !ad.price_type ? 'کرون' : ad.price_type}` : 'توافقی'}
+                                  <span className="font-extrabold text-stone-900 tabular-nums text-[12px] block">
+                                    {ad.price ? `${Number(ad.price).toLocaleString('sv-SE')} ${ad.price_type === 'kr' || !ad.price_type ? 'کرون' : ad.price_type}` : 'توافقی'}
                                   </span>
                                 </div>
                               </td>

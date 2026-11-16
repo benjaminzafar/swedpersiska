@@ -32,14 +32,42 @@ export default {
       },
       fontFamily: {
         sans: [
+          "'Vazirmatn'",
           "-apple-system",
           "BlinkMacSystemFont",
           "'Segoe UI'",
           "Roboto",
-          "'Vazirmatn'",
           "'Noto Sans Arabic'",
           "sans-serif"
         ],
+        vazir: [
+          "'Vazirmatn'",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "'Segoe UI'",
+          "sans-serif"
+        ],
+      },
+      spacing: {
+        '0.2': '0.05rem',
+        '4.5': '1.125rem',
+        '7.5': '1.875rem',
+        '8.5': '2.125rem',
+        '9.5': '2.375rem',
+        '15': '3.75rem',
+        '68': '17rem',
+      },
+      minWidth: {
+        '4.5': '1.125rem',
+        '5': '1.25rem',
+        '8': '2rem',
+      },
+      boxShadow: {
+        '2xs': '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+        'xs': '0 1px 3px 0 rgba(0, 0, 0, 0.06)',
+      },
+      backdropBlur: {
+        'xs': '2px',
       },
     },
   },
