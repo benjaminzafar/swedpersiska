@@ -87,6 +87,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [copiedPin, setCopiedPin] = useState(false);
   const [copiedRef, setCopiedRef] = useState(false);
+  const [copiedKey, setCopiedKey] = useState(null);
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
 
   // Site Branding State
@@ -518,16 +519,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   };
 
   // Copy helper
-  const copyText = (text, type) => {
+  const copyText = (text, keyOrType, label) => {
+    if (!text) return;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
-      if (type === 'pin') {
+      setCopiedKey(keyOrType);
+      if (keyOrType === 'pin') {
         setCopiedPin(true);
         setTimeout(() => setCopiedPin(false), 2000);
-      } else {
+      } else if (keyOrType === 'ref') {
         setCopiedRef(true);
         setTimeout(() => setCopiedRef(false), 2000);
       }
+      triggerToast(`${label || 'متن'} کپی شد`);
+      setTimeout(() => setCopiedKey(null), 2000);
     }
   };
 
@@ -1569,433 +1574,375 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           )}
 
           {/* ========================================================
-              TAB 2: COUNTRY ADS MANAGEMENT (SPLIT CRM VIEW)
+              TAB 2: ANNONSER (FULL-WIDTH COMPREHENSIVE VIEW)
           ======================================================== */}
           {activeTab === 'ads' && (
-            <div className="flex-1 flex overflow-hidden rounded-2xl border border-stone-200/80 bg-white animate-in fade-in duration-150 ease-out">
+            <div className="space-y-4 max-w-7xl w-full animate-in fade-in duration-150 ease-out">
               
-              {/* Left/Main Column: Ads List & Filters */}
-              <div className="flex-1 flex flex-col border-e border-stone-200/80 overflow-hidden bg-[#fafaf9]">
+              {/* Filter Controls Bar (Top Astryx Frame) */}
+              <div className="p-4 rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
                 
-                {/* Filter Controls Header */}
-                <div className="p-3.5 sm:p-4 border-b border-stone-200/80 space-y-3 bg-white">
+                {/* 1. Country Filter Pills */}
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                  <span className="text-xs font-bold text-stone-500 shrink-0">کشور:</span>
                   
-                  {/* Apple macOS Segmented Control for Country Filter */}
-                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-                    <span className="text-xs font-semibold text-zinc-500 shrink-0">کشور:</span>
-                    
-                    <div className="p-1 rounded-xl bg-black/[0.04] border border-black/[0.05] inline-flex items-center gap-0.5">
-                      <button
-                        type="button"
-                        onClick={() => { playFeedback('select'); setCountryFilter('all'); }}
-                        className={`min-h-[30px] px-3 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 select-none active:scale-95 cursor-pointer ${
-                          countryFilter === 'all'
-                            ? 'bg-white text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.1)] font-bold'
-                            : 'text-zinc-600 hover:text-zinc-950 hover:bg-white/40'
-                        }`}
-                      >
-                        همه ({ads.length})
-                      </button>
+                  <div className="p-1 rounded-xl bg-stone-100/80 border border-stone-200/80 inline-flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => { playFeedback('select'); setCountryFilter('all'); }}
+                      className={`min-h-[30px] px-3.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all select-none active:scale-95 cursor-pointer ${
+                        countryFilter === 'all'
+                          ? 'bg-white text-zinc-950 shadow-xs'
+                          : 'text-stone-600 hover:text-zinc-950 hover:bg-white/50'
+                      }`}
+                    >
+                      همه ({ads.length})
+                    </button>
 
-                      {COUNTRIES.map(country => {
-                        const count = ads.filter(a => a.country === country.id || (!a.country && country.id === 'se')).length;
-                        const isSelected = countryFilter === country.id;
-
-                        return (
-                          <button
-                            key={country.id}
-                            type="button"
-                            onClick={() => { playFeedback('select'); setCountryFilter(country.id); }}
-                            className={`min-h-[30px] px-3 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 select-none flex items-center gap-1.5 active:scale-95 cursor-pointer ${
-                              isSelected
-                                ? 'bg-white text-zinc-950 shadow-[0_1px_3px_rgba(0,0,0,0.1)] font-bold'
-                                : 'text-zinc-600 hover:text-zinc-950 hover:bg-white/40'
-                            }`}
-                          >
-                            <span>{country.nameFa}</span>
-                            <span className={`text-[10px] font-mono ${isSelected ? 'text-[#007aff]' : 'opacity-60'}`}>
-                              ({count})
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Search & Category / Status filters */}
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <div className="relative flex-1">
-                      <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
-                      <input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="جستجو در عنوان، کد پیگیری، شهر، نام..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-9 rounded-xl bg-stone-50 border border-stone-200 ps-8 pe-8 text-xs text-zinc-900 placeholder-stone-400 focus:bg-white focus:border-zinc-900 focus:outline-none"
-                      />
-                      {searchQuery && (
-                        <button
-                          type="button"
-                          onClick={() => setSearchQuery('')}
-                          className="absolute end-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
-                        >
-                          <X size={13} />
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="h-9 rounded-xl bg-stone-50 border border-stone-200 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
-                      >
-                        <option value="all">همه دسته‌ها</option>
-                        {CATEGORIES.filter(c => c.id !== 'all').map(c => (
-                          <option key={c.id} value={c.id}>{c.fa}</option>
-                        ))}
-                      </select>
-
-                      <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-9 rounded-xl bg-stone-50 border border-stone-200 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
-                      >
-                        <option value="all">همه وضعیت‌ها</option>
-                        <option value="active">فقط فعال</option>
-                        <option value="hidden">مخفی‌شده</option>
-                        <option value="vip">فقط ویژه (VIP)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Ads Stream List */}
-                <div className="flex-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-3 sm:p-4 space-y-2.5">
-                  {filteredAds.length === 0 ? (
-                    <div className="text-center py-16 text-stone-400 space-y-2">
-                      <Layers size={32} className="mx-auto text-stone-300" />
-                      <p className="text-xs font-medium">هیچ آگهی با این فیلترها یافت نشد.</p>
-                    </div>
-                  ) : (
-                    filteredAds.map(ad => {
-                      const isSelected = selectedAdId === ad.id;
-                      const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
+                    {COUNTRIES.map(country => {
+                      const count = ads.filter(a => a.country === country.id || (!a.country && country.id === 'se')).length;
+                      const isSelected = countryFilter === country.id;
 
                       return (
-                        <div
-                          key={ad.id}
-                          id={`ad-item-${ad.id}`}
-                          onClick={() => {
-                            playFeedback('select');
-                            setSelectedAdId(ad.id);
-                            setMobileDetailOpen(true);
-                          }}
-                          className={`relative p-3.5 rounded-2xl border transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 active:scale-[0.99] select-none ${
+                        <button
+                          key={country.id}
+                          type="button"
+                          onClick={() => { playFeedback('select'); setCountryFilter(country.id); }}
+                          className={`min-h-[30px] px-3 rounded-lg text-xs font-bold whitespace-nowrap transition-all select-none flex items-center gap-1.5 active:scale-95 cursor-pointer ${
                             isSelected
-                              ? 'bg-[#007aff]/5 border-[#007aff] shadow-xs ring-1 ring-[#007aff]/30'
-                              : 'bg-white border-stone-200/80 hover:border-black/[0.15] shadow-[0_1px_2px_rgba(0,0,0,0.02)]'
+                              ? 'bg-white text-zinc-950 shadow-xs'
+                              : 'text-stone-600 hover:text-zinc-950 hover:bg-white/50'
                           }`}
                         >
-                          {isSelected && (
-                            <span className="absolute inset-y-3 -end-0.5 w-1 rounded-full bg-[#007aff] shadow-xs" />
-                          )}
-                          <div className="flex items-center gap-3 min-w-0">
-                            {/* Image thumbnail */}
-                            <div className="h-12 w-12 rounded-xl bg-stone-100 border border-stone-200 overflow-hidden shrink-0">
-                              {ad.images && ad.images[0] ? (
-                                <img src={ad.images[0]} alt="" className="h-full w-full object-cover" />
-                              ) : (
-                                <div className="h-full w-full flex items-center justify-center text-[10px] text-stone-400">
-                                  بدون عکس
-                                </div>
-                              )}
-                            </div>
+                          <span>{country.nameFa}</span>
+                          <span className={`text-[10.5px] font-mono ${isSelected ? 'text-blue-600' : 'opacity-60'}`}>
+                            ({count})
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-                            <div className="min-w-0 space-y-1">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                {/* Country Badge */}
-                                <span className="px-2 py-0.2 rounded-full bg-[#ebf4fe] text-[#175cd3] text-[10.5px] font-bold border border-[#c3ddfd]">
-                                  {countryObj.nameFa}
-                                </span>
+                {/* 2. Search & Category & Status Dropdowns */}
+                <div className="flex flex-col sm:flex-row gap-2.5">
+                  <div className="relative flex-1">
+                    <Search size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      placeholder="جستجو در عنوان، کد پیگیری، شهر، نام تماس، ایمیل..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 ps-9 pe-8 text-xs text-zinc-900 placeholder:text-stone-400 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        className="absolute end-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
+                      >
+                        <X size={13} />
+                      </button>
+                    )}
+                  </div>
 
-                                <span className="font-mono text-[10.5px] text-stone-600 font-bold bg-stone-100 px-1.5 py-0.2 rounded border border-stone-200">
-                                  <bdi>{ad.reference_number}</bdi>
-                                </span>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={categoryFilter}
+                      onChange={(e) => setCategoryFilter(e.target.value)}
+                      className="h-10 rounded-xl bg-stone-50 border border-stone-200/80 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-stone-400 focus:outline-none cursor-pointer shadow-2xs"
+                    >
+                      <option value="all">همه دسته‌ها</option>
+                      {CATEGORIES.filter(c => c.id !== 'all').map(c => (
+                        <option key={c.id} value={c.id}>{c.fa}</option>
+                      ))}
+                    </select>
 
-                                {ad.is_featured && (
-                                  <span className="px-2 py-0.2 rounded-full bg-[#fef6e7] text-[#9a6200] text-[10px] font-bold border border-[#fbdca7]">
-                                    VIP ویژه
-                                  </span>
-                                )}
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="h-10 rounded-xl bg-stone-50 border border-stone-200/80 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-stone-400 focus:outline-none cursor-pointer shadow-2xs"
+                    >
+                      <option value="all">همه وضعیت‌ها</option>
+                      <option value="active">فقط فعال</option>
+                      <option value="hidden">مخفی‌شده</option>
+                      <option value="vip">فقط ویژه (VIP)</option>
+                    </select>
+                  </div>
+                </div>
 
-                                {ad.status === 'hidden' && (
-                                  <span className="px-2 py-0.2 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200">
-                                    مخفی
-                                  </span>
-                                )}
-                              </div>
+              </div>
 
-                              <h4 className="text-xs font-bold text-zinc-900 truncate">
-                                {ad.title}
-                              </h4>
+              {/* Ads Full-Width Stream (Showing Complete Info Directly!) */}
+              <div className="space-y-3.5 pb-12">
+                {filteredAds.length === 0 ? (
+                  <div className="text-center py-20 bg-white rounded-2xl border border-stone-200/80 p-8 text-stone-400 space-y-2">
+                    <Layers size={36} className="mx-auto text-stone-300" />
+                    <p className="text-sm font-semibold text-stone-600">هیچ آگهی با این فیلترها یافت نشد.</p>
+                    <p className="text-xs text-stone-400">فیلترهای جستجو یا کشور را تغییر دهید.</p>
+                  </div>
+                ) : (
+                  filteredAds.map(ad => {
+                    const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
+                    const catObj = CATEGORIES.find(c => c.id === ad.category);
 
-                              <div className="flex items-center gap-2.5 text-[11px] text-stone-500">
-                                <span>{ad.city}</span>
-                                <span>•</span>
-                                <span className="font-semibold text-zinc-700">
-                                  {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
-                                </span>
-                                <span>•</span>
-                                <span>{ad.views_count || 1} بازدید</span>
-                              </div>
-                            </div>
+                    return (
+                      <div
+                        key={ad.id}
+                        id={`ad-item-${ad.id}`}
+                        className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 transition-all p-4 sm:p-5 space-y-4"
+                      >
+                        {/* 1. Header Row: Reference, Category, Country, Status Badges & Actions */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-stone-100">
+                          
+                          {/* Badges / Identification */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {/* Country Badge */}
+                            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-200/70">
+                              {countryObj.nameFa}
+                            </span>
+
+                            {/* Reference Number with 1-Click Copy */}
+                            <button
+                              type="button"
+                              onClick={() => copyText(ad.reference_number, `ref-${ad.id}`, 'کد پیگیری')}
+                              className="font-mono text-[11px] text-stone-800 font-bold bg-stone-100 hover:bg-stone-200 px-2 py-0.5 rounded border border-stone-200/80 flex items-center gap-1 cursor-pointer transition-colors"
+                              title="کپی کد پیگیری"
+                            >
+                              <span>#{ad.reference_number || ad.id.slice(0, 8)}</span>
+                              {copiedKey === `ref-${ad.id}` ? <Check size={11} className="text-emerald-600" /> : <Copy size={11} className="text-stone-400" />}
+                            </button>
+
+                            {/* Edit PIN with 1-Click Copy */}
+                            <button
+                              type="button"
+                              onClick={() => copyText(ad.pin_code || '1234', `pin-${ad.id}`, 'رمز ویرایش')}
+                              className="font-mono text-[11px] font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 px-2 py-0.5 rounded border border-amber-200/70 flex items-center gap-1 cursor-pointer transition-colors"
+                              title="کپی رمز ویرایش"
+                            >
+                              <span>رمز: {ad.pin_code || '1234'}</span>
+                              {copiedKey === `pin-${ad.id}` ? <Check size={11} className="text-emerald-600" /> : <Copy size={11} className="text-amber-600" />}
+                            </button>
+
+                            {/* Category Badge */}
+                            {catObj && (
+                              <span className="px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 text-[10.5px] font-semibold">
+                                {catObj.fa}
+                              </span>
+                            )}
+
+                            {/* VIP Badge */}
+                            {ad.is_featured ? (
+                              <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10.5px] font-extrabold border border-amber-300 flex items-center gap-1">
+                                <Sparkles size={11} className="text-amber-600" />
+                                <span>VIP ویژه</span>
+                              </span>
+                            ) : null}
+
+                            {/* Status Badge */}
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold border ${
+                              ad.status === 'active'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-stone-100 text-stone-600 border-stone-200'
+                            }`}>
+                              {ad.status === 'active' ? 'فعال' : 'مخفی'}
+                            </span>
                           </div>
 
-                          {/* Quick action buttons */}
-                          <div className="hidden sm:flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                          {/* Quick Actions (Right side of header) */}
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {/* Toggle VIP */}
                             <button
                               type="button"
                               onClick={() => toggleFeatured(ad)}
-                              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                              className={`h-8 px-2.5 rounded-xl border text-[11.5px] font-bold transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
                                 ad.is_featured
-                                  ? 'bg-[#fef6e7] text-[#9a6200] border-[#fbdca7]'
-                                  : 'bg-stone-50 text-stone-500 border-stone-200 hover:text-amber-600'
+                                  ? 'bg-amber-50 text-amber-800 border-amber-300'
+                                  : 'bg-white hover:bg-stone-50 text-stone-600 border-stone-200'
                               }`}
-                              title={ad.is_featured ? 'برداشتن VIP' : 'اعطای نشان ویژه VIP'}
+                              title={ad.is_featured ? 'حذف نشان VIP' : 'تبدیل به VIP'}
                             >
-                              <Sparkles size={14} />
+                              <Sparkles size={13} className={ad.is_featured ? 'text-amber-600' : 'text-stone-400'} />
+                              <span>{ad.is_featured ? 'VIP فعال' : 'VIP کردن'}</span>
                             </button>
 
+                            {/* Toggle Active / Hidden */}
                             <button
                               type="button"
                               onClick={() => toggleStatus(ad)}
-                              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                              className={`h-8 px-2.5 rounded-xl border text-[11.5px] font-bold transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
                                 ad.status === 'active'
-                                  ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]'
-                                  : 'bg-stone-50 text-stone-500 border-stone-200 hover:text-emerald-600'
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                  : 'bg-stone-100 text-stone-700 border-stone-300'
                               }`}
                               title={ad.status === 'active' ? 'مخفی کردن' : 'فعال‌سازی'}
                             >
-                              <CheckCircle size={14} />
+                              <CheckCircle size={13} className={ad.status === 'active' ? 'text-emerald-600' : 'text-stone-400'} />
+                              <span>{ad.status === 'active' ? 'فعال' : 'مخفی'}</span>
                             </button>
 
+                            {/* View Live on Site */}
+                            <button
+                              type="button"
+                              onClick={() => window.open(`?ad=${ad.reference_number || ad.id}`, '_blank')}
+                              className="h-8 px-2.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-[11.5px] font-semibold flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
+                              title="مشاهده آگهی در سایت"
+                            >
+                              <ExternalLink size={13} />
+                              <span className="hidden sm:inline">مشاهده</span>
+                            </button>
+
+                            {/* Delete Ad */}
                             <button
                               type="button"
                               onClick={() => deleteAdAdmin(ad.id)}
-                              className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors cursor-pointer"
-                              title="حذف دائمی"
+                              className="h-8 w-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center cursor-pointer active:scale-95 transition-all"
+                              title="حذف دائمی آگهی"
                             >
                               <Trash2 size={14} />
                             </button>
                           </div>
                         </div>
-                      );
-                    })
-                  )}
-                </div>
 
-              </div>
+                        {/* 2. Middle Row: Photo + Title + Pricing + Location + Description */}
+                        <div className="flex flex-col sm:flex-row gap-4 items-start">
+                          {/* Image Thumbnail */}
+                          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-stone-100 border border-stone-200/80 overflow-hidden shrink-0 shadow-2xs">
+                            {ad.images && ad.images[0] ? (
+                              <img src={ad.images[0]} alt="" className="h-full w-full object-cover hover:scale-105 transition-transform" />
+                            ) : (
+                              <div className="h-full w-full flex flex-col items-center justify-center text-[11px] text-stone-400 gap-1 bg-stone-50">
+                                <ImageIcon size={20} className="text-stone-300" />
+                                <span>بدون عکس</span>
+                              </div>
+                            )}
+                          </div>
 
-              {/* Right Column: CRM Details for Selected Ad (Desktop Inspector) */}
-              {currentSelectedAd && (
-                <div className="hidden lg:flex w-96 xl:w-[410px] shrink-0 bg-white flex-col overflow-hidden border-s border-[#e5ebf4]">
-                  
-                  {/* Sticky Frosted Header */}
-                  <div className="sticky top-0 z-10 p-4 border-b border-[#e5ebf4] bg-white/85 backdrop-blur-md flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <span className="text-[10px] font-mono text-stone-500 uppercase tracking-wider block font-bold">
-                        اطلاعات آگهی
-                      </span>
-                      <h3 className="text-sm font-black text-zinc-900 truncate max-w-[240px]">
-                        {currentSelectedAd.title}
-                      </h3>
-                    </div>
+                          {/* Title & Core Details */}
+                          <div className="flex-1 min-w-0 space-y-2">
+                            <h3 className="text-base font-extrabold text-stone-900 tracking-tight leading-snug">
+                              {ad.title}
+                            </h3>
 
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => toggleFeatured(currentSelectedAd)}
-                        className={`p-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                          currentSelectedAd.is_featured
-                            ? 'bg-[#fef6e7] text-[#9a6200] border-[#fbdca7]'
-                            : 'bg-stone-100 text-stone-500 border-stone-200 hover:text-amber-600'
-                        }`}
-                        title="تغییر VIP"
-                      >
-                        <Sparkles size={15} />
-                      </button>
+                            {/* City, Price & Views Strip */}
+                            <div className="flex items-center gap-3 text-xs text-stone-500 flex-wrap">
+                              <span className="flex items-center gap-1 text-stone-700 font-medium">
+                                <MapPin size={13} className="text-stone-400" />
+                                <span>{ad.city || 'نامشخص'} ({countryObj.nameFa})</span>
+                              </span>
+                              <span>•</span>
+                              <span className="font-bold text-stone-900 font-mono">
+                                {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
+                              </span>
+                              <span>•</span>
+                              <span className="flex items-center gap-1 font-mono text-stone-600">
+                                <Eye size={13} className="text-stone-400" />
+                                <span>{ad.views_count || 1} بازدید</span>
+                              </span>
+                              <span>•</span>
+                              <span className="text-stone-400 font-mono text-[11px]">
+                                ثبت: {new Date(ad.created_at || '2026-01-01').toLocaleDateString('sv-SE')}
+                              </span>
+                            </div>
 
-                      <button
-                        type="button"
-                        onClick={() => toggleStatus(currentSelectedAd)}
-                        className={`p-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                          currentSelectedAd.status === 'active'
-                            ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]'
-                            : 'bg-stone-100 text-stone-500 border-stone-200 hover:text-emerald-600'
-                        }`}
-                        title="تغییر وضعیت"
-                      >
-                        <CheckCircle size={15} />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => deleteAdAdmin(currentSelectedAd.id)}
-                        className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 cursor-pointer"
-                        title="حذف آگهی"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Details Scrollable Body */}
-                  <div className="flex-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-5 space-y-4 text-xs">
-                    
-                    {/* Photo Preview */}
-                    {currentSelectedAd.images && currentSelectedAd.images[0] && (
-                      <div className="aspect-[16/10] w-full rounded-2xl overflow-hidden bg-stone-100 border border-stone-200 shadow-2xs">
-                        <img src={currentSelectedAd.images[0]} alt="" className="w-full h-full object-cover" />
-                      </div>
-                    )}
-
-                    {/* 1. Country Switcher for this Ad */}
-                    <div className="p-4 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] shadow-2xs space-y-2">
-                      <label className="block text-[11px] font-bold text-stone-700">
-                        تغییر کشور:
-                      </label>
-                      <div className="grid grid-cols-2 gap-1.5">
-                        {COUNTRIES.map(c => {
-                          const isCurrent = (currentSelectedAd.country || 'se') === c.id;
-
-                          return (
-                            <button
-                              key={c.id}
-                              type="button"
-                              onClick={() => updateAdCountry(currentSelectedAd.id, c.id)}
-                              className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-all text-center border cursor-pointer ${
-                                isCurrent
-                                  ? 'bg-zinc-900 text-white border-zinc-900 shadow-xs'
-                                  : 'bg-white hover:bg-stone-100 text-zinc-700 border-stone-200'
-                              }`}
-                            >
-                              {c.nameFa}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* 2. Key Metadata & PIN */}
-                    <div className="p-4 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] shadow-2xs space-y-3">
-                      <div className="flex items-center justify-between pb-2 border-b border-stone-200">
-                        <span className="text-stone-500 font-medium">کد پیگیری:</span>
-                        <button
-                          type="button"
-                          onClick={() => copyText(currentSelectedAd.reference_number, 'ref')}
-                          className="flex items-center gap-1.5 font-mono font-bold text-zinc-900 hover:text-black cursor-pointer"
-                        >
-                          <span>{currentSelectedAd.reference_number}</span>
-                          {copiedRef ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
-                        </button>
-                      </div>
-
-                      <div className="flex items-center justify-between pb-2 border-b border-stone-200">
-                        <span className="text-stone-500 font-medium">رمز ویرایش:</span>
-                        <button
-                          type="button"
-                          onClick={() => copyText(currentSelectedAd.pin_code || '1234', 'pin')}
-                          className="flex items-center gap-1.5 font-mono font-extrabold text-[#9a6200] bg-[#fef6e7] px-2.5 py-0.5 rounded-lg border border-[#fbdca7] cursor-pointer"
-                        >
-                          <span>{currentSelectedAd.pin_code || '1234'}</span>
-                          {copiedPin ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
-                        </button>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-stone-500 font-medium">تاریخ ثبت:</span>
-                        <span className="text-zinc-800 font-medium">
-                          {new Date(currentSelectedAd.created_at || '2026-01-01').toLocaleDateString('fa-IR')}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* 3. Seller Contacts */}
-                    <div className="p-4 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] shadow-2xs space-y-2.5">
-                      <span className="text-[11px] font-bold text-stone-700 block">اطلاعات تماس:</span>
-                      
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-stone-500">
-                          <span>نام:</span>
-                          <span className="font-bold text-zinc-900">{currentSelectedAd.contact_name}</span>
+                            {/* Description Full Text */}
+                            {ad.description && (
+                              <p className="text-xs text-stone-600 leading-relaxed whitespace-pre-line bg-stone-50/70 p-3 rounded-xl border border-stone-100">
+                                {ad.description}
+                              </p>
+                            )}
+                          </div>
                         </div>
 
-                        {currentSelectedAd.contact_phone && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-stone-500">تلفن:</span>
-                            <a href={`tel:${currentSelectedAd.contact_phone}`} className="font-mono text-zinc-900 font-semibold flex items-center gap-1 hover:underline">
-                              <Phone size={12} />
-                              <span>{currentSelectedAd.contact_phone}</span>
-                            </a>
-                          </div>
-                        )}
+                        {/* 3. Bottom Row: Complete Contact Information & Quick Country Changer */}
+                        <div className="pt-3 border-t border-stone-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-xs bg-stone-50/50 p-3 rounded-xl">
+                          
+                          {/* Contacts Details */}
+                          <div className="flex items-center gap-4 flex-wrap text-stone-700">
+                            {ad.contact_name && (
+                              <div className="flex items-center gap-1.5">
+                                <User size={13} className="text-stone-400" />
+                                <span className="text-stone-500">نام:</span>
+                                <span className="font-bold text-stone-900">{ad.contact_name}</span>
+                              </div>
+                            )}
 
-                        {currentSelectedAd.contact_whatsapp && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-stone-500">واتساپ:</span>
-                            <a href={`https://wa.me/${currentSelectedAd.contact_whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="font-mono text-emerald-700 font-semibold flex items-center gap-1 hover:underline">
-                              <span>{currentSelectedAd.contact_whatsapp}</span>
-                            </a>
-                          </div>
-                        )}
+                            {ad.contact_phone && (
+                              <a
+                                href={`tel:${ad.contact_phone}`}
+                                className="flex items-center gap-1.5 font-mono text-stone-900 font-semibold hover:text-blue-600 transition-colors"
+                              >
+                                <Phone size={13} className="text-stone-400" />
+                                <span>{ad.contact_phone}</span>
+                              </a>
+                            )}
 
-                        {currentSelectedAd.contact_telegram && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-stone-500">تلگرام:</span>
-                            <a href={`https://t.me/${currentSelectedAd.contact_telegram.replace('@', '')}`} target="_blank" rel="noreferrer" className="font-mono text-sky-700 font-semibold flex items-center gap-1 hover:underline">
-                              <Send size={12} />
-                              <span>{currentSelectedAd.contact_telegram}</span>
-                            </a>
-                          </div>
-                        )}
+                            {ad.contact_whatsapp && (
+                              <a
+                                href={`https://wa.me/${ad.contact_whatsapp.replace(/[^0-9]/g, '')}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-1 font-mono text-emerald-700 font-bold hover:underline"
+                              >
+                                <span>واتساپ: {ad.contact_whatsapp}</span>
+                              </a>
+                            )}
 
-                        {currentSelectedAd.contact_email && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-stone-500">ایمیل:</span>
-                            <a href={`mailto:${currentSelectedAd.contact_email}`} className="font-mono text-zinc-800 hover:underline flex items-center gap-1">
-                              <Mail size={12} />
-                              <span>{currentSelectedAd.contact_email}</span>
-                            </a>
+                            {ad.contact_telegram && (
+                              <a
+                                href={`https://t.me/${ad.contact_telegram.replace('@', '')}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-1 font-mono text-sky-700 font-bold hover:underline"
+                              >
+                                <Send size={12} />
+                                <span>{ad.contact_telegram}</span>
+                              </a>
+                            )}
+
+                            {ad.contact_email && (
+                              <a
+                                href={`mailto:${ad.contact_email}`}
+                                className="flex items-center gap-1.5 font-mono text-stone-600 hover:text-stone-900 hover:underline"
+                              >
+                                <Mail size={13} className="text-stone-400" />
+                                <span>{ad.contact_email}</span>
+                              </a>
+                            )}
                           </div>
-                        )}
+
+                          {/* Quick Country Switcher for this Ad */}
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span className="text-[11px] font-bold text-stone-500">تغییر کشور:</span>
+                            <div className="inline-flex rounded-lg border border-stone-200 bg-white p-0.5">
+                              {COUNTRIES.map(c => {
+                                const isCurrent = (ad.country || 'se') === c.id;
+                                return (
+                                  <button
+                                    key={c.id}
+                                    type="button"
+                                    onClick={() => updateAdCountry(ad.id, c.id)}
+                                    className={`px-2 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
+                                      isCurrent
+                                        ? 'bg-slate-900 text-white shadow-2xs'
+                                        : 'text-stone-600 hover:text-stone-950 hover:bg-stone-100'
+                                    }`}
+                                  >
+                                    {c.nameFa}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                        </div>
+
                       </div>
-                    </div>
-
-                    {/* 4. Description */}
-                    <div className="p-4 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] shadow-2xs space-y-1.5">
-                      <span className="text-[11px] font-bold text-stone-700 block">متن آگهی:</span>
-                      <p className="text-stone-700 leading-relaxed whitespace-pre-line text-xs font-normal">
-                        {currentSelectedAd.description}
-                      </p>
-                    </div>
-
-                    {/* 5. Live View Link */}
-                    <button
-                      type="button"
-                      onClick={() => window.open(`?ad=${currentSelectedAd.reference_number || currentSelectedAd.id}`, '_blank')}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
-                    >
-                      <ExternalLink size={14} />
-                      <span>مشاهده در سایت</span>
-                    </button>
-
-                  </div>
-
-                </div>
-              )}
+                    );
+                  })
+                )}
+              </div>
 
             </div>
           )}
