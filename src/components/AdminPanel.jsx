@@ -1323,7 +1323,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   // ========================================================
   return (
     <main 
-      className="admin-scope min-h-screen bg-[#f4f1ea] text-zinc-900 font-vazir select-none flex flex-col lg:flex-row p-0 sm:p-4 gap-4" 
+      className="admin-scope min-h-screen w-full bg-[#f4f1ea] text-zinc-900 font-vazir select-none flex flex-col lg:flex-row p-0 sm:p-4 gap-4" 
       dir="rtl"
       data-testid="admin-page"
     >
@@ -1337,10 +1337,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          1. DESKTOP FLOATING SIDEBAR (RIGHT-ALIGNED IN RTL)
+          1. DESKTOP FLOATING SIDEBAR (EXPANDED TO 315px LUXURY WIDTH)
       ======================================================== */}
       <aside
-        className="lg:fixed lg:top-4 lg:bottom-4 lg:right-4 lg:left-auto lg:w-[285px] bg-[#11141a] text-white rounded-2xl px-3.5 pb-4 pt-0 hidden lg:flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.14)] border border-stone-800/80 select-none z-30 transition-all duration-200 ease-out"
+        className="lg:fixed lg:top-4 lg:bottom-4 lg:right-4 lg:left-auto lg:w-[315px] bg-[#11141a] text-white rounded-2xl px-4 pb-4 pt-0 hidden lg:flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.16)] border border-stone-800/80 select-none z-30 transition-all duration-200 ease-out"
         data-testid="admin-sidebar"
       >
         {/* Top Header / Brand */}
@@ -1684,10 +1684,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       {/* ========================================================
           2. MAIN CONTENT AREA (PADDED RIGHT FOR DESKTOP SIDEBAR)
       ======================================================== */}
-      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200 lg:pr-[301px] lg:pl-0 px-2.5 pb-8 sm:px-0 sm:pb-8">
+      <div className="flex-1 w-full flex flex-col min-w-0 transition-all duration-200 lg:pr-[331px] lg:pl-0 px-2.5 pb-8 sm:px-0 sm:pb-8">
         
         {/* Top Desktop Nav Bar */}
-        <header className="hidden lg:flex items-center justify-between h-15 px-5 bg-white/95 backdrop-blur-md rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] mb-4 sticky top-4 shrink-0 z-20 select-none">
+        <header className="hidden lg:flex items-center justify-between h-16 px-6 bg-white/95 backdrop-blur-md rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] mb-4.5 sticky top-4 shrink-0 z-20 select-none">
           {/* Right: Active Section Title with Modern Icon Container */}
           <div className="flex items-center gap-3 min-w-[200px] shrink-0">
             <div className="flex h-9.5 w-9.5 items-center justify-center rounded-xl bg-stone-100 text-stone-800 border border-stone-200/80 shadow-2xs">
@@ -2005,21 +2005,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between pt-3 mt-3 border-t border-stone-100 text-[11.5px]">
-                          <div className="flex items-center gap-1.5">
+                        <div className="flex items-center justify-between pt-3 mt-3 border-t border-stone-100 text-[11.5px] gap-2">
+                          <div className="flex items-center gap-1 min-w-0">
                             <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
                             <span className="text-stone-500 font-medium">فعال:</span>
-                            <span className="font-bold text-stone-900 tabular-nums">{stats.active}</span>
+                            <span className="font-bold text-stone-900 font-mono tabular-nums">{stats.active}</span>
                           </div>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1 min-w-0">
                             <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0"></span>
                             <span className="text-amber-700 font-medium">ویژه:</span>
-                            <span className="font-bold text-amber-800 tabular-nums">{stats.vip}</span>
+                            <span className="font-bold text-amber-800 font-mono tabular-nums">{stats.vip}</span>
                           </div>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1 min-w-0">
                             <span className="h-2 w-2 rounded-full bg-purple-400 shrink-0"></span>
                             <span className="text-stone-500 font-medium">بازدید:</span>
-                            <span className="font-bold text-stone-900 tabular-nums">{stats.views}</span>
+                            <span className="font-bold text-stone-900 font-mono tabular-nums">{Number(stats.views).toLocaleString('sv-SE')}</span>
                           </div>
                         </div>
                       </div>
@@ -2048,7 +2048,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       onClick={() => handleTabChange('ads')}
                       className="inline-flex items-center gap-1.5 text-[12px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer group"
                     >
-                      <span>مدیریت همه آگهی‌ها (<span className="tabular-nums">{counts.active}</span>)</span>
+                      <span>مدیریت همه آگهی‌ها (<span className="tabular-nums font-mono font-bold">{counts.active}</span>)</span>
                       <ArrowUpRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                     </button>
                   </div>
@@ -2078,15 +2078,15 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                             </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-mono font-bold text-[11.5px] text-stone-600 bg-stone-100 px-1.5 py-0.2 rounded border border-stone-200/60">
+                                <span dir="ltr" className="inline-block font-mono font-bold text-[11.5px] text-stone-700 bg-stone-100 px-2 py-0.5 rounded-md border border-stone-200/70 shadow-2xs">
                                   #{ad.reference_number || ad.id.slice(0, 8)}
                                 </span>
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200/80">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200/80">
                                   {NORDIC_FLAGS[ad.country || 'se']}
                                   <span>{countryObj.nameFa}</span>
                                 </span>
                                 {ad.is_featured && (
-                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70 flex items-center gap-1">
+                                  <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70 flex items-center gap-1">
                                     <Sparkles size={11} className="text-amber-600" />
                                     <span>ویژه</span>
                                   </span>
@@ -2106,8 +2106,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                               <div className="flex items-center gap-2 text-[11.5px] text-stone-500 mt-1">
                                 <span className="font-medium text-stone-600">{ad.city || 'اسکاندیناوی'}</span>
                                 <span>·</span>
-                                <span className="font-bold text-stone-900 tabular-nums">
-                                  {ad.price ? `${Number(ad.price).toLocaleString()} کرون` : 'توافقی'}
+                                <span className="font-bold text-stone-900 font-mono tabular-nums">
+                                  {ad.price ? `${Number(ad.price).toLocaleString('sv-SE')} کرون` : 'توافقی'}
                                 </span>
                               </div>
                             </div>
@@ -3135,7 +3135,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               TAB 3: STRIPE PAYMENT GATEWAY & VIP SETTINGS
           ======================================================== */}
           {activeTab === 'monetization' && (
-            <div className="space-y-6 max-w-5xl mx-auto w-full py-2 animate-in fade-in duration-150 ease-out">
+            <div className="space-y-6 w-full py-2 animate-in fade-in duration-150 ease-out">
               
               <div className="border-b border-stone-200/80 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
@@ -3283,7 +3283,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               TAB 4: CLOUDFLARE TURNSTILE ANTI-BOT SETTINGS
           ======================================================== */}
           {activeTab === 'security' && (
-            <div className="space-y-6 max-w-5xl mx-auto w-full py-2 animate-in fade-in duration-150 ease-out">
+            <div className="space-y-6 w-full py-2 animate-in fade-in duration-150 ease-out">
               
               <div className="border-b border-stone-200/80 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
@@ -3449,7 +3449,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               TAB 5: SITE BRANDING & SEO
           ======================================================== */}
           {activeTab === 'settings' && (
-            <div className="space-y-6 max-w-5xl mx-auto w-full py-2 animate-in fade-in duration-150 ease-out">
+            <div className="space-y-6 w-full py-2 animate-in fade-in duration-150 ease-out">
               
               <div className="border-b border-stone-200/80 pb-5">
                 <h2 className="text-base font-black text-zinc-900">تنظیمات سایت و سئو</h2>

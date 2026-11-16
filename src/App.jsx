@@ -378,7 +378,7 @@ export default function App() {
         url.searchParams.delete('tab');
         window.history.replaceState({}, '', url.toString());
       } catch {}
-    }, 250);
+    }, 280);
   };
 
   const handleCategoryChange = (catId) => {
@@ -499,10 +499,10 @@ export default function App() {
       {/* Smooth Fullscreen Admin Portal (Soft dissolve transition, zero page reload, zero jump in face) */}
       {adminOpen && (
         <div 
-          className={`fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] transition-all duration-250 ease-out ${
+          className={`fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             adminClosing 
-              ? 'opacity-0 scale-[0.99] pointer-events-none' 
-              : 'opacity-100 scale-100 animate-in fade-in duration-200 ease-out'
+              ? 'opacity-0 scale-[0.985] pointer-events-none' 
+              : 'opacity-100 scale-100 animate-in fade-in duration-300 ease-out'
           }`}
         >
           <ErrorBoundary>

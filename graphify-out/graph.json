@@ -327,7 +327,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "src/App.jsx",
-      "source_location": "L23",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "src_app_app",
       "community": 11,
@@ -374,6 +374,26 @@
       "norm_label": "addetailmodal()"
     },
     {
+      "label": "AdDetailPage.jsx",
+      "file_type": "code",
+      "source_file": "src/components/AdDetailPage.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "components_addetailpage",
+      "community": 11,
+      "norm_label": "addetailpage.jsx"
+    },
+    {
+      "label": "AdDetailPage()",
+      "file_type": "code",
+      "source_file": "src/components/AdDetailPage.jsx",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "components_addetailpage_addetailpage",
+      "community": 11,
+      "norm_label": "addetailpage()"
+    },
+    {
       "label": "AdminPanel.jsx",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
@@ -384,14 +404,84 @@
       "norm_label": "adminpanel.jsx"
     },
     {
+      "label": "PaginationBar()",
+      "file_type": "code",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "components_adminpanel_paginationbar",
+      "community": 2,
+      "norm_label": "paginationbar()"
+    },
+    {
+      "label": "NORDIC_FLAGS",
+      "file_type": "code",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L147",
+      "_origin": "ast",
+      "id": "components_adminpanel_nordic_flags",
+      "community": 2,
+      "norm_label": "nordic_flags"
+    },
+    {
+      "label": "CATEGORY_ICON_MAP",
+      "file_type": "code",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L181",
+      "_origin": "ast",
+      "id": "components_adminpanel_category_icon_map",
+      "community": 2,
+      "norm_label": "category_icon_map"
+    },
+    {
+      "label": "AVAILABLE_CATEGORY_ICONS",
+      "file_type": "code",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L201",
+      "_origin": "ast",
+      "id": "components_adminpanel_available_category_icons",
+      "community": 2,
+      "norm_label": "available_category_icons"
+    },
+    {
+      "label": "DEFAULT_CATEGORIES",
+      "file_type": "code",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L219",
+      "_origin": "ast",
+      "id": "components_adminpanel_default_categories",
+      "community": 2,
+      "norm_label": "default_categories"
+    },
+    {
       "label": "AdminPanel()",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
-      "source_location": "L26",
+      "source_location": "L230",
       "_origin": "ast",
       "id": "components_adminpanel_adminpanel",
       "community": 2,
       "norm_label": "adminpanel()"
+    },
+    {
+      "label": "CloudflareTurnstile.jsx",
+      "file_type": "code",
+      "source_file": "src/components/CloudflareTurnstile.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "components_cloudflareturnstile",
+      "community": 2,
+      "norm_label": "cloudflareturnstile.jsx"
+    },
+    {
+      "label": "CloudflareTurnstile()",
+      "file_type": "code",
+      "source_file": "src/components/CloudflareTurnstile.jsx",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "components_cloudflareturnstile_cloudflareturnstile",
+      "community": 2,
+      "norm_label": "cloudflareturnstile()"
     },
     {
       "label": "CountryBanner.jsx",
@@ -412,6 +502,66 @@
       "id": "components_countrybanner_countrybanner",
       "community": 11,
       "norm_label": "countrybanner()"
+    },
+    {
+      "label": "ErrorBoundary.jsx",
+      "file_type": "code",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "components_errorboundary",
+      "community": 12,
+      "norm_label": "errorboundary.jsx"
+    },
+    {
+      "label": "ErrorBoundary",
+      "file_type": "code",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "components_errorboundary_errorboundary",
+      "community": 12,
+      "norm_label": "errorboundary"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "components_errorboundary_errorboundary_constructor",
+      "community": 12,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".getDerivedStateFromError()",
+      "file_type": "code",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "components_errorboundary_errorboundary_getderivedstatefromerror",
+      "community": 12,
+      "norm_label": ".getderivedstatefromerror()"
+    },
+    {
+      "label": ".componentDidCatch()",
+      "file_type": "code",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "components_errorboundary_errorboundary_componentdidcatch",
+      "community": 12,
+      "norm_label": ".componentdidcatch()"
+    },
+    {
+      "label": ".render()",
+      "file_type": "code",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "components_errorboundary_errorboundary_render",
+      "community": 12,
+      "norm_label": ".render()"
     },
     {
       "label": "Footer.jsx",
@@ -450,7 +600,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_manageadmodal",
-      "community": 2,
+      "community": 11,
       "norm_label": "manageadmodal.jsx"
     },
     {
@@ -460,8 +610,38 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "components_manageadmodal_manageadmodal",
-      "community": 2,
+      "community": 11,
       "norm_label": "manageadmodal()"
+    },
+    {
+      "label": "MobileBottomNav.jsx",
+      "file_type": "code",
+      "source_file": "src/components/MobileBottomNav.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "components_mobilebottomnav",
+      "community": 11,
+      "norm_label": "mobilebottomnav.jsx"
+    },
+    {
+      "label": "CATEGORY_META",
+      "file_type": "code",
+      "source_file": "src/components/MobileBottomNav.jsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "components_mobilebottomnav_category_meta",
+      "community": 11,
+      "norm_label": "category_meta"
+    },
+    {
+      "label": "MobileBottomNav()",
+      "file_type": "code",
+      "source_file": "src/components/MobileBottomNav.jsx",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "components_mobilebottomnav_mobilebottomnav",
+      "community": 11,
+      "norm_label": "mobilebottomnav()"
     },
     {
       "label": "Navbar.jsx",
@@ -477,11 +657,31 @@
       "label": "Navbar()",
       "file_type": "code",
       "source_file": "src/components/Navbar.jsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "components_navbar_navbar",
       "community": 11,
       "norm_label": "navbar()"
+    },
+    {
+      "label": "PaymentModal.jsx",
+      "file_type": "code",
+      "source_file": "src/components/PaymentModal.jsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "components_paymentmodal",
+      "community": 2,
+      "norm_label": "paymentmodal.jsx"
+    },
+    {
+      "label": "PaymentModal()",
+      "file_type": "code",
+      "source_file": "src/components/PaymentModal.jsx",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "components_paymentmodal_paymentmodal",
+      "community": 2,
+      "norm_label": "paymentmodal()"
     },
     {
       "label": "PostAdModal.jsx",
@@ -497,7 +697,7 @@
       "label": "PostAdModal()",
       "file_type": "code",
       "source_file": "src/components/PostAdModal.jsx",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "components_postadmodal_postadmodal",
       "community": 2,
@@ -590,7 +790,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_main",
-      "community": 11,
+      "community": 12,
       "norm_label": "main.jsx"
     },
     {
@@ -692,6 +892,26 @@
       "id": "vite_config_manualchunks",
       "community": 7,
       "norm_label": "manualchunks()"
+    },
+    {
+      "label": "dashboard-performance.md",
+      "file_type": "document",
+      "source_file": ".agents/rules/dashboard-performance.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "rules_dashboard_performance",
+      "community": 13,
+      "norm_label": "dashboard-performance.md"
+    },
+    {
+      "label": "Dashboard Performance Architecture Rule",
+      "file_type": "document",
+      "source_file": ".agents/rules/dashboard-performance.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "rules_dashboard_performance_dashboard_performance_architecture_rule",
+      "community": 13,
+      "norm_label": "dashboard performance architecture rule"
     },
     {
       "label": "SKILL.md",
@@ -822,6 +1042,86 @@
       "id": "readme_databas_supabase",
       "community": 4,
       "norm_label": "\ud83d\uddc4\ufe0f databas (supabase)"
+    },
+    {
+      "label": "DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "file_type": "document",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_dashboard_performance_architecture",
+      "community": 0,
+      "norm_label": "dashboard_performance_architecture.md"
+    },
+    {
+      "label": "Dashboard Performance Architecture Rule",
+      "file_type": "document",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_dashboard_performance_architecture_dashboard_performance_architecture_rule",
+      "community": 0,
+      "norm_label": "dashboard performance architecture rule"
+    },
+    {
+      "label": "Core Principle",
+      "file_type": "document",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "docs_dashboard_performance_architecture_core_principle",
+      "community": 0,
+      "norm_label": "core principle"
+    },
+    {
+      "label": "1. Never Load Unnecessary Data",
+      "file_type": "document",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "docs_dashboard_performance_architecture_1_never_load_unnecessary_data",
+      "community": 0,
+      "norm_label": "1. never load unnecessary data"
+    },
+    {
+      "label": "2. Separate Active Data from Historical Data",
+      "file_type": "document",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "docs_dashboard_performance_architecture_2_separate_active_data_from_historical_data",
+      "community": 0,
+      "norm_label": "2. separate active data from historical data"
+    },
+    {
+      "label": "3. Use Pagination & Range / Cursor-Based Loading",
+      "file_type": "document",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "docs_dashboard_performance_architecture_3_use_pagination_range_cursor_based_loading",
+      "community": 0,
+      "norm_label": "3. use pagination & range / cursor-based loading"
+    },
+    {
+      "label": "4. Lazy-Loaded Archive",
+      "file_type": "document",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "docs_dashboard_performance_architecture_4_lazy_loaded_archive",
+      "community": 0,
+      "norm_label": "4. lazy-loaded archive"
+    },
+    {
+      "label": "5. Universal Enforcement Across All Sections",
+      "file_type": "document",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "docs_dashboard_performance_architecture_5_universal_enforcement_across_all_sections",
+      "community": 0,
+      "norm_label": "5. universal enforcement across all sections"
     }
   ],
   "links": [
@@ -1132,6 +1432,17 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/App.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "components_addetailpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
       "source_location": "L24",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -1148,6 +1459,17 @@
       "confidence_score": 1.0,
       "source": "src_app",
       "target": "components_countrybanner"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "components_errorboundary",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -1176,11 +1498,33 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/App.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "components_mobilebottomnav",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
       "source_location": "L18",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_app",
       "target": "components_navbar"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "components_paymentmodal",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -1358,12 +1702,116 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/components/AdDetailPage.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "components_addetailpage",
+      "target": "components_addetailpage_addetailpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdDetailPage.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "components_addetailpage",
+      "target": "lib_translations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdDetailPage.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "components_addetailpage",
+      "target": "lib_translations_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdDetailPage.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "components_addetailpage",
+      "target": "lib_translations_t",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/components/AdminPanel.jsx",
       "source_location": "L21",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "components_adminpanel",
       "target": "components_adminpanel_adminpanel"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L201",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "components_adminpanel_available_category_icons",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L181",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "components_adminpanel_category_icon_map",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L219",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "components_adminpanel_default_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L147",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "components_adminpanel_nordic_flags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "components_adminpanel_paginationbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "components_cloudflareturnstile",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -1410,6 +1858,38 @@
       "target": "lib_translations_categories"
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "lib_translations_countries",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/CloudflareTurnstile.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "components_cloudflareturnstile",
+      "target": "components_cloudflareturnstile_cloudflareturnstile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PostAdModal.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "components_postadmodal",
+      "target": "components_cloudflareturnstile",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/CountryBanner.jsx",
@@ -1440,6 +1920,67 @@
       "confidence_score": 1.0,
       "source": "components_countrybanner",
       "target": "lib_translations_countries"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "components_errorboundary",
+      "target": "components_errorboundary_errorboundary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_main",
+      "target": "components_errorboundary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "components_errorboundary_errorboundary",
+      "target": "components_errorboundary_errorboundary_componentdidcatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "components_errorboundary_errorboundary",
+      "target": "components_errorboundary_errorboundary_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "components_errorboundary_errorboundary",
+      "target": "components_errorboundary_errorboundary_getderivedstatefromerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ErrorBoundary.jsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "components_errorboundary_errorboundary",
+      "target": "components_errorboundary_errorboundary_render",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1540,6 +2081,59 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/components/MobileBottomNav.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "components_mobilebottomnav",
+      "target": "components_mobilebottomnav_category_meta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/MobileBottomNav.jsx",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "components_mobilebottomnav",
+      "target": "components_mobilebottomnav_mobilebottomnav",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/MobileBottomNav.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "components_mobilebottomnav",
+      "target": "lib_translations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/MobileBottomNav.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "components_mobilebottomnav",
+      "target": "lib_translations_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/MobileBottomNav.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "components_mobilebottomnav",
+      "target": "lib_translations_countries",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/components/Navbar.jsx",
       "source_location": "L12",
       "weight": 1.0,
@@ -1590,6 +2184,38 @@
       "confidence_score": 1.0,
       "source": "components_navbar",
       "target": "lib_translations_t"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PaymentModal.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "components_paymentmodal",
+      "target": "components_paymentmodal_paymentmodal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PaymentModal.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "components_paymentmodal",
+      "target": "lib_supabase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PaymentModal.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "components_paymentmodal",
+      "target": "lib_supabase_supabase",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1833,6 +2459,16 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": ".agents/rules/dashboard-performance.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "rules_dashboard_performance",
+      "target": "rules_dashboard_performance_dashboard_performance_architecture_rule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": ".agents/skills/astryx/SKILL.md",
       "source_location": "L10",
       "weight": 1.0,
@@ -1939,8 +2575,78 @@
       "confidence_score": 1.0,
       "source": "readme_kom_ig\u00e5ng",
       "target": "readme_2_bygg_f\u00f6r_produktion"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_dashboard_performance_architecture",
+      "target": "docs_dashboard_performance_architecture_dashboard_performance_architecture_rule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "docs_dashboard_performance_architecture_dashboard_performance_architecture_rule",
+      "target": "docs_dashboard_performance_architecture_core_principle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "docs_dashboard_performance_architecture_core_principle",
+      "target": "docs_dashboard_performance_architecture_1_never_load_unnecessary_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "docs_dashboard_performance_architecture_core_principle",
+      "target": "docs_dashboard_performance_architecture_2_separate_active_data_from_historical_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "docs_dashboard_performance_architecture_core_principle",
+      "target": "docs_dashboard_performance_architecture_3_use_pagination_range_cursor_based_loading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "docs_dashboard_performance_architecture_core_principle",
+      "target": "docs_dashboard_performance_architecture_4_lazy_loaded_archive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/DASHBOARD_PERFORMANCE_ARCHITECTURE.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "docs_dashboard_performance_architecture_core_principle",
+      "target": "docs_dashboard_performance_architecture_5_universal_enforcement_across_all_sections",
+      "confidence_score": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "f96645d0e2e9b01a482987ae2af24d0d95abb039"
+  "built_at_commit": "5b6d27715fa4a884640b02d913187dd559ebe9a1"
 }
