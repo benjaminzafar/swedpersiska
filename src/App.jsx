@@ -378,7 +378,7 @@ export default function App() {
         url.searchParams.delete('tab');
         window.history.replaceState({}, '', url.toString());
       } catch {}
-    }, 280);
+    }, 150);
   };
 
   const handleCategoryChange = (catId) => {
@@ -493,28 +493,27 @@ export default function App() {
   // Featured ads subset
   const featuredAds = filteredAds.filter(a => a.is_featured);
 
+  if (adminOpen) {
+    return (
+      <div
+        className={`fixed inset-0 z-50 overflow-hidden bg-[#f4f1ea] transition-opacity duration-150 ease-out ${
+          adminClosing ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
+        <ErrorBoundary>
+          <AdminPanel
+            onClose={handleCloseAdmin}
+            onRefreshAds={() => {
+              fetchAds();
+            }}
+          />
+        </ErrorBoundary>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen flex flex-col bg-[#f8fafc] text-stone-900 overflow-x-hidden w-full max-w-full pb-16 md:pb-0 ${lang === 'fa' ? 'font-vazir' : ''}`}>
-      
-      {/* Smooth Fullscreen Admin Portal (Soft dissolve transition, zero page reload, zero jump in face) */}
-      {adminOpen && (
-        <div 
-          className={`fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            adminClosing 
-              ? 'opacity-0 scale-[0.985] pointer-events-none' 
-              : 'opacity-100 scale-100 animate-in fade-in duration-300 ease-out'
-          }`}
-        >
-          <ErrorBoundary>
-            <AdminPanel
-              onClose={handleCloseAdmin}
-              onRefreshAds={() => {
-                fetchAds();
-              }}
-            />
-          </ErrorBoundary>
-        </div>
-      )}
 
       {/* Geolocation Scandinavian Detection Pop-Up Modal */}
       <CountryBanner

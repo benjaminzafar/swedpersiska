@@ -421,47 +421,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }, 3000);
   };
 
-  // Lightweight Apple-style Synthetic Haptic & Audio Feedback
-  const playFeedback = (type = 'click') => {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      if (type === 'click' || type === 'select') {
-        osc.frequency.setValueAtTime(800, ctx.currentTime);
-        gain.gain.setValueAtTime(0.03, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.015);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.015);
-      } else if (type === 'vip') {
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.05, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.12);
-      } else if (type === 'status') {
-        osc.frequency.setValueAtTime(440, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.05);
-        gain.gain.setValueAtTime(0.04, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.08);
-      } else if (type === 'delete') {
-        osc.frequency.setValueAtTime(320, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.04, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.1);
-      }
-    } catch {}
-  };
+  // Zero-CPU feedback stub (avoids spawning unclosed WebAudio hardware threads)
+  const playFeedback = () => {};
 
   // 1. Fetch Overview & Aggregates (Parallel head: true count queries, zero row overhead)
   const fetchAdminData = async () => {
@@ -1343,24 +1304,24 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   // ========================================================
   return (
     <main 
-      className="admin-scope min-h-screen w-full bg-[#f4f1ea] text-zinc-900 font-vazir select-none flex flex-col lg:flex-row p-0 sm:p-4 gap-4" 
+      className="admin-scope h-screen w-full overflow-hidden bg-[#f4f1ea] text-zinc-900 font-vazir select-none flex flex-col lg:flex-row p-0 lg:p-4 lg:gap-4" 
       dir="rtl"
       data-testid="admin-page"
     >
       
       {/* Dynamic Island Toast */}
       {actionSuccessMsg && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full bg-zinc-950/90 text-white px-4 py-2 text-xs font-semibold shadow-2xl border border-white/15 backdrop-blur-md animate-in fade-in slide-in-from-top-3 duration-200 select-none">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full bg-zinc-950 text-white px-4 py-2 text-xs font-semibold shadow-2xl border border-white/15 animate-in fade-in slide-in-from-top-3 duration-200 select-none">
           <CheckCircle size={15} className="text-[#34c759] shrink-0" />
           <span>{actionSuccessMsg}</span>
         </div>
       )}
 
       {/* ========================================================
-          1. DESKTOP FLOATING SIDEBAR (EXPANDED TO 315px LUXURY WIDTH)
+          1. DESKTOP STATIONARY SIDEBAR (LOCKED TO VIEWPORT HEIGHT)
       ======================================================== */}
       <aside
-        className="lg:fixed lg:top-4 lg:bottom-4 lg:right-4 lg:left-auto lg:w-[315px] bg-[#11141a] text-white rounded-2xl p-4 hidden lg:flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.16)] border border-stone-800/80 select-none z-30 transition-all duration-200 ease-out"
+        className="hidden lg:flex flex-col justify-between w-[305px] shrink-0 h-full bg-[#11141a] text-white rounded-2xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.16)] border border-stone-800/80 select-none z-30"
         data-testid="admin-sidebar"
       >
         {/* Top Header / Brand */}
@@ -1583,22 +1544,22 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={onClose}
-              className="h-10 flex items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-bold text-stone-100 bg-white/10 hover:bg-white/15 hover:text-white border border-white/10 active:scale-95 transition-all text-center cursor-pointer group"
+              className="h-10 flex items-center justify-center gap-1.5 rounded-xl px-2.5 text-xs font-bold text-stone-100 bg-white/10 hover:bg-white/15 hover:text-white border border-white/10 active:scale-95 transition-colors text-center cursor-pointer group"
               title="مشاهده وب‌سایت"
             >
-              <Globe2 size={15} className="text-blue-400 group-hover:rotate-12 transition-transform duration-200 shrink-0" />
-              <span className="truncate">مشاهده سایت</span>
+              <Globe2 size={15} className="text-blue-400 shrink-0" />
+              <span className="whitespace-nowrap">وب‌سایت</span>
               <ArrowUpRight size={12} className="text-stone-400 group-hover:text-white transition-colors shrink-0" />
             </button>
 
             <button
               type="button"
               onClick={handleLogout}
-              className="h-10 flex items-center justify-center gap-1.5 rounded-xl px-3 text-xs font-bold text-rose-300 bg-rose-950/35 hover:bg-rose-950/55 border border-rose-800/40 active:scale-95 transition-all text-center cursor-pointer"
+              className="h-10 flex items-center justify-center gap-1.5 rounded-xl px-2.5 text-xs font-bold text-rose-300 bg-rose-950/35 hover:bg-rose-950/55 border border-rose-800/40 active:scale-95 transition-colors text-center cursor-pointer"
               title="خروج از حساب"
             >
               <LogOut size={15} className="shrink-0" />
-              <span className="truncate">خروج</span>
+              <span className="whitespace-nowrap">خروج</span>
             </button>
           </div>
         </div>
@@ -1608,7 +1569,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       {mobileSidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden font-vazir select-none" dir="rtl">
           <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 bg-black/60 animate-in fade-in duration-200"
             onClick={() => setMobileSidebarOpen(false)}
           />
           
@@ -1651,7 +1612,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     key={item.id}
                     type="button"
                     onClick={() => handleTabChange(item.id)}
-                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13px] transition-all duration-150 active:scale-[0.99] cursor-pointer ${
+                    className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-[13px] transition-colors cursor-pointer ${
                       isActive
                         ? 'bg-white text-slate-950 font-bold shadow-sm'
                         : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
@@ -1681,7 +1642,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-white/10 text-white text-xs font-bold active:scale-95 transition-all"
+                className="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-white/10 text-white text-xs font-bold active:scale-95 transition-colors"
               >
                 <Globe2 size={15} />
                 <span>مشاهده سایت</span>
@@ -1691,7 +1652,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-rose-500/20 text-rose-300 text-xs font-bold active:scale-95 transition-all"
+                className="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-rose-500/20 text-rose-300 text-xs font-bold active:scale-95 transition-colors"
               >
                 <LogOut size={15} />
                 <span>خروج از حساب</span>
@@ -1702,12 +1663,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          2. MAIN CONTENT AREA (PADDED RIGHT FOR DESKTOP SIDEBAR)
+          2. MAIN SCROLLABLE CONTENT AREA (INDEPENDENT FROM SIDEBAR)
       ======================================================== */}
-      <div className="flex-1 w-full flex flex-col min-w-0 transition-all duration-200 lg:pr-[331px] lg:pl-0 px-2.5 pb-8 sm:px-0 sm:pb-8">
+      <div className="flex-1 w-full h-full overflow-y-auto overflow-x-hidden flex flex-col min-w-0 px-2.5 pb-8 sm:px-4 lg:px-0 lg:pb-8">
         
         {/* Top Desktop Nav Bar */}
-        <header className="hidden lg:flex items-center justify-between h-[68px] px-5 bg-white/95 backdrop-blur-md rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] mb-5 sticky top-4 shrink-0 z-20 select-none gap-4">
+        <header className="hidden lg:flex items-center justify-between h-[68px] px-5 bg-white rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.03)] mb-5 sticky top-0 shrink-0 z-20 select-none gap-4">
           {/* Right: Active Section Title + Quick Navigation Pills */}
           <div className="flex items-center gap-3.5 shrink-0">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-stone-100 text-stone-800 border border-stone-200/90 shadow-sm shrink-0">
@@ -1732,11 +1693,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <span className="text-[11px] text-stone-500 font-medium mt-0.5">سوئد پرشیا • سامانه نیازمندی‌ها</span>
             </div>
 
-            {/* Quick Navigation Pills inside Top Navbar to fill empty center space */}
-            <div className="hidden 2xl:flex items-center gap-1 bg-stone-100/90 p-1 rounded-xl border border-stone-200/80 ms-3">
+            {/* Quick Navigation Pills inside Top Navbar */}
+            <div className="hidden xl:flex items-center gap-1 bg-stone-100/90 p-1 rounded-xl border border-stone-200/80 ms-3">
               {[
                 { id: 'overview', label: 'نمای کلی', icon: LayoutGrid },
-                { id: 'ads', label: 'آگهی‌ها', icon: Layers3, count: counts.active },
+                { id: 'ads', label: 'آگهی‌ها', icon: Layers3 },
                 { id: 'archive', label: 'بایگانی', icon: Archive },
                 { id: 'categories', label: 'دسته‌ها', icon: Shapes },
                 { id: 'monetization', label: 'پرداخت', icon: WalletCards },
@@ -1749,7 +1710,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     key={tab.id}
                     type="button"
                     onClick={() => handleTabChange(tab.id)}
-                    className={`h-8 px-2.5 rounded-lg text-[11.5px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    className={`h-8 px-2.5 rounded-lg text-[11.5px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                       isCurr
                         ? 'bg-white text-stone-950 shadow-sm border border-stone-200/80'
                         : 'text-stone-600 hover:text-stone-900 hover:bg-white/60'
@@ -1763,9 +1724,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             </div>
           </div>
 
-          {/* Center-Left: Expanded Search Bar + Status & Action Buttons */}
+          {/* Left: Search Bar + Notification Bell + Live Site Button */}
           <div className="flex items-center justify-end gap-2.5 flex-1 min-w-0">
-            {/* Search Bar (Expands smoothly to fill available navbar space) */}
+            {/* Search Bar */}
             <div className="relative flex-1 max-w-md min-w-[180px]">
               <Search size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
@@ -1779,7 +1740,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   fetchActiveAds(1, val, countryFilter, categoryFilter);
                 }}
                 placeholder="جستجو در عنوان، کد رهگیری یا شهر آگهی..."
-                className="w-full h-10 pr-10 pl-9 bg-stone-50 hover:bg-stone-100/80 focus:bg-white text-xs text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/90 focus:border-blue-500 outline-none transition-all shadow-sm"
+                className="w-full h-10 pr-10 pl-9 bg-stone-50 hover:bg-stone-100/80 focus:bg-white text-xs text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/90 focus:border-blue-500 outline-none transition-colors shadow-sm"
               />
               {searchQuery && (
                 <button
@@ -1795,26 +1756,6 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               )}
             </div>
 
-            {/* Live Online Badge */}
-            <span className="h-10 px-3.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-xs font-bold flex items-center gap-2 shadow-sm select-none shrink-0">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </span>
-              <span className="text-[11.5px]">سیستم ۱۰۰٪ آنلاین</span>
-            </span>
-
-            {/* Refresh Button */}
-            <button
-              type="button"
-              onClick={fetchAdminData}
-              className="h-10 px-3.5 rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-all shadow-sm active:scale-95 flex items-center gap-2 text-xs font-bold cursor-pointer shrink-0"
-              title="بروزرسانی داده‌ها"
-            >
-              <RotateCcw size={15} className={loading ? 'animate-spin text-blue-600' : 'text-stone-500'} />
-              <span className="hidden xl:inline">بروزرسانی</span>
-            </button>
-
             {/* Notification Bell (Full 40x40px button with non-overlapping badge) */}
             <button
               type="button"
@@ -1822,7 +1763,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 setStatusFilter('all');
                 handleTabChange('ads');
               }}
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-colors shadow-sm active:scale-95 cursor-pointer shrink-0"
               title={`${counts.active} آگهی فعال در سیستم`}
             >
               <Bell size={17} className="text-stone-700" />
@@ -1837,9 +1778,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <button
               type="button"
               onClick={onClose}
-              className="h-10 px-4 rounded-xl bg-stone-900 hover:bg-black text-white text-xs font-bold flex items-center gap-2 shadow-sm cursor-pointer active:scale-95 transition-all group shrink-0"
+              className="h-10 px-4 rounded-xl bg-stone-900 hover:bg-black text-white text-xs font-bold flex items-center gap-2 shadow-sm cursor-pointer active:scale-95 transition-colors group shrink-0"
             >
-              <Globe2 size={15} className="text-blue-400 group-hover:rotate-12 transition-transform duration-200" />
+              <Globe2 size={15} className="text-blue-400" />
               <span>مشاهده سایت</span>
               <ArrowUpRight size={13} className="text-stone-400 group-hover:text-white transition-colors" />
             </button>
@@ -1948,7 +1889,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         آگهی‌های ویژه
                       </span>
                     </div>
-                    <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/70 animate-pulse">
+                    <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/70">
                       جایگاه بالا
                     </span>
                   </div>
@@ -3695,12 +3636,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       ======================================================== */}
       {selectedAdForModal && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 select-none"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/65 animate-in fade-in duration-150 select-none"
           dir="rtl"
           onClick={() => setSelectedAdForModal(null)}
         >
           <div 
-            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 select-text"
+            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150 select-text"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -3709,8 +3650,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <span className="font-extrabold text-[15px] text-stone-900">
                   جزئیات کامل آگهی
                 </span>
-                <span className="font-mono text-xs font-bold text-stone-700 bg-stone-200/80 px-2 py-0.5 rounded">
-                  #{selectedAdForModal.reference_number || selectedAdForModal.id.slice(0, 8)}
+                <span dir="ltr" className="inline-flex items-center font-mono text-xs font-bold text-stone-700 bg-stone-200/80 px-2 py-0.5 rounded">
+                  <span>#</span>
+                  <span>{selectedAdForModal.reference_number || selectedAdForModal.id.slice(0, 8)}</span>
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-200">
                   {COUNTRIES.find(c => c.id === (selectedAdForModal.country || 'se'))?.nameFa}
@@ -3780,28 +3722,32 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <button
                     type="button"
                     onClick={() => copyText(selectedAdForModal.reference_number, `modal-ref`, 'کد پیگیری')}
-                    className="font-mono text-xs font-bold text-stone-800 bg-stone-100 hover:bg-stone-200 px-2.5 py-1 rounded-lg border border-stone-200 flex items-center gap-1.5 cursor-pointer"
+                    className="text-xs font-bold text-stone-800 bg-stone-100 hover:bg-stone-200 px-2.5 py-1 rounded-lg border border-stone-200 flex items-center gap-1.5 cursor-pointer"
                   >
-                    <span>کد رهگیری: #{selectedAdForModal.reference_number || selectedAdForModal.id.slice(0, 8)}</span>
+                    <span>کد رهگیری:</span>
+                    <span dir="ltr" className="inline-flex items-center font-mono">
+                      <span>#</span>
+                      <span>{selectedAdForModal.reference_number || selectedAdForModal.id.slice(0, 8)}</span>
+                    </span>
                     <Copy size={12} className="text-stone-400" />
                   </button>
 
                   <button
                     type="button"
                     onClick={() => copyText(selectedAdForModal.pin_code || '1234', `modal-pin`, 'رمز ویرایش')}
-                    className="font-mono text-xs font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1.5 cursor-pointer"
+                    className="text-xs font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1.5 cursor-pointer"
                   >
-                    <span>رمز ویرایش: {selectedAdForModal.pin_code || '1234'}</span>
+                    <span>رمز ویرایش: <span className="font-mono">{selectedAdForModal.pin_code || '1234'}</span></span>
                     <Copy size={12} className="text-amber-600" />
                   </button>
 
-                  <span className="flex items-center gap-1 font-mono text-stone-600">
+                  <span className="flex items-center gap-1 tabular-nums text-stone-600 font-semibold">
                     <Eye size={13} className="text-stone-400" />
                     <span>{selectedAdForModal.views_count || 1} بازدید</span>
                   </span>
 
-                  <span className="text-stone-400 font-mono text-xs">
-                    تاریخ ثبت: {new Date(selectedAdForModal.created_at || '2026-01-01').toLocaleDateString('sv-SE')}
+                  <span className="text-stone-500 tabular-nums text-xs">
+                    تاریخ ثبت: <span dir="ltr" className="inline-block font-mono">{new Date(selectedAdForModal.created_at || '2026-01-01').toLocaleDateString('sv-SE')}</span>
                   </span>
                 </div>
               </div>
@@ -3818,8 +3764,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
                 <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
                   <span className="text-[11px] font-bold text-stone-400 uppercase">قیمت / مبلغ</span>
-                  <div className="text-sm font-extrabold text-stone-900 font-mono">
-                    {selectedAdForModal.price ? `${Number(selectedAdForModal.price).toLocaleString()} کرون` : 'توافقی'}
+                  <div className="text-sm font-extrabold text-stone-900 tabular-nums">
+                    {selectedAdForModal.price ? `${Number(selectedAdForModal.price).toLocaleString('sv-SE')} کرون` : 'توافقی'}
                   </div>
                 </div>
               </div>
@@ -3839,7 +3785,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                   {selectedAdForModal.contact_name && (
                     <div className="flex items-center gap-2 text-stone-800">
-                      <User size={14} className="text-stone-400" />
+                      <User size={14} className="text-stone-400 shrink-0" />
                       <span className="text-stone-500">نام:</span>
                       <span className="font-bold">{selectedAdForModal.contact_name}</span>
                     </div>
@@ -3848,10 +3794,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   {selectedAdForModal.contact_phone && (
                     <a
                       href={`tel:${selectedAdForModal.contact_phone}`}
-                      className="flex items-center gap-2 font-mono text-blue-700 font-bold hover:underline"
+                      className="flex items-center gap-2 text-blue-700 font-bold hover:underline"
                     >
-                      <Phone size={14} className="text-blue-500" />
-                      <span>{selectedAdForModal.contact_phone}</span>
+                      <Phone size={14} className="text-blue-500 shrink-0" />
+                      <span dir="ltr" className="font-mono">{selectedAdForModal.contact_phone}</span>
                     </a>
                   )}
 
@@ -3860,9 +3806,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       href={`https://wa.me/${selectedAdForModal.contact_whatsapp.replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-2 font-mono text-emerald-700 font-bold hover:underline"
+                      className="flex items-center gap-2 text-emerald-700 font-bold hover:underline"
                     >
-                      <span>واتساپ: {selectedAdForModal.contact_whatsapp}</span>
+                      <span>واتساپ:</span>
+                      <span dir="ltr" className="font-mono">{selectedAdForModal.contact_whatsapp}</span>
                     </a>
                   )}
 
@@ -3871,20 +3818,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       href={`https://t.me/${selectedAdForModal.contact_telegram.replace('@', '')}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-2 font-mono text-sky-700 font-bold hover:underline"
+                      className="flex items-center gap-2 text-sky-700 font-bold hover:underline"
                     >
-                      <Send size={13} />
-                      <span>{selectedAdForModal.contact_telegram}</span>
+                      <Send size={13} className="shrink-0" />
+                      <span dir="ltr" className="font-mono">{selectedAdForModal.contact_telegram}</span>
                     </a>
                   )}
 
                   {selectedAdForModal.contact_email && (
                     <a
                       href={`mailto:${selectedAdForModal.contact_email}`}
-                      className="flex items-center gap-2 font-mono text-stone-600 hover:text-stone-900 hover:underline sm:col-span-2"
+                      className="flex items-center gap-2 text-stone-600 hover:text-stone-900 hover:underline sm:col-span-2"
                     >
-                      <Mail size={14} className="text-stone-400" />
-                      <span>{selectedAdForModal.contact_email}</span>
+                      <Mail size={14} className="text-stone-400 shrink-0" />
+                      <span dir="ltr" className="font-mono">{selectedAdForModal.contact_email}</span>
                     </a>
                   )}
                 </div>
