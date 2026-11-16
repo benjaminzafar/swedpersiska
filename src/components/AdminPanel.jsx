@@ -1039,7 +1039,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-200 lg:pr-[264px] lg:pl-0 px-2.5 pb-8 sm:px-0 sm:pb-8">
         
         {/* Top Desktop Nav Bar */}
-        <header className="hidden lg:flex items-center justify-between h-14 px-5 bg-white rounded-2xl border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4 sticky top-0 shrink-0 z-20 select-none">
+        <header className="hidden lg:flex items-center justify-between h-14 px-5 bg-white rounded-2xl border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4 sticky top-4 shrink-0 z-20 select-none">
           {/* Right: Active Section Title */}
           <div className="flex items-center min-w-[150px] shrink-0">
             <span className="font-extrabold text-stone-900 tracking-tight text-[16px]">
@@ -1962,7 +1962,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           {activeTab === 'monetization' && (
             <div className="space-y-6 max-w-4xl mx-auto w-full py-2 animate-in fade-in duration-150 ease-out">
               
-              <div className="border-b border-[#e5ebf4] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="border-b border-stone-200/80 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-base font-black text-zinc-900">درگاه Stripe و VIP</h2>
                   <p className="text-xs text-stone-500 mt-0.5">تنظیمات پرداخت و ارتقای آگهی</p>
@@ -1971,8 +1971,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <div className="flex items-center gap-2">
                   <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
                     stripeSettings.mode === 'live' 
-                      ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]' 
-                      : 'bg-[#fef6e7] text-[#9a6200] border-[#fbdca7]'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80' 
+                      : 'bg-amber-50 text-amber-800 border-amber-200/80'
                   }`}>
                     {stripeSettings.mode === 'live' ? 'زنده (Live)' : 'تستی (Test)'}
                   </span>
@@ -1980,8 +1980,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </div>
 
               {saveSuccessMsg && (
-                <div className="p-3.5 rounded-2xl bg-[#eaf7ee] border border-[#c4e9cb] text-[#1b7a37] text-xs font-bold flex items-center gap-2">
-                  <CheckCircle size={16} className="text-[#1b7a37]" />
+                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-bold flex items-center gap-2">
+                  <CheckCircle size={16} className="text-emerald-600" />
                   <span>{saveSuccessMsg}</span>
                 </div>
               )}
@@ -1989,7 +1989,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <form onSubmit={saveStripeSettings} className="space-y-6">
                 
                 {/* Stripe Credentials Card */}
-                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
+                <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
                   <h3 className="text-xs font-extrabold text-zinc-900">اطلاعات اتصال Stripe</h3>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1998,7 +1998,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <select
                         value={stripeSettings.mode}
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, mode: e.target.value }))}
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-medium focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-medium focus:border-stone-400 focus:outline-none transition-all cursor-pointer shadow-2xs"
                       >
                         <option value="test">آزمایشی (Test)</option>
                         <option value="live">واقعی (Live)</option>
@@ -2010,7 +2010,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <select
                         value={stripeSettings.enabled ? 'true' : 'false'}
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, enabled: e.target.value === 'true' }))}
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-medium focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-medium focus:border-stone-400 focus:outline-none transition-all cursor-pointer shadow-2xs"
                       >
                         <option value="true">فعال</option>
                         <option value="false">غیرفعال</option>
@@ -2026,7 +2026,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         value={stripeSettings.publishableKey}
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, publishableKey: e.target.value }))}
                         placeholder="pk_test_... یا pk_live_..."
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3.5 text-xs text-zinc-900 font-mono focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                         dir="ltr"
                       />
                     </div>
@@ -2038,7 +2038,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         value={stripeSettings.secretKey}
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, secretKey: e.target.value }))}
                         placeholder="sk_test_... یا sk_live_..."
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3.5 text-xs text-zinc-900 font-mono focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                         dir="ltr"
                       />
                     </div>
@@ -2046,7 +2046,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Pricing & VIP Configuration */}
-                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
+                <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
                   <h3 className="text-xs font-extrabold text-zinc-900">تعرفه آگهی VIP</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -2057,7 +2057,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         min="1"
                         value={stripeSettings.vipPrice}
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, vipPrice: Number(e.target.value) }))}
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3.5 text-xs text-zinc-900 font-mono focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                       />
                     </div>
 
@@ -2066,7 +2066,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <select
                         value={stripeSettings.currency}
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, currency: e.target.value }))}
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-medium focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-medium focus:border-stone-400 focus:outline-none transition-all cursor-pointer shadow-2xs"
                       >
                         <option value="SEK">SEK (سوئد)</option>
                         <option value="NOK">NOK (نروژ)</option>
@@ -2080,7 +2080,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <select
                         value={stripeSettings.vipDurationDays}
                         onChange={(e) => setStripeSettings(prev => ({ ...prev, vipDurationDays: Number(e.target.value) }))}
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-medium focus:bg-white focus:border-zinc-900 focus:outline-none cursor-pointer"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-medium focus:border-stone-400 focus:outline-none transition-all cursor-pointer shadow-2xs"
                       >
                         <option value={7}>۷ روز</option>
                         <option value={14}>۱۴ روز</option>
@@ -2094,7 +2094,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <button
                   type="submit"
                   disabled={savingSettings}
-                  className="h-10 px-6 rounded-full bg-[#007aff] hover:bg-[#0071eb] disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-[0_2px_10px_rgba(0,122,255,0.30)] active:scale-[0.98] transition-all cursor-pointer"
+                  className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-2xs active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Save size={15} />
                   <span>{savingSettings ? 'در حال ذخیره‌سازی...' : 'ذخیره تنظیمات'}</span>
@@ -2110,7 +2110,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           {activeTab === 'security' && (
             <div className="space-y-6 max-w-4xl mx-auto w-full py-2 animate-in fade-in duration-150 ease-out">
               
-              <div className="border-b border-[#e5ebf4] pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="border-b border-stone-200/80 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-base font-black text-zinc-900">امنیت و آنتی‌بات</h2>
                   <p className="text-xs text-stone-500 mt-0.5">تنظیمات محافظت کلودفلر Turnstile</p>
@@ -2119,8 +2119,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <div className="flex items-center gap-2">
                   <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
                     turnstileSettings.enabled 
-                      ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]' 
-                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80' 
+                      : 'bg-rose-50 text-rose-700 border-rose-200/80'
                   }`}>
                     {turnstileSettings.enabled ? 'فعال' : 'خاموش'}
                   </span>
@@ -2128,8 +2128,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </div>
 
               {saveSuccessMsg && (
-                <div className="p-3.5 rounded-2xl bg-[#eaf7ee] border border-[#c4e9cb] text-[#1b7a37] text-xs font-bold flex items-center gap-2">
-                  <CheckCircle size={16} className="text-[#1b7a37]" />
+                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-bold flex items-center gap-2">
+                  <CheckCircle size={16} className="text-emerald-600" />
                   <span>{saveSuccessMsg}</span>
                 </div>
               )}
@@ -2137,11 +2137,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <form onSubmit={saveTurnstileSettings} className="space-y-6">
                 
                 {/* Toggles & Modes Card */}
-                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
+                <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
                   <h3 className="text-xs font-extrabold text-zinc-900">محدوده فعال‌سازی</h3>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <label className="flex items-center justify-between p-4 rounded-2xl bg-stone-50 border border-stone-200 cursor-pointer">
+                    <label className="flex items-center justify-between p-4 rounded-xl bg-stone-50 hover:bg-stone-100/70 border border-stone-200/80 cursor-pointer transition-all shadow-2xs">
                       <div>
                         <span className="text-xs font-bold text-zinc-900 block">فعال بودن Turnstile</span>
                         <span className="text-[11px] text-stone-500">بررسی امنیتی فرم‌ها</span>
@@ -2154,12 +2154,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       />
                     </label>
 
-                    <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-1">
+                    <div className="p-4 rounded-xl bg-stone-50 border border-stone-200/80 space-y-1 shadow-2xs">
                       <label className="block text-xs font-bold text-stone-700">حالت اجرا</label>
                       <select
                         value={turnstileSettings.mode}
                         onChange={(e) => setTurnstileSettings(prev => ({ ...prev, mode: e.target.value }))}
-                        className="w-full h-8 rounded-lg bg-white border border-stone-300 px-2.5 text-xs text-zinc-900 font-medium focus:border-zinc-900 focus:outline-none cursor-pointer"
+                        className="w-full h-8 rounded-lg bg-white border border-stone-200/80 px-2.5 text-xs text-zinc-900 font-medium focus:border-stone-400 focus:outline-none transition-all cursor-pointer"
                       >
                         <option value="test">آزمایشی (Test)</option>
                         <option value="live">واقعی (Live)</option>
@@ -2168,7 +2168,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                    <label className="flex items-center justify-between p-4 rounded-2xl bg-stone-50 border border-stone-200 cursor-pointer">
+                    <label className="flex items-center justify-between p-4 rounded-xl bg-stone-50 hover:bg-stone-100/70 border border-stone-200/80 cursor-pointer transition-all shadow-2xs">
                       <div className="flex items-center gap-2.5">
                         <Lock size={15} className="text-amber-600" />
                         <div>
@@ -2184,7 +2184,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       />
                     </label>
 
-                    <label className="flex items-center justify-between p-4 rounded-2xl bg-stone-50 border border-stone-200 cursor-pointer">
+                    <label className="flex items-center justify-between p-4 rounded-xl bg-stone-50 hover:bg-stone-100/70 border border-stone-200/80 cursor-pointer transition-all shadow-2xs">
                       <div className="flex items-center gap-2.5">
                         <Bot size={15} className="text-zinc-700" />
                         <div>
@@ -2203,7 +2203,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Cloudflare Keys Card */}
-                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
+                <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xs font-extrabold text-zinc-900">کلیدهای Turnstile</h3>
                     <a
@@ -2224,7 +2224,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         value={turnstileSettings.siteKey}
                         onChange={(e) => setTurnstileSettings(prev => ({ ...prev, siteKey: e.target.value }))}
                         placeholder={turnstileSettings.mode === 'test' ? 'حالت تستی نیازی به کلید ندارد' : '0x4AAAAAA...'}
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3.5 text-xs text-zinc-900 font-mono focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                         dir="ltr"
                       />
                     </div>
@@ -2236,7 +2236,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         value={turnstileSettings.secretKey}
                         onChange={(e) => setTurnstileSettings(prev => ({ ...prev, secretKey: e.target.value }))}
                         placeholder={turnstileSettings.mode === 'test' ? 'حالت تستی نیازی به کلید ندارد' : '0x4AAAAAA...'}
-                        className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3.5 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none"
+                        className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3.5 text-xs text-zinc-900 font-mono focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                         dir="ltr"
                       />
                     </div>
@@ -2244,9 +2244,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 </div>
 
                 {/* Live Preview Widget */}
-                <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-3">
+                <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
                   <h3 className="text-xs font-extrabold text-zinc-900">تست ویجت</h3>
-                  <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col items-center justify-center space-y-2">
+                  <div className="p-4 rounded-xl bg-stone-50 border border-stone-200/80 flex flex-col items-center justify-center space-y-2 shadow-2xs">
                     <CloudflareTurnstile
                       theme="light"
                       siteKey={turnstileSettings.mode === 'live' ? turnstileSettings.siteKey : undefined}
@@ -2260,7 +2260,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <button
                   type="submit"
                   disabled={savingSettings}
-                  className="h-10 px-6 rounded-full bg-[#007aff] hover:bg-[#0071eb] disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-[0_2px_10px_rgba(0,122,255,0.30)] active:scale-[0.98] transition-all cursor-pointer"
+                  className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black disabled:opacity-50 text-white font-bold text-xs flex items-center gap-2 shadow-2xs active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Save size={15} />
                   <span>{savingSettings ? 'در حال ذخیره‌سازی...' : 'ذخیره تنظیمات'}</span>
@@ -2276,20 +2276,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           {activeTab === 'settings' && (
             <div className="space-y-6 max-w-4xl mx-auto w-full py-2 animate-in fade-in duration-150 ease-out">
               
-              <div className="border-b border-[#e5ebf4] pb-5">
+              <div className="border-b border-stone-200/80 pb-5">
                 <h2 className="text-base font-black text-zinc-900">تنظیمات سایت و سئو</h2>
                 <p className="text-xs text-stone-500 mt-0.5">مشخصات برند و اطلاعات گوگل برای ۴ کشور</p>
               </div>
 
               {saveSuccessMsg && (
-                <div className="p-3.5 rounded-2xl bg-[#eaf7ee] border border-[#c4e9cb] text-[#1b7a37] text-xs font-bold flex items-center gap-2">
-                  <CheckCircle size={16} className="text-[#1b7a37]" />
+                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-bold flex items-center gap-2">
+                  <CheckCircle size={16} className="text-emerald-600" />
                   <span>{saveSuccessMsg}</span>
                 </div>
               )}
 
               {/* Site Branding Form */}
-              <form onSubmit={saveBrandingSettings} className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-4">
+              <form onSubmit={saveBrandingSettings} className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
                 <h3 className="text-xs font-extrabold text-zinc-900">مشخصات سایت</h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2299,7 +2299,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       type="text"
                       value={siteName}
                       onChange={(e) => setSiteName(e.target.value)}
-                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                     />
                   </div>
 
@@ -2309,7 +2309,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       type="text"
                       value={siteSlogan}
                       onChange={(e) => setSiteSlogan(e.target.value)}
-                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                     />
                   </div>
                 </div>
@@ -2321,7 +2321,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       type="email"
                       value={supportEmail}
                       onChange={(e) => setSupportEmail(e.target.value)}
-                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none text-left"
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-mono focus:border-stone-400 focus:outline-none transition-all shadow-2xs text-left"
                       dir="ltr"
                     />
                   </div>
@@ -2332,7 +2332,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       type="text"
                       value={supportTelegram}
                       onChange={(e) => setSupportTelegram(e.target.value)}
-                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none text-left"
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-mono focus:border-stone-400 focus:outline-none transition-all shadow-2xs text-left"
                       dir="ltr"
                     />
                   </div>
@@ -2344,7 +2344,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       value={supportPhone}
                       onChange={(e) => setSupportPhone(e.target.value)}
                       placeholder="+46..."
-                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 font-mono focus:bg-white focus:border-zinc-900 focus:outline-none text-left"
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 font-mono focus:border-stone-400 focus:outline-none transition-all shadow-2xs text-left"
                       dir="ltr"
                     />
                   </div>
@@ -2354,7 +2354,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <button
                     type="submit"
                     disabled={savingSettings}
-                    className="h-10 px-5 rounded-full bg-[#007aff] hover:bg-[#0071eb] text-white font-bold text-xs flex items-center gap-2 shadow-[0_2px_10px_rgba(0,122,255,0.30)] active:scale-[0.98] transition-all cursor-pointer"
+                    className="h-10 px-5 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center gap-2 shadow-2xs active:scale-[0.98] transition-all cursor-pointer"
                   >
                     <Save size={15} />
                     <span>ذخیره مشخصات</span>
@@ -2363,12 +2363,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </form>
 
               {/* Country-Specific SEO Settings */}
-              <div className="rounded-3xl bg-white border border-[#e5ebf4] p-6 shadow-xs space-y-5">
-                <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+              <div className="rounded-2xl bg-white border border-stone-200/80 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-5">
+                <div className="flex items-center justify-between pb-3 border-b border-stone-200/80">
                   <h3 className="text-xs font-extrabold text-zinc-900">سئوی گوگل</h3>
                   
                   {/* Country Switcher Tabs */}
-                  <div className="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
+                  <div className="flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200/80">
                     {COUNTRIES.map(c => (
                       <button
                         key={c.id}
@@ -2376,7 +2376,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                         onClick={() => setSeoActiveCountry(c.id)}
                         className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           seoActiveCountry === c.id
-                            ? 'bg-zinc-900 text-white shadow-xs'
+                            ? 'bg-slate-900 text-white shadow-2xs'
                             : 'text-stone-600 hover:text-zinc-900'
                         }`}
                       >
@@ -2401,7 +2401,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           title: e.target.value
                         }
                       }))}
-                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                     />
                   </div>
 
@@ -2419,7 +2419,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           description: e.target.value
                         }
                       }))}
-                      className="w-full rounded-xl bg-stone-50 border border-stone-300 p-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                      className="w-full rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 p-3 text-xs text-zinc-900 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                     />
                   </div>
 
@@ -2437,7 +2437,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                           keywords: e.target.value
                         }
                       }))}
-                      className="w-full h-10 rounded-xl bg-stone-50 border border-stone-300 px-3 text-xs text-zinc-900 focus:bg-white focus:border-zinc-900 focus:outline-none"
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 px-3 text-xs text-zinc-900 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
                     />
                   </div>
 
@@ -2445,7 +2445,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                     <button
                       type="submit"
                       disabled={savingSettings}
-                      className="h-10 px-5 rounded-full bg-[#007aff] hover:bg-[#0071eb] text-white font-bold text-xs flex items-center gap-2 shadow-[0_2px_10px_rgba(0,122,255,0.30)] active:scale-[0.98] transition-all cursor-pointer"
+                      className="h-10 px-5 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center gap-2 shadow-2xs active:scale-[0.98] transition-all cursor-pointer"
                     >
                       <Save size={15} />
                       <span>ذخیره سئو</span>
