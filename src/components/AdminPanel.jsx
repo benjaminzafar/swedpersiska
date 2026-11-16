@@ -27,11 +27,80 @@ import {
   Bell,
   MapPin,
   User,
-  Image as ImageIcon
+  Image as ImageIcon,
+  FolderTree,
+  Plus,
+  Edit3,
+  AlertCircle,
+  Home,
+  Utensils,
+  Briefcase,
+  GraduationCap,
+  ShoppingBag,
+  Car,
+  Calendar,
+  Tag,
+  Laptop,
+  Heart,
+  BookOpen,
+  Stethoscope,
+  Music,
+  Hammer,
+  Dumbbell
 } from 'lucide-react';
 import CloudflareTurnstile from './CloudflareTurnstile';
 import { supabase } from '../lib/supabase';
 import { CATEGORIES, COUNTRIES } from '../lib/translations';
+
+// Category Icon Mapping
+const CATEGORY_ICON_MAP = {
+  Home,
+  Utensils,
+  Briefcase,
+  GraduationCap,
+  ShoppingBag,
+  Car,
+  Calendar,
+  Tag,
+  Laptop,
+  Heart,
+  BookOpen,
+  Stethoscope,
+  Music,
+  Hammer,
+  Dumbbell,
+  FolderTree,
+  Layers
+};
+
+const AVAILABLE_CATEGORY_ICONS = [
+  { name: 'Home', label: 'مسکن و خانه' },
+  { name: 'Utensils', label: 'رستوران و خوراک' },
+  { name: 'Briefcase', label: 'خدمات و کار' },
+  { name: 'GraduationCap', label: 'آموزش و تحصیل' },
+  { name: 'ShoppingBag', label: 'خرید و فروش' },
+  { name: 'Car', label: 'خودرو و نقلیه' },
+  { name: 'Calendar', label: 'رویداد و مراسم' },
+  { name: 'Laptop', label: 'دیجیتال و فناوری' },
+  { name: 'Heart', label: 'سلامت و زیبایی' },
+  { name: 'BookOpen', label: 'فرهنگ و کتاب' },
+  { name: 'Stethoscope', label: 'پزشکی و بهداشت' },
+  { name: 'Music', label: 'موسیقی و هنر' },
+  { name: 'Hammer', label: 'فنی و ساختمانی' },
+  { name: 'Dumbbell', label: 'ورزش و سرگرمی' },
+  { name: 'Tag', label: 'عمومی و سایر' },
+];
+
+const DEFAULT_CATEGORIES = [
+  { id: 'bostad', fa: 'مسکن و خانه', icon: 'Home', enabled: true, isSystem: true, order: 1 },
+  { id: 'restaurang', fa: 'رستوران و خوراک', icon: 'Utensils', enabled: true, isSystem: true, order: 2 },
+  { id: 'tjanster', fa: 'خدمات و دارالترجمه', icon: 'Briefcase', enabled: true, isSystem: true, order: 3 },
+  { id: 'jobb', fa: 'کار و استخدام', icon: 'GraduationCap', enabled: true, isSystem: true, order: 4 },
+  { id: 'kop-salj', fa: 'خرید و فروش', icon: 'ShoppingBag', enabled: true, isSystem: true, order: 5 },
+  { id: 'fordon', fa: 'خودرو و وسایل نقلیه', icon: 'Car', enabled: true, isSystem: true, order: 6 },
+  { id: 'evenemang', fa: 'رویدادها و مراسم', icon: 'Calendar', enabled: true, isSystem: true, order: 7 },
+  { id: 'ovrigt', fa: 'سایر نیازمندی‌ها', icon: 'Tag', enabled: true, isSystem: true, order: 8 },
+];
 
 export default function AdminPanel({ onClose, onRefreshAds }) {
   // Authentication with localStorage session persistence so refresh does NOT kick admin out
@@ -47,16 +116,16 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Active view: 'overview' | 'ads' | 'monetization' | 'security' | 'settings' with URL & localStorage persistence
+  // Active view: 'overview' | 'ads' | 'categories' | 'monetization' | 'security' | 'settings' with URL & localStorage persistence
   const [activeTab, setActiveTab] = useState(() => {
     try {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
-      if (tabParam && ['overview', 'ads', 'monetization', 'security', 'settings'].includes(tabParam)) {
+      if (tabParam && ['overview', 'ads', 'categories', 'monetization', 'security', 'settings'].includes(tabParam)) {
         return tabParam;
       }
       const saved = localStorage.getItem('swedpersiska_admin_tab');
-      if (saved && ['overview', 'ads', 'monetization', 'security', 'settings'].includes(saved)) {
+      if (saved && ['overview', 'ads', 'categories', 'monetization', 'security', 'settings'].includes(saved)) {
         return saved;
       }
     } catch {}
@@ -75,6 +144,31 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       window.history.replaceState({ modal: 'admin', tab }, '', url.toString());
     } catch {}
   };
+
+  // Categories Management State
+  const [categoriesList, setCategoriesList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('swedpersiska_portal_categories');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return DEFAULT_CATEGORIES;
+  });
+  const [categorySearchQuery, setCategorySearchQuery] = useState('');
+  const [categoryStatusFilter, setCategoryStatusFilter] = useState('all'); // 'all' | 'active' | 'disabled' | 'has_ads'
+  const [categoryModal, setCategoryModal] = useState({
+    isOpen: false,
+    mode: 'add', // 'add' | 'edit'
+    id: '',
+    fa: '',
+    icon: 'Home',
+    enabled: true,
+    isSystem: false,
+    errorMsg: ''
+  });
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
   // Ads state
   const [ads, setAds] = useState([]);
@@ -261,6 +355,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               ...item.value
             }));
           }
+          if (item.key === 'portal_categories' && item.value && Array.isArray(item.value) && item.value.length > 0) {
+            setCategoriesList(item.value);
+            try {
+              localStorage.setItem('swedpersiska_portal_categories', JSON.stringify(item.value));
+            } catch {}
+          }
         });
       }
     } catch (err) {
@@ -268,6 +368,140 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Persist Categories to Supabase & localStorage
+  const persistCategories = async (updated) => {
+    setCategoriesList(updated);
+    try {
+      localStorage.setItem('swedpersiska_portal_categories', JSON.stringify(updated));
+    } catch {}
+    try {
+      await supabase
+        .from('swedpersiska_settings')
+        .upsert({
+          key: 'portal_categories',
+          value: updated,
+          updated_at: new Date().toISOString()
+        });
+    } catch (err) {
+      console.error('Error saving categories to Supabase:', err);
+    }
+  };
+
+  // Categories Action Handlers
+  const handleOpenAddCategory = () => {
+    playFeedback('click');
+    setCategoryModal({
+      isOpen: true,
+      mode: 'add',
+      id: '',
+      fa: '',
+      icon: 'Tag',
+      enabled: true,
+      isSystem: false,
+      errorMsg: ''
+    });
+  };
+
+  const handleOpenEditCategory = (cat) => {
+    playFeedback('click');
+    setCategoryModal({
+      isOpen: true,
+      mode: 'edit',
+      id: cat.id,
+      fa: cat.fa,
+      icon: cat.icon || 'Tag',
+      enabled: cat.enabled !== false,
+      isSystem: !!cat.isSystem,
+      errorMsg: ''
+    });
+  };
+
+  const handleSaveCategoryModal = async (e) => {
+    if (e) e.preventDefault();
+    const trimmedFa = categoryModal.fa.trim();
+    const rawId = categoryModal.id.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+
+    if (!trimmedFa) {
+      setCategoryModal(prev => ({ ...prev, errorMsg: 'لطفاً عنوان دسته‌بندی را وارد نمایید.' }));
+      return;
+    }
+    if (!rawId) {
+      setCategoryModal(prev => ({ ...prev, errorMsg: 'لطفاً شناسه انگلیسی (Slug) را وارد نمایید.' }));
+      return;
+    }
+
+    if (categoryModal.mode === 'add') {
+      const exists = categoriesList.some(c => c.id.toLowerCase() === rawId);
+      if (exists) {
+        setCategoryModal(prev => ({ ...prev, errorMsg: 'این شناسه قبلاً برای دسته‌بندی دیگری استفاده شده است.' }));
+        return;
+      }
+
+      const newCategory = {
+        id: rawId,
+        fa: trimmedFa,
+        icon: categoryModal.icon || 'Tag',
+        enabled: categoryModal.enabled,
+        isSystem: false,
+        order: categoriesList.length + 1
+      };
+
+      const updated = [...categoriesList, newCategory];
+      await persistCategories(updated);
+      playFeedback('status');
+      triggerToast(`دسته‌بندی «${trimmedFa}» اضافه شد.`);
+      setCategoryModal({ isOpen: false, mode: 'add', id: '', fa: '', icon: 'Tag', enabled: true, isSystem: false, errorMsg: '' });
+    } else {
+      // Edit mode
+      const updated = categoriesList.map(c => {
+        if (c.id === categoryModal.id) {
+          return {
+            ...c,
+            fa: trimmedFa,
+            icon: categoryModal.icon || c.icon || 'Tag',
+            enabled: categoryModal.enabled
+          };
+        }
+        return c;
+      });
+
+      await persistCategories(updated);
+      playFeedback('status');
+      triggerToast(`دسته‌بندی «${trimmedFa}» به‌روزرسانی شد.`);
+      setCategoryModal({ isOpen: false, mode: 'add', id: '', fa: '', icon: 'Tag', enabled: true, isSystem: false, errorMsg: '' });
+    }
+  };
+
+  const handleToggleCategoryStatus = async (catId) => {
+    playFeedback('click');
+    const target = categoriesList.find(c => c.id === catId);
+    const nextStatus = target ? !target.enabled : true;
+    const updated = categoriesList.map(c => {
+      if (c.id === catId) {
+        return { ...c, enabled: nextStatus };
+      }
+      return c;
+    });
+    await persistCategories(updated);
+    triggerToast(nextStatus ? 'دسته‌بندی فعال شد' : 'دسته‌بندی غیرفعال شد');
+  };
+
+  const handleDeleteCategoryConfirm = async () => {
+    if (!categoryToDelete) return;
+    playFeedback('delete');
+    const updated = categoriesList.filter(c => c.id !== categoryToDelete.id);
+    await persistCategories(updated);
+    triggerToast(`دسته‌بندی «${categoryToDelete.fa}» حذف شد.`);
+    setCategoryToDelete(null);
+  };
+
+  const handleViewCategoryAds = (catId) => {
+    playFeedback('select');
+    setCategoryFilter(catId);
+    handleTabChange('ads');
+    triggerToast(`فیلتر دسته‌بندی اعمال شد.`);
   };
 
   // Login verification
@@ -587,6 +821,32 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const vipAds = ads.filter(a => a.is_featured).length;
   const totalViews = ads.reduce((sum, a) => sum + (a.views_count || 0), 0);
 
+  // Filtered categories
+  const filteredCategories = categoriesList.filter(cat => {
+    const q = categorySearchQuery.toLowerCase().trim();
+    const matchSearch = !q || 
+      cat.fa.toLowerCase().includes(q) || 
+      cat.id.toLowerCase().includes(q) ||
+      (cat.icon && cat.icon.toLowerCase().includes(q));
+
+    const count = ads.filter(a => a.category === cat.id).length;
+    const matchStatus = 
+      categoryStatusFilter === 'all' ||
+      (categoryStatusFilter === 'active' && cat.enabled !== false) ||
+      (categoryStatusFilter === 'disabled' && cat.enabled === false) ||
+      (categoryStatusFilter === 'has_ads' && count > 0);
+
+    return matchSearch && matchStatus;
+  });
+
+  const topCategory = categoriesList.reduce((top, cat) => {
+    const count = ads.filter(a => a.category === cat.id).length;
+    if (!top || count > top.count) {
+      return { ...cat, count };
+    }
+    return top;
+  }, null);
+
   // Desktop Power Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -609,6 +869,18 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           document.activeElement.blur();
           return;
         }
+        if (categoryModal.isOpen) {
+          setCategoryModal({ isOpen: false, mode: 'add', id: '', fa: '', icon: 'Tag', enabled: true, isSystem: false, errorMsg: '' });
+          return;
+        }
+        if (categoryToDelete) {
+          setCategoryToDelete(null);
+          return;
+        }
+        if (selectedAdForModal) {
+          setSelectedAdForModal(null);
+          return;
+        }
         if (mobileDetailOpen) {
           setMobileDetailOpen(false);
           return;
@@ -621,6 +893,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           setSearchQuery('');
           return;
         }
+        if (categorySearchQuery) {
+          setCategorySearchQuery('');
+          return;
+        }
         onClose();
         return;
       }
@@ -630,12 +906,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         return;
       }
 
-      // 4. Tab Navigation (1-5) on Desktop
+      // 4. Tab Navigation (1-6) on Desktop
       if (e.key === '1') handleTabChange('overview');
       else if (e.key === '2') handleTabChange('ads');
-      else if (e.key === '3') handleTabChange('monetization');
-      else if (e.key === '4') handleTabChange('security');
-      else if (e.key === '5') handleTabChange('settings');
+      else if (e.key === '3') handleTabChange('categories');
+      else if (e.key === '4') handleTabChange('monetization');
+      else if (e.key === '5') handleTabChange('security');
+      else if (e.key === '6') handleTabChange('settings');
 
       // 5. Arrow navigation through ads in Ads tab with auto-scroll
       if (activeTab === 'ads' && filteredAds.length > 0) {
@@ -855,6 +1132,26 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
               <button
                 type="button"
+                onClick={() => handleTabChange('categories')}
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-[13px] transition-all duration-150 active:scale-[0.99] cursor-pointer ${
+                  activeTab === 'categories'
+                    ? 'bg-white text-slate-950 shadow-sm font-bold'
+                    : 'text-stone-300 hover:bg-white/10 hover:text-white font-medium'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <FolderTree size={16} strokeWidth={activeTab === 'categories' ? 2.4 : 1.75} className={activeTab === 'categories' ? 'text-slate-950 shrink-0' : 'text-stone-400 shrink-0'} />
+                  <span className="truncate">دسته‌بندی‌ها</span>
+                </div>
+                <span className={`flex h-4 min-w-4 items-center justify-center rounded px-1.5 text-[9.5px] font-mono font-bold ${
+                  activeTab === 'categories' ? 'bg-slate-900 text-white' : 'bg-emerald-400/20 text-emerald-300 border border-emerald-400/30'
+                }`}>
+                  {categoriesList.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => handleTabChange('monetization')}
                 className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-[13px] transition-all duration-150 active:scale-[0.99] cursor-pointer ${
                   activeTab === 'monetization'
@@ -977,6 +1274,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               {[
                 { id: 'overview', label: 'داشبورد', icon: LayoutDashboard, badge: null },
                 { id: 'ads', label: 'مدیریت آگهی‌ها', icon: Layers, badge: ads.length },
+                { id: 'categories', label: 'دسته‌بندی‌ها', icon: FolderTree, badge: categoriesList.length },
                 { id: 'monetization', label: 'درگاه و VIP', icon: CreditCard, badge: 'VIP' },
                 { id: 'security', label: 'امنیت سیستم', icon: ShieldCheck, badge: turnstileSettings.enabled ? 'فعال' : 'غیرفعال' },
                 { id: 'settings', label: 'تنظیمات سایت', icon: Settings, badge: null },
@@ -1046,6 +1344,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             <span className="font-extrabold text-stone-900 tracking-tight text-[16px]">
               {activeTab === 'overview' && 'داشبورد مدیریت'}
               {activeTab === 'ads' && 'مدیریت آگهی‌ها'}
+              {activeTab === 'categories' && 'مدیریت دسته‌بندی‌ها'}
               {activeTab === 'monetization' && 'درگاه بانکی و تعرفه VIP'}
               {activeTab === 'security' && 'امنیت و فایروال'}
               {activeTab === 'settings' && 'تنظیمات کلی سایت'}
@@ -1141,6 +1440,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 <span className="font-bold text-[14.5px] text-stone-900 tracking-tight truncate block max-w-[150px] sm:max-w-xs">
                   {activeTab === 'overview' && 'داشبورد'}
                   {activeTab === 'ads' && 'مدیریت آگهی‌ها'}
+                  {activeTab === 'categories' && 'دسته‌بندی‌ها'}
                   {activeTab === 'monetization' && 'درگاه و VIP'}
                   {activeTab === 'security' && 'امنیت سیستم'}
                   {activeTab === 'settings' && 'تنظیمات سایت'}
@@ -1339,7 +1639,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
                     {ads.slice(0, 5).map(ad => {
                       const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
-                      const catObj = CATEGORIES.find(c => c.id === ad.category);
+                      const catObj = categoriesList.find(c => c.id === ad.category) || CATEGORIES.find(c => c.id === ad.category);
                       return (
                         <div
                           key={ad.id}
@@ -1579,7 +1879,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       className="h-10 rounded-xl bg-stone-50 border border-stone-200/80 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-stone-400 focus:outline-none cursor-pointer shadow-2xs"
                     >
                       <option value="all">همه دسته‌ها</option>
-                      {CATEGORIES.filter(c => c.id !== 'all').map(c => (
+                      {categoriesList.map(c => (
                         <option key={c.id} value={c.id}>{c.fa}</option>
                       ))}
                     </select>
@@ -1625,7 +1925,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <tbody className="divide-y divide-stone-100 text-xs">
                         {filteredAds.map(ad => {
                           const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
-                          const catObj = CATEGORIES.find(c => c.id === ad.category);
+                          const catObj = categoriesList.find(c => c.id === ad.category) || CATEGORIES.find(c => c.id === ad.category);
 
                           return (
                             <tr
@@ -1847,6 +2147,300 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                                     onClick={() => deleteAdAdmin(ad.id)}
                                     className="h-8 w-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center cursor-pointer transition-all active:scale-95"
                                     title="حذف دائمی آگهی"
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
+
+          {/* ========================================================
+              TAB: CATEGORIES MANAGEMENT (LUXURY STONE & SLATE RTL)
+          ======================================================== */}
+          {activeTab === 'categories' && (
+            <div className="space-y-4 max-w-7xl w-full animate-in fade-in duration-150 ease-out">
+              
+              {/* 1. Summary Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Card 1: کل دسته‌بندی‌ها */}
+                <div className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
+                      کل دسته‌بندی‌ها
+                    </span>
+                    <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-700 border border-stone-200/80">
+                      پرتال
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 font-mono">
+                    {categoriesList.length}
+                  </p>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>دسته‌بندی‌های فعال و سفارشی</span>
+                    <span className="font-semibold text-stone-600 font-mono">
+                      {categoriesList.filter(c => !c.isSystem).length} سفارشی
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card 2: دسته‌های فعال */}
+                <div className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
+                      دسته‌های فعال
+                    </span>
+                    <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
+                      قابل استفاده
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-emerald-600 font-mono">
+                    {categoriesList.filter(c => c.enabled !== false).length}
+                  </p>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>آماده دریافت آگهی جدید</span>
+                    <span className="font-semibold text-stone-600 font-mono">
+                      {categoriesList.filter(c => c.enabled === false).length} غیرفعال
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card 3: دسته‌های دارای آگهی */}
+                <div className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
+                      دارای آگهی زنده
+                    </span>
+                    <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 border border-blue-200/60">
+                      پوشش محتوا
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-blue-600 font-mono">
+                    {categoriesList.filter(c => ads.some(a => a.category === c.id)).length}
+                  </p>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>دسته‌های شامل حداقل ۱ آگهی</span>
+                    <span className="font-semibold text-stone-600 font-mono">
+                      {totalAds} آگهی کل
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card 4: پرآگهی‌ترین دسته */}
+                <div 
+                  onClick={() => topCategory && handleViewCategoryAds(topCategory.id)}
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                  title="کلیک برای مشاهده آگهی‌ها"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
+                      دسته‌بندی برتر
+                    </span>
+                    <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/70">
+                      بیشترین آگهی
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[20px] sm:text-[22px] font-extrabold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors truncate">
+                    {topCategory ? topCategory.fa : '—'}
+                  </p>
+                  <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
+                    <span>تعداد آگهی‌های ثبت‌شده</span>
+                    <span className="font-semibold text-stone-900 font-mono">
+                      {topCategory ? `${topCategory.count} آگهی` : '۰'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Controls & Actions Bar */}
+              <div className="p-4 rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                
+                {/* Search & Status Filter */}
+                <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1">
+                  <div className="relative w-full sm:w-72">
+                    <Search size={15} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="جستجو در عنوان، شناسه (slug) یا آیکون..."
+                      value={categorySearchQuery}
+                      onChange={(e) => setCategorySearchQuery(e.target.value)}
+                      className="w-full h-10 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200/80 ps-9 pe-8 text-xs text-zinc-900 placeholder:text-stone-400 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
+                    />
+                    {categorySearchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setCategorySearchQuery('')}
+                        className="absolute end-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
+                      >
+                        <X size={13} />
+                      </button>
+                    )}
+                  </div>
+
+                  <select
+                    value={categoryStatusFilter}
+                    onChange={(e) => setCategoryStatusFilter(e.target.value)}
+                    className="w-full sm:w-auto h-10 rounded-xl bg-stone-50 border border-stone-200/80 px-3 text-xs font-semibold text-zinc-800 focus:bg-white focus:border-stone-400 focus:outline-none cursor-pointer shadow-2xs"
+                  >
+                    <option value="all">همه وضعیت‌ها ({categoriesList.length})</option>
+                    <option value="active">فقط فعال ({categoriesList.filter(c => c.enabled !== false).length})</option>
+                    <option value="disabled">فقط غیرفعال ({categoriesList.filter(c => c.enabled === false).length})</option>
+                    <option value="has_ads">دارای آگهی ({categoriesList.filter(c => ads.some(a => a.category === c.id)).length})</option>
+                  </select>
+                </div>
+
+                {/* Add New Category Primary Action */}
+                <button
+                  type="button"
+                  onClick={handleOpenAddCategory}
+                  className="h-10 px-4 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all shadow-2xs shrink-0"
+                >
+                  <Plus size={16} />
+                  <span>افزودن دسته‌بندی جدید</span>
+                </button>
+              </div>
+
+              {/* 3. High-Density Luxury Categories Table */}
+              <div className="bg-white rounded-2xl border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
+                {filteredCategories.length === 0 ? (
+                  <div className="text-center py-16 p-8 text-stone-400 space-y-2">
+                    <FolderTree size={36} className="mx-auto text-stone-300" />
+                    <p className="text-sm font-semibold text-stone-600">هیچ دسته‌بندی با این فیلترها یافت نشد.</p>
+                    <p className="text-xs text-stone-400">جستجو را بازنشانی کنید یا دسته جدیدی اضافه نمایید.</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-right border-collapse">
+                      <thead>
+                        <tr className="bg-stone-50/90 border-b border-stone-200/80 text-[11.5px] font-bold text-stone-500 select-none">
+                          <th className="py-3 px-3 text-center w-14">آیکون</th>
+                          <th className="py-3 px-3 min-w-[200px]">عنوان دسته‌بندی</th>
+                          <th className="py-3 px-3 min-w-[150px]">شناسه یکتا (Slug)</th>
+                          <th className="py-3 px-3 min-w-[130px] text-center">آگهی‌های ثبت‌شده</th>
+                          <th className="py-3 px-3 text-center w-24">وضعیت</th>
+                          <th className="py-3 px-3 text-center w-28">نوع دسته</th>
+                          <th className="py-3 px-3 text-center min-w-[140px]">عملیات</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100 text-xs">
+                        {filteredCategories.map(cat => {
+                          const IconComp = CATEGORY_ICON_MAP[cat.icon] || Tag;
+                          const adCount = ads.filter(a => a.category === cat.id).length;
+                          const isEnabled = cat.enabled !== false;
+
+                          return (
+                            <tr
+                              key={cat.id}
+                              className="hover:bg-blue-50/40 transition-colors group"
+                            >
+                              {/* 1. Icon */}
+                              <td className="py-3 px-3 text-center align-middle">
+                                <div className="w-10 h-10 rounded-xl bg-stone-100 border border-stone-200/80 flex items-center justify-center text-stone-700 mx-auto shadow-2xs group-hover:scale-105 group-hover:bg-blue-50 group-hover:text-blue-700 group-hover:border-blue-200 transition-all">
+                                  <IconComp size={18} />
+                                </div>
+                              </td>
+
+                              {/* 2. Title */}
+                              <td className="py-3 px-3 align-middle">
+                                <div className="space-y-0.5">
+                                  <span className="font-extrabold text-[13.5px] text-stone-900 block leading-tight">
+                                    {cat.fa}
+                                  </span>
+                                  <span className="text-[10.5px] text-stone-400">
+                                    آیکون: {cat.icon || 'Tag'}
+                                  </span>
+                                </div>
+                              </td>
+
+                              {/* 3. Slug */}
+                              <td className="py-3 px-3 align-middle">
+                                <button
+                                  type="button"
+                                  onClick={() => copyText(cat.id, `cat-${cat.id}`, 'شناسه دسته')}
+                                  className="font-mono text-[11px] font-bold text-stone-800 bg-stone-100 hover:bg-stone-200 px-2 py-0.5 rounded border border-stone-200 flex items-center gap-1.5 cursor-pointer transition-colors"
+                                  title="کپی شناسه یکتا"
+                                >
+                                  <span>#{cat.id}</span>
+                                  {copiedKey === `cat-${cat.id}` ? <Check size={11} className="text-emerald-600" /> : <Copy size={11} className="text-stone-400" />}
+                                </button>
+                              </td>
+
+                              {/* 4. Ads Count & Link */}
+                              <td className="py-3 px-3 text-center align-middle">
+                                {adCount > 0 ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleViewCategoryAds(cat.id)}
+                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/70 text-xs font-bold cursor-pointer transition-colors shadow-2xs active:scale-95"
+                                    title="مشاهده آگهی‌های این دسته"
+                                  >
+                                    <span className="font-mono">{adCount}</span>
+                                    <span className="text-[10.5px]">آگهی</span>
+                                    <ExternalLink size={11} />
+                                  </button>
+                                ) : (
+                                  <span className="inline-block px-2 py-0.5 rounded-lg bg-stone-100 text-stone-400 text-[11px] font-mono">
+                                    بدون آگهی
+                                  </span>
+                                )}
+                              </td>
+
+                              {/* 5. Status Toggle */}
+                              <td className="py-3 px-3 text-center align-middle">
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleCategoryStatus(cat.id)}
+                                  className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border cursor-pointer active:scale-95 transition-all ${
+                                    isEnabled
+                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                      : 'bg-stone-100 text-stone-500 border-stone-200 hover:bg-stone-200'
+                                  }`}
+                                  title="کلیک برای تغییر وضعیت"
+                                >
+                                  {isEnabled ? 'فعال' : 'غیرفعال'}
+                                </button>
+                              </td>
+
+                              {/* 6. Category Type */}
+                              <td className="py-3 px-3 text-center align-middle">
+                                <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border ${
+                                  cat.isSystem
+                                    ? 'bg-slate-100 text-slate-700 border-slate-200'
+                                    : 'bg-purple-50 text-purple-700 border-purple-200/80'
+                                }`}>
+                                  {cat.isSystem ? 'پیش‌فرض' : 'سفارشی'}
+                                </span>
+                              </td>
+
+                              {/* 7. Actions */}
+                              <td className="py-3 px-3 text-center align-middle">
+                                <div className="flex items-center justify-center gap-1.5">
+                                  {/* Edit Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOpenEditCategory(cat)}
+                                    className="h-8 px-2.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors active:scale-95"
+                                    title="ویرایش دسته‌بندی"
+                                  >
+                                    <Edit3 size={13} />
+                                    <span>ویرایش</span>
+                                  </button>
+
+                                  {/* Delete Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => setCategoryToDelete(cat)}
+                                    className="h-8 w-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center cursor-pointer transition-all active:scale-95"
+                                    title="حذف دسته‌بندی"
                                   >
                                     <Trash2 size={13} />
                                   </button>
@@ -2656,6 +3250,217 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          CATEGORY ADD / EDIT MODAL (FROSTED GLASS RTL)
+      ======================================================== */}
+      {categoryModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md font-vazir animate-in fade-in duration-150 select-none" dir="rtl">
+          <div 
+            className="fixed inset-0"
+            onClick={() => setCategoryModal(prev => ({ ...prev, isOpen: false }))}
+          />
+
+          <div className="relative z-10 w-full max-w-lg bg-white rounded-3xl border border-stone-200 shadow-2xl p-6 sm:p-7 text-right space-y-5 animate-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-stone-100 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 shadow-2xs">
+                  <FolderTree size={20} />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-[16px] text-stone-900 tracking-tight">
+                    {categoryModal.mode === 'add' ? 'افزودن دسته‌بندی جدید' : 'ویرایش دسته‌بندی'}
+                  </h3>
+                  <p className="text-[11.5px] text-stone-400">
+                    {categoryModal.mode === 'add' ? 'یک دسته‌بندی تازه به پرتال اضافه کنید' : `ویرایش مشخصات دسته‌بندی #${categoryModal.id}`}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setCategoryModal(prev => ({ ...prev, isOpen: false }))}
+                className="h-8 w-8 flex items-center justify-center rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-500 cursor-pointer active:scale-90 transition-all"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Error message */}
+            {categoryModal.errorMsg && (
+              <div className="p-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold flex items-center gap-2">
+                <AlertCircle size={15} className="shrink-0" />
+                <span>{categoryModal.errorMsg}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSaveCategoryModal} className="space-y-4">
+              {/* Persian Title */}
+              <div>
+                <label className="block text-xs font-bold text-stone-700 mb-1.5">
+                  عنوان فارسی دسته‌بندی <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="مثلاً: آموزش و تدریس خصوصی"
+                  value={categoryModal.fa}
+                  onChange={(e) => setCategoryModal(prev => ({ ...prev, fa: e.target.value, errorMsg: '' }))}
+                  className="w-full h-11 rounded-xl bg-stone-50 hover:bg-stone-100/70 focus:bg-white border border-stone-200 px-3.5 text-xs text-stone-900 placeholder:text-stone-400 focus:border-stone-400 focus:outline-none transition-all shadow-2xs"
+                />
+              </div>
+
+              {/* Slug */}
+              <div>
+                <label className="block text-xs font-bold text-stone-700 mb-1.5">
+                  شناسه انگلیسی یکتا (Slug) <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  disabled={categoryModal.mode === 'edit'}
+                  placeholder="utbildning یا services"
+                  value={categoryModal.id}
+                  onChange={(e) => setCategoryModal(prev => ({ ...prev, id: e.target.value, errorMsg: '' }))}
+                  className={`w-full h-11 rounded-xl border border-stone-200 px-3.5 text-xs font-mono text-left focus:outline-none transition-all shadow-2xs ${
+                    categoryModal.mode === 'edit'
+                      ? 'bg-stone-100 text-stone-500 cursor-not-allowed'
+                      : 'bg-stone-50 hover:bg-stone-100/70 focus:bg-white text-stone-900 focus:border-stone-400'
+                  }`}
+                  dir="ltr"
+                />
+                <span className="text-[10.5px] text-stone-400 block mt-1">
+                  شناسه انگلیسی در دیتابیس و لینک‌ها ذخیره می‌شود و پس از ایجاد قابل تغییر نیست.
+                </span>
+              </div>
+
+              {/* Icon Picker */}
+              <div>
+                <label className="block text-xs font-bold text-stone-700 mb-2">
+                  انتخاب آیکون نمایشی
+                </label>
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 max-h-48 overflow-y-auto no-scrollbar p-1">
+                  {AVAILABLE_CATEGORY_ICONS.map(item => {
+                    const Icon = CATEGORY_ICON_MAP[item.name] || Tag;
+                    const isSelected = categoryModal.icon === item.name;
+
+                    return (
+                      <button
+                        key={item.name}
+                        type="button"
+                        onClick={() => setCategoryModal(prev => ({ ...prev, icon: item.name }))}
+                        className={`flex flex-col items-center justify-center p-2.5 rounded-xl border transition-all cursor-pointer select-none active:scale-95 ${
+                          isSelected
+                            ? 'bg-blue-50 border-blue-600 text-blue-700 shadow-2xs ring-1 ring-blue-600'
+                            : 'bg-stone-50 hover:bg-stone-100/80 border-stone-200 text-stone-600'
+                        }`}
+                        title={item.label}
+                      >
+                        <Icon size={20} />
+                        <span className="text-[9.5px] mt-1 font-medium truncate w-full text-center">
+                          {item.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Enabled toggle */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
+                <div>
+                  <span className="font-bold text-xs text-stone-800 block">وضعیت فعال‌بودن</span>
+                  <span className="text-[11px] text-stone-400">امکان انتخاب در فرم ثبت آگهی و فیلترهای جستجو</span>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={categoryModal.enabled}
+                  onChange={(e) => setCategoryModal(prev => ({ ...prev, enabled: e.target.checked }))}
+                  className="h-4 w-4 rounded border-stone-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-stone-100">
+                <button
+                  type="button"
+                  onClick={() => setCategoryModal(prev => ({ ...prev, isOpen: false }))}
+                  className="h-10 px-4 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-100 font-bold text-xs cursor-pointer active:scale-95 transition-all"
+                >
+                  انصراف
+                </button>
+                <button
+                  type="submit"
+                  className="h-10 px-5 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs cursor-pointer shadow-2xs active:scale-95 transition-all"
+                >
+                  {categoryModal.mode === 'add' ? 'افزودن دسته‌بندی' : 'ذخیره تغییرات'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          DELETE CATEGORY CONFIRMATION MODAL
+      ======================================================== */}
+      {categoryToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md font-vazir animate-in fade-in duration-150 select-none" dir="rtl">
+          <div 
+            className="fixed inset-0"
+            onClick={() => setCategoryToDelete(null)}
+          />
+
+          <div className="relative z-10 w-full max-w-md bg-white rounded-3xl border border-stone-200 shadow-2xl p-6 text-right space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 border border-rose-200/80">
+                <Trash2 size={22} />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-[16px] text-stone-900 tracking-tight">
+                  حذف دسته‌بندی «{categoryToDelete.fa}»
+                </h3>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  شناسه: #{categoryToDelete.id}
+                </p>
+              </div>
+            </div>
+
+            {ads.filter(a => a.category === categoryToDelete.id).length > 0 ? (
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-800 text-xs space-y-1">
+                <p className="font-bold">
+                  توجه: این دسته‌بندی دارای {ads.filter(a => a.category === categoryToDelete.id).length} آگهی ثبت‌شده است!
+                </p>
+                <p className="text-[11px] text-amber-700">
+                  در صورت حذف، آگهی‌های این دسته بدون تغییر در دیتابیس باقی می‌مانند اما دسته‌بندی آن‌ها ممکن است در سایت نمایش داده نشود.
+                </p>
+              </div>
+            ) : (
+              <p className="text-xs text-stone-600">
+                آیا از حذف این دسته‌بندی مطمئن هستید؟ این عملیات قابل بازگشت نیست.
+              </p>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setCategoryToDelete(null)}
+                className="h-10 px-4 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-100 font-bold text-xs cursor-pointer active:scale-95 transition-all"
+              >
+                انصراف
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteCategoryConfirm}
+                className="h-10 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs cursor-pointer shadow-2xs active:scale-95 transition-all"
+              >
+                حذف قطعی دسته
+              </button>
+            </div>
           </div>
         </div>
       )}
