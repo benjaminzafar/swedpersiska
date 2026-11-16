@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { 
   Search, 
   MapPin, 
@@ -17,10 +17,19 @@ import AdDetailPage from './components/AdDetailPage';
 import PaymentModal from './components/PaymentModal';
 import PostAdModal from './components/PostAdModal';
 import ManageAdModal from './components/ManageAdModal';
-import AdminPanel from './components/AdminPanel';
 import ErrorBoundary from './components/ErrorBoundary';
-import { supabase, PUBLIC_AD_COLUMNS, isSafeHttpUrl } from './lib/supabase';
+import { isSafeHttpUrl } from './lib/supabase';
+import {
+  publicApi,
+  isAdminSubdomain,
+  isAdminPortalActive,
+  getMainSiteUrl,
+  getAdminPortalUrl
+} from './lib/apiClient';
 import { COUNTRIES, CATEGORIES, t } from './lib/translations';
+
+// Lazy-loaded Admin Portal (completely separated from the public frontend bundle)
+const AdminPanel = lazy(() => import('./components/AdminPanel'));
 
 
 
@@ -110,32 +119,23 @@ export default function App() {
       return false;
     }
   });
-  const [adminOpen, setAdminOpen] = useState(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('admin') === '1' || params.get('admin') === 'true' || params.get('modal') === 'admin';
-    } catch {
-      return false;
-    }
-  });
+  const [adminOpen, setAdminOpen] = useState(() => isAdminPortalActive());
   const [adminClosing, setAdminClosing] = useState(false);
   const [siteName, setSiteName] = useState('سوئد پرشیا');
   const [logoUrl, setLogoUrl] = useState('');
 
-  // Fetch Site Branding & Public Settings (excludes secret keys)
+  // Fetch Site Branding & Public Settings via Secure Public API
   const fetchSettings = async () => {
+    if (isAdminSubdomain()) return;
     try {
-      const { data } = await supabase
-        .from('swedpersiska_settings')
-        .select('key, value')
-        .in('key', ['site_branding', 'seo_settings', 'portal_categories', 'stripe_settings']);
-      if (data) {
-        const branding = data.find(item => item.key === 'site_branding')?.value;
+      const settings = await publicApi.fetchBootstrap();
+      if (settings) {
+        const branding = settings.site_branding;
         if (branding) {
           if (branding.siteName) setSiteName(branding.siteName);
           if (branding.logoUrl && isSafeHttpUrl(branding.logoUrl)) setLogoUrl(branding.logoUrl);
         }
-        const stripe = data.find(item => item.key === 'stripe_settings')?.value;
+        const stripe = settings.stripe_settings;
         if (stripe) {
           setStripeSettings({
             enabled: stripe.enabled,
@@ -157,6 +157,10 @@ export default function App() {
 
   // Dynamic Country SEO Document Title
   useEffect(() => {
+    if (isAdminSubdomain()) {
+      document.title = 'پنل مدیریت | سوئد پرشیا';
+      return;
+    }
     const titles = {
       se: 'نیازمندی‌ها، مسکن و خدمات فارسی‌زبانان در سوئد | سوئد پرشیا',
       no: 'نیازمندی‌ها، مسکن و مشاغل فارسی‌زبانان در نروژ | سوئد پرشیا',
@@ -180,35 +184,15 @@ export default function App() {
     document.documentElement.lang = 'fa';
   }, []);
 
-  // Helper to fetch a single active ad safely by UUID or reference_number without UUID cast errors
-  const fetchPublicAdByParam = async (rawParam) => {
-    if (!rawParam) return null;
-    const clean = rawParam.trim();
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean);
-    let query = supabase.from('swedpersiska_ads').select(PUBLIC_AD_COLUMNS);
-    if (isUuid) {
-      query = query.eq('id', clean);
-    } else {
-      const safeRef = clean.replace(/[^a-zA-Z0-9_-]/g, '');
-      if (!safeRef) return null;
-      query = query.eq('reference_number', safeRef);
-    }
-    const { data } = await query.maybeSingle();
-    return data || null;
-  };
-
-  // Fetch ads from Supabase (excludes pin_code)
+  // Fetch ads from Secure Public API
   const fetchAds = async () => {
+    if (isAdminSubdomain()) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('swedpersiska_ads')
-        .select(PUBLIC_AD_COLUMNS)
-        .eq('status', 'active')
-        .order('is_featured', { ascending: false })
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const data = await publicApi.fetchAds();
       setAds(data || []);
     } catch (err) {
       console.error('Error fetching ads:', err);
@@ -223,11 +207,12 @@ export default function App() {
 
   // Immediate ad check on mount for direct link or browser refresh
   useEffect(() => {
+    if (isAdminSubdomain()) return;
     try {
       const params = new URLSearchParams(window.location.search);
       const adParam = params.get('ad');
       if (adParam) {
-        fetchPublicAdByParam(adParam).then((data) => {
+        publicApi.fetchAdByParam(adParam).then((data) => {
           if (data) setActiveAdDetail(data);
         });
       }
@@ -240,9 +225,8 @@ export default function App() {
       try {
         const params = new URLSearchParams(window.location.search);
 
-        // 1. Admin Panel
-        const isAdmin = params.get('admin') === '1' || params.get('admin') === 'true' || params.get('modal') === 'admin';
-        setAdminOpen(isAdmin);
+        // 1. Admin Panel (Subdomain, /admin path, or ?admin=1)
+        setAdminOpen(isAdminPortalActive());
 
         // 2. Modals
         const modal = params.get('modal');
@@ -258,7 +242,7 @@ export default function App() {
           if (found) {
             setActiveAdDetail(found);
           } else {
-            fetchPublicAdByParam(adParam).then((data) => {
+            publicApi.fetchAdByParam(adParam).then((data) => {
               if (data) setActiveAdDetail(data);
             });
           }
@@ -379,21 +363,34 @@ export default function App() {
   };
 
   const handleOpenAdmin = () => {
+    const targetUrl = getAdminPortalUrl();
+    if (/^https?:\/\//i.test(targetUrl)) {
+      window.location.href = targetUrl;
+      return;
+    }
     setAdminOpen(true);
     try {
       const url = new URL(window.location.href);
-      url.searchParams.set('admin', '1');
+      url.pathname = '/admin';
+      url.searchParams.delete('admin');
       window.history.pushState({ modal: 'admin' }, '', url.toString());
     } catch {}
   };
 
   const handleCloseAdmin = () => {
+    if (isAdminSubdomain()) {
+      window.location.href = getMainSiteUrl();
+      return;
+    }
     setAdminClosing(true);
     setTimeout(() => {
       setAdminOpen(false);
       setAdminClosing(false);
       try {
         const url = new URL(window.location.href);
+        if (url.pathname.startsWith('/admin')) {
+          url.pathname = '/';
+        }
         url.searchParams.delete('admin');
         url.searchParams.delete('tab');
         window.history.replaceState({}, '', url.toString());
@@ -425,11 +422,7 @@ export default function App() {
       window.history.pushState({ view: 'ad', id: ad.reference_number || ad.id }, '', url.toString());
     } catch {}
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    supabase
-      .from('swedpersiska_ads')
-      .update({ views_count: (ad.views_count || 0) + 1 })
-      .eq('id', ad.id)
-      .then(() => {});
+    publicApi.incrementView(ad.id, ad.views_count);
   };
 
   // Back to ads feed
@@ -521,12 +514,23 @@ export default function App() {
         }`}
       >
         <ErrorBoundary>
-          <AdminPanel
-            onClose={handleCloseAdmin}
-            onRefreshAds={() => {
-              fetchAds();
-            }}
-          />
+          <Suspense
+            fallback={
+              <div className="fixed inset-0 flex items-center justify-center bg-[#101116] text-white font-vazir" dir="rtl">
+                <div className="flex items-center gap-3 text-xs font-bold text-stone-300">
+                  <RefreshCw size={16} className="animate-spin text-blue-500" />
+                  <span>در حال بارگذاری پنل مدیریت...</span>
+                </div>
+              </div>
+            }
+          >
+            <AdminPanel
+              onClose={handleCloseAdmin}
+              onRefreshAds={() => {
+                fetchAds();
+              }}
+            />
+          </Suspense>
         </ErrorBoundary>
       </div>
     );

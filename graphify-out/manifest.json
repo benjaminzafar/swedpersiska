@@ -15,8 +15,8 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1794824078.5088427,
-    "ast_hash": "041345738e9127894851a3fefddacdb4",
+    "mtime": 1794825421.2924562,
+    "ast_hash": "03f7c690f1c3d5da5440fe2401527d78",
     "semantic_hash": ""
   },
   "src/components/AdCard.jsx": {
@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "src/components/AdminPanel.jsx": {
-    "mtime": 1794824321.175439,
-    "ast_hash": "b45d3fa12b9e8cbc3132b1b8e3b4c0a4",
+    "mtime": 1794825639.1851103,
+    "ast_hash": "9c44c29fcd9d3aa2f714f85161bee2d5",
     "semantic_hash": ""
   },
   "src/components/CountryBanner.jsx": {
@@ -75,8 +75,8 @@
     "semantic_hash": ""
   },
   "vercel.json": {
-    "mtime": 1794707653.8778307,
-    "ast_hash": "496cb597886faaac749e664cb8dc9c7e",
+    "mtime": 1794825176.622764,
+    "ast_hash": "578375dd384d9750f3d776cb54993db5",
     "semantic_hash": ""
   },
   "vite.config.js": {
@@ -162,6 +162,21 @@
   "public/images/cities/stockholm.jpg": {
     "mtime": 1794717188.3741212,
     "ast_hash": "05ce3d8c3d5077596880fb2873ad486c",
+    "semantic_hash": ""
+  },
+  "api/admin.js": {
+    "mtime": 1794825093.9644444,
+    "ast_hash": "826579e467630094415eb65ef5493a67",
+    "semantic_hash": ""
+  },
+  "api/public.js": {
+    "mtime": 1794825051.9536204,
+    "ast_hash": "219751d6d90ab40b75afe096cb8b2341",
+    "semantic_hash": ""
+  },
+  "src/lib/apiClient.js": {
+    "mtime": 1794825132.7148004,
+    "ast_hash": "6691d069a0f2eadc505ce0e34774365c",
     "semantic_hash": ""
   }
 }

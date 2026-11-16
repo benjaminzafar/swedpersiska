@@ -59,6 +59,7 @@ import {
 } from 'lucide-react';
 import CloudflareTurnstile from './CloudflareTurnstile';
 import { supabase } from '../lib/supabase';
+import { adminApi } from '../lib/apiClient';
 import { CATEGORIES, COUNTRIES } from '../lib/translations';
 
 // Architecture Constant: Maximum 10 records per view (Minimal Data Loading Rule)
@@ -413,10 +414,51 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   // Zero-CPU feedback stub (avoids spawning unclosed WebAudio hardware threads)
   const playFeedback = () => {};
 
-  // 1. Fetch Overview & Aggregates (Parallel head: true count queries, zero row overhead)
+  // 1. Fetch Overview & Aggregates via Secure Admin API (with Supabase fallback)
+  const applySettingsItems = (items) => {
+    if (!items || !Array.isArray(items)) return;
+    items.forEach(item => {
+      if (item.key === 'site_branding' && item.value) {
+        setSiteName(item.value.siteName || 'سوئد پرشیا');
+        setSiteSlogan(item.value.siteSlogan || '');
+        setLogoUrl(item.value.logoUrl || '');
+        setSupportEmail(item.value.supportEmail || '');
+        setSupportTelegram(item.value.supportTelegram || '');
+        setSupportPhone(item.value.supportPhone || '');
+      }
+      if (item.key === 'seo_settings' && item.value) {
+        setSeoSettings(prev => ({ ...prev, ...item.value }));
+      }
+      if (item.key === 'stripe_settings' && item.value) {
+        setStripeSettings(prev => ({ ...prev, ...item.value }));
+      }
+      if (item.key === 'turnstile_settings' && item.value) {
+        setTurnstileSettings(prev => ({ ...prev, ...item.value }));
+      }
+      if (item.key === 'portal_categories' && item.value && Array.isArray(item.value) && item.value.length > 0) {
+        setCategoriesList(item.value);
+        try {
+          localStorage.setItem('swedpersiska_portal_categories', JSON.stringify(item.value));
+        } catch {}
+      }
+    });
+  };
+
   const fetchAdminData = async () => {
     setLoading(true);
     try {
+      // Try Secure Serverless Admin API first
+      const apiRes = await adminApi.request('overview');
+      if (apiRes && apiRes.ok) {
+        setCounts(apiRes.counts);
+        setCountryStats(apiRes.countryStats);
+        setCategoryCounts(apiRes.categoryCounts);
+        setRecentActiveAds(apiRes.recentActiveAds || []);
+        applySettingsItems(apiRes.settings);
+        await fetchActiveAds(1, searchQuery, countryFilter, categoryFilter);
+        return;
+      }
+
       const [totalRes, activeRes, vipRes, archiveRes, recentRes, metaRes, settingsRes] = await Promise.all([
         supabase.from('swedpersiska_ads').select('*', { count: 'exact', head: true }),
         supabase.from('swedpersiska_ads').select('*', { count: 'exact', head: true }).eq('status', 'active'),
@@ -471,42 +513,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       await fetchActiveAds(1, searchQuery, countryFilter, categoryFilter);
 
       // 2. Fetch Settings
-      if (settingsRes.data && settingsRes.data.length > 0) {
-        settingsRes.data.forEach(item => {
-          if (item.key === 'site_branding' && item.value) {
-            setSiteName(item.value.siteName || 'سوئد پرشیا');
-            setSiteSlogan(item.value.siteSlogan || '');
-            setLogoUrl(item.value.logoUrl || '');
-            setSupportEmail(item.value.supportEmail || '');
-            setSupportTelegram(item.value.supportTelegram || '');
-            setSupportPhone(item.value.supportPhone || '');
-          }
-          if (item.key === 'seo_settings' && item.value) {
-            setSeoSettings(prev => ({
-              ...prev,
-              ...item.value
-            }));
-          }
-          if (item.key === 'stripe_settings' && item.value) {
-            setStripeSettings(prev => ({
-              ...prev,
-              ...item.value
-            }));
-          }
-          if (item.key === 'turnstile_settings' && item.value) {
-            setTurnstileSettings(prev => ({
-              ...prev,
-              ...item.value
-            }));
-          }
-          if (item.key === 'portal_categories' && item.value && Array.isArray(item.value) && item.value.length > 0) {
-            setCategoriesList(item.value);
-            try {
-              localStorage.setItem('swedpersiska_portal_categories', JSON.stringify(item.value));
-            } catch {}
-          }
-        });
-      }
+      applySettingsItems(settingsRes.data);
     } catch (err) {
       console.error('Error fetching admin data:', err);
     } finally {
@@ -518,6 +525,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const fetchActiveAds = async (page = 1, search = searchQuery, country = countryFilter, cat = categoryFilter) => {
     setActiveLoading(true);
     try {
+      const apiRes = await adminApi.request('active_ads', { page, search, country, category: cat });
+      if (apiRes && apiRes.ok) {
+        setActiveAds(apiRes.ads || []);
+        setActiveTotalCount(apiRes.count ?? 0);
+        setActivePage(page);
+        return;
+      }
+
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
@@ -559,6 +574,15 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const fetchArchiveAds = async (page = 1) => {
     setArchiveLoading(true);
     try {
+      const apiRes = await adminApi.request('archive_ads', { page });
+      if (apiRes && apiRes.ok) {
+        setArchiveAds(apiRes.ads || []);
+        setArchiveTotalCount(apiRes.count ?? 0);
+        setArchivePage(page);
+        setArchiveLoaded(true);
+        return;
+      }
+
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
@@ -717,8 +741,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     triggerToast(`فیلتر دسته‌بندی اعمال شد.`);
   };
 
-  // Login verification
-  const handleLogin = (e) => {
+  // Login verification via Secure Serverless Admin API
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError('');
 
@@ -730,41 +754,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       }
     }
 
-    const validEmail = (import.meta.env.VITE_ADMIN_EMAIL || 'swedpersiska@gmail.com').toLowerCase().trim();
-    const validPass = import.meta.env.VITE_ADMIN_PASSWORD || 'Sam@13321332';
-
-    const cleanedEmail = adminEmailInput.trim().toLowerCase();
-    const cleanedPass = adminPassInput.trim();
-
-    const isEmailValid = (
-      cleanedEmail === validEmail ||
-      cleanedEmail === 'swedpersiska@gmail.com' ||
-      cleanedEmail === 'admin'
-    );
-
-    const isPassValid = (
-      cleanedPass === validPass ||
-      cleanedPass === 'Sam@13321332' ||
-      cleanedPass === 'swed2026' ||
-      cleanedPass === 'admin'
-    );
-
-    if (isEmailValid && isPassValid) {
+    try {
+      await adminApi.login(adminEmailInput, adminPassInput);
       setIsAuthenticated(true);
-      try {
-        localStorage.setItem('swedpersiska_admin_auth', 'true');
-      } catch {}
       fetchAdminData();
-    } else {
-      setLoginError('ایمیل یا رمز عبور اشتباه است.');
+    } catch (err) {
+      setLoginError(err.message || 'ایمیل یا رمز عبور اشتباه است.');
     }
   };
 
   // Logout handler
   const handleLogout = () => {
     setIsAuthenticated(false);
+    adminApi.setToken('');
     try {
-      localStorage.removeItem('swedpersiska_admin_auth');
       localStorage.removeItem('swedpersiska_admin_tab');
       const url = new URL(window.location.href);
       url.searchParams.delete('admin');
@@ -792,12 +795,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const updateAdCountry = async (adId, newCountry) => {
     playFeedback('click');
     try {
-      const { error } = await supabase
-        .from('swedpersiska_ads')
-        .update({ country: newCountry })
-        .eq('id', adId);
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('update_country', { id: adId, country: newCountry });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_ads')
+          .update({ country: newCountry })
+          .eq('id', adId);
+        if (error) throw error;
+      }
       setActiveAds(prev => prev.map(a => a.id === adId ? { ...a, country: newCountry } : a));
       setRecentActiveAds(prev => prev.map(a => a.id === adId ? { ...a, country: newCountry } : a));
       setArchiveAds(prev => prev.map(a => a.id === adId ? { ...a, country: newCountry } : a));
@@ -815,12 +820,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     playFeedback('vip');
     try {
       const nextVal = !ad.is_featured;
-      const { error } = await supabase
-        .from('swedpersiska_ads')
-        .update({ is_featured: nextVal })
-        .eq('id', ad.id);
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('toggle_featured', { id: ad.id, is_featured: nextVal });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_ads')
+          .update({ is_featured: nextVal })
+          .eq('id', ad.id);
+        if (error) throw error;
+      }
       setActiveAds(prev => prev.map(a => a.id === ad.id ? { ...a, is_featured: nextVal } : a));
       setRecentActiveAds(prev => prev.map(a => a.id === ad.id ? { ...a, is_featured: nextVal } : a));
       setArchiveAds(prev => prev.map(a => a.id === ad.id ? { ...a, is_featured: nextVal } : a));
@@ -840,12 +847,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const archiveAd = async (ad) => {
     playFeedback('status');
     try {
-      const { error } = await supabase
-        .from('swedpersiska_ads')
-        .update({ status: 'hidden' })
-        .eq('id', ad.id);
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('archive_ad', { id: ad.id });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_ads')
+          .update({ status: 'hidden' })
+          .eq('id', ad.id);
+        if (error) throw error;
+      }
       setActiveAds(prev => prev.filter(a => a.id !== ad.id));
       setRecentActiveAds(prev => prev.filter(a => a.id !== ad.id));
       setActiveTotalCount(prev => Math.max(0, prev - 1));
@@ -870,12 +879,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const restoreAd = async (ad) => {
     playFeedback('status');
     try {
-      const { error } = await supabase
-        .from('swedpersiska_ads')
-        .update({ status: 'active' })
-        .eq('id', ad.id);
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('restore_ad', { id: ad.id });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_ads')
+          .update({ status: 'active' })
+          .eq('id', ad.id);
+        if (error) throw error;
+      }
       setArchiveAds(prev => prev.filter(a => a.id !== ad.id));
       setArchiveTotalCount(prev => Math.max(0, prev - 1));
       setActiveTotalCount(prev => prev + 1);
@@ -910,12 +921,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }
     playFeedback('delete');
     try {
-      const { error } = await supabase
-        .from('swedpersiska_ads')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('delete_ad', { id });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_ads')
+          .delete()
+          .eq('id', id);
+        if (error) throw error;
+      }
       setActiveAds(prev => prev.filter(a => a.id !== id));
       setRecentActiveAds(prev => prev.filter(a => a.id !== id));
       setArchiveAds(prev => prev.filter(a => a.id !== id));
@@ -948,15 +961,17 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         supportPhone: supportPhone.trim()
       };
 
-      const { error } = await supabase
-        .from('swedpersiska_settings')
-        .upsert({
-          key: 'site_branding',
-          value: payload,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('save_settings', { key: 'site_branding', value: payload });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_settings')
+          .upsert({
+            key: 'site_branding',
+            value: payload,
+            updated_at: new Date().toISOString()
+          });
+        if (error) throw error;
+      }
       setSaveSuccessMsg('تنظیمات برند ذخیره شد.');
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (err) {
@@ -971,15 +986,17 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     e.preventDefault();
     setSavingSettings(true);
     try {
-      const { error } = await supabase
-        .from('swedpersiska_settings')
-        .upsert({
-          key: 'seo_settings',
-          value: seoSettings,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('save_settings', { key: 'seo_settings', value: seoSettings });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_settings')
+          .upsert({
+            key: 'seo_settings',
+            value: seoSettings,
+            updated_at: new Date().toISOString()
+          });
+        if (error) throw error;
+      }
       const countryObj = COUNTRIES.find(c => c.id === seoActiveCountry) || COUNTRIES[0];
       setSaveSuccessMsg(`تنظیمات سئوی کشور ${countryObj.nameFa} ذخیره شد.`);
       setTimeout(() => setSaveSuccessMsg(''), 3000);
@@ -1004,15 +1021,17 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         vipDurationDays: Number(stripeSettings.vipDurationDays) || 30,
         vipBadgeText: stripeSettings.vipBadgeText || 'ویژه (VIP)'
       };
-      const { error } = await supabase
-        .from('swedpersiska_settings')
-        .upsert({
-          key: 'stripe_settings',
-          value: publicStripePayload,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('save_settings', { key: 'stripe_settings', value: publicStripePayload });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_settings')
+          .upsert({
+            key: 'stripe_settings',
+            value: publicStripePayload,
+            updated_at: new Date().toISOString()
+          });
+        if (error) throw error;
+      }
       setSaveSuccessMsg('تنظیمات درگاه Stripe ذخیره شد.');
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (err) {
@@ -1035,15 +1054,17 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         protectPostAd: turnstileSettings.protectPostAd
       };
       localStorage.setItem('swedpersiska_turnstile_settings', JSON.stringify(publicTurnstilePayload));
-      const { error } = await supabase
-        .from('swedpersiska_settings')
-        .upsert({
-          key: 'turnstile_settings',
-          value: publicTurnstilePayload,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
+      const apiRes = await adminApi.request('save_settings', { key: 'turnstile_settings', value: publicTurnstilePayload });
+      if (!apiRes) {
+        const { error } = await supabase
+          .from('swedpersiska_settings')
+          .upsert({
+            key: 'turnstile_settings',
+            value: publicTurnstilePayload,
+            updated_at: new Date().toISOString()
+          });
+        if (error) throw error;
+      }
       setSaveSuccessMsg('تنظیمات آنتی‌بات کلودفلر ذخیره شد.');
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (err) {

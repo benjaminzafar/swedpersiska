@@ -64,6 +64,136 @@
       "norm_label": "react/only-export-components"
     },
     {
+      "label": "admin.js",
+      "file_type": "code",
+      "source_file": "api/admin.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "api_admin",
+      "community": 16,
+      "norm_label": "admin.js"
+    },
+    {
+      "label": "supabase",
+      "file_type": "code",
+      "source_file": "api/admin.js",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "api_admin_supabase",
+      "community": 16,
+      "norm_label": "supabase"
+    },
+    {
+      "label": "createAdminToken()",
+      "file_type": "code",
+      "source_file": "api/admin.js",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "api_admin_createadmintoken",
+      "community": 16,
+      "norm_label": "createadmintoken()"
+    },
+    {
+      "label": "verifyAdminToken()",
+      "file_type": "code",
+      "source_file": "api/admin.js",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "api_admin_verifyadmintoken",
+      "community": 16,
+      "norm_label": "verifyadmintoken()"
+    },
+    {
+      "label": "setCorsHeaders()",
+      "file_type": "code",
+      "source_file": "api/admin.js",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "api_admin_setcorsheaders",
+      "community": 16,
+      "norm_label": "setcorsheaders()"
+    },
+    {
+      "label": "handler()",
+      "file_type": "code",
+      "source_file": "api/admin.js",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "api_admin_handler",
+      "community": 16,
+      "norm_label": "handler()"
+    },
+    {
+      "label": "public.js",
+      "file_type": "code",
+      "source_file": "api/public.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "api_public",
+      "community": 15,
+      "norm_label": "public.js"
+    },
+    {
+      "label": "supabase",
+      "file_type": "code",
+      "source_file": "api/public.js",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "api_public_supabase",
+      "community": 15,
+      "norm_label": "supabase"
+    },
+    {
+      "label": "isSafeHttpUrl()",
+      "file_type": "code",
+      "source_file": "api/public.js",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "api_public_issafehttpurl",
+      "community": 15,
+      "norm_label": "issafehttpurl()"
+    },
+    {
+      "label": "generateReferenceNumber()",
+      "file_type": "code",
+      "source_file": "api/public.js",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "api_public_generatereferencenumber",
+      "community": 15,
+      "norm_label": "generatereferencenumber()"
+    },
+    {
+      "label": "generatePinCode()",
+      "file_type": "code",
+      "source_file": "api/public.js",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "api_public_generatepincode",
+      "community": 15,
+      "norm_label": "generatepincode()"
+    },
+    {
+      "label": "setCorsHeaders()",
+      "file_type": "code",
+      "source_file": "api/public.js",
+      "source_location": "L40",
+      "_origin": "ast",
+      "id": "api_public_setcorsheaders",
+      "community": 15,
+      "norm_label": "setcorsheaders()"
+    },
+    {
+      "label": "handler()",
+      "file_type": "code",
+      "source_file": "api/public.js",
+      "source_location": "L47",
+      "_origin": "ast",
+      "id": "api_public_handler",
+      "community": 15,
+      "norm_label": "handler()"
+    },
+    {
       "label": "package.json",
       "file_type": "code",
       "source_file": "package.json",
@@ -324,10 +454,20 @@
       "norm_label": "app.jsx"
     },
     {
+      "label": "AdminPanel",
+      "file_type": "code",
+      "source_file": "src/App.jsx",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "src_app_adminpanel",
+      "community": 11,
+      "norm_label": "adminpanel"
+    },
+    {
       "label": "App()",
       "file_type": "code",
       "source_file": "src/App.jsx",
-      "source_location": "L27",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "src_app_app",
       "community": 11,
@@ -387,7 +527,7 @@
       "label": "PaginationBar()",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
-      "source_location": "L68",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "components_adminpanel_paginationbar",
       "community": 2,
@@ -397,7 +537,7 @@
       "label": "NORDIC_FLAGS",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
-      "source_location": "L141",
+      "source_location": "L142",
       "_origin": "ast",
       "id": "components_adminpanel_nordic_flags",
       "community": 2,
@@ -407,7 +547,7 @@
       "label": "CATEGORY_ICON_MAP",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
-      "source_location": "L175",
+      "source_location": "L176",
       "_origin": "ast",
       "id": "components_adminpanel_category_icon_map",
       "community": 2,
@@ -417,7 +557,7 @@
       "label": "AVAILABLE_CATEGORY_ICONS",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
-      "source_location": "L195",
+      "source_location": "L196",
       "_origin": "ast",
       "id": "components_adminpanel_available_category_icons",
       "community": 2,
@@ -427,7 +567,7 @@
       "label": "DEFAULT_CATEGORIES",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
-      "source_location": "L213",
+      "source_location": "L214",
       "_origin": "ast",
       "id": "components_adminpanel_default_categories",
       "community": 2,
@@ -437,7 +577,7 @@
       "label": "AdminPanel()",
       "file_type": "code",
       "source_file": "src/components/AdminPanel.jsx",
-      "source_location": "L224",
+      "source_location": "L225",
       "_origin": "ast",
       "id": "components_adminpanel_adminpanel",
       "community": 2,
@@ -684,6 +824,86 @@
       "norm_label": "postadmodal()"
     },
     {
+      "label": "apiClient.js",
+      "file_type": "code",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "lib_apiclient",
+      "community": 2,
+      "norm_label": "apiclient.js"
+    },
+    {
+      "label": "API_BASE",
+      "file_type": "code",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "lib_apiclient_api_base",
+      "community": 2,
+      "norm_label": "api_base"
+    },
+    {
+      "label": "isAdminSubdomain()",
+      "file_type": "code",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "lib_apiclient_isadminsubdomain",
+      "community": 2,
+      "norm_label": "isadminsubdomain()"
+    },
+    {
+      "label": "isAdminPortalActive()",
+      "file_type": "code",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "lib_apiclient_isadminportalactive",
+      "community": 2,
+      "norm_label": "isadminportalactive()"
+    },
+    {
+      "label": "getMainSiteUrl()",
+      "file_type": "code",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "lib_apiclient_getmainsiteurl",
+      "community": 2,
+      "norm_label": "getmainsiteurl()"
+    },
+    {
+      "label": "getAdminPortalUrl()",
+      "file_type": "code",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L44",
+      "_origin": "ast",
+      "id": "lib_apiclient_getadminportalurl",
+      "community": 2,
+      "norm_label": "getadminportalurl()"
+    },
+    {
+      "label": "publicApi",
+      "file_type": "code",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "lib_apiclient_publicapi",
+      "community": 2,
+      "norm_label": "publicapi"
+    },
+    {
+      "label": "adminApi",
+      "file_type": "code",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L145",
+      "_origin": "ast",
+      "id": "lib_apiclient_adminapi",
+      "community": 2,
+      "norm_label": "adminapi"
+    },
+    {
       "label": "supabase.js",
       "file_type": "code",
       "source_file": "src/lib/supabase.js",
@@ -867,7 +1087,7 @@
       "label": "headers",
       "file_type": "code",
       "source_file": "vercel.json",
-      "source_location": "L12",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "vercel_headers",
       "community": 5,
@@ -1174,6 +1394,182 @@
       "confidence_score": 1.0,
       "source": "oxlintrc_rules",
       "target": "oxlintrc_rules_react_rules_of_hooks"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/admin.js",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "api_admin",
+      "target": "api_admin_createadmintoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/admin.js",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "api_admin",
+      "target": "api_admin_handler",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/admin.js",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "api_admin",
+      "target": "api_admin_setcorsheaders",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/admin.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "api_admin",
+      "target": "api_admin_supabase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/admin.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "api_admin",
+      "target": "api_admin_verifyadmintoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "api/admin.js",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "api_admin_handler",
+      "target": "api_admin_createadmintoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "api/admin.js",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "api_admin_handler",
+      "target": "api_admin_verifyadmintoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "api/admin.js",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "api_admin_handler",
+      "target": "api_admin_setcorsheaders",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "api_public",
+      "target": "api_public_generatepincode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "api_public",
+      "target": "api_public_generatereferencenumber",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "api_public",
+      "target": "api_public_handler",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "api_public",
+      "target": "api_public_issafehttpurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "api_public",
+      "target": "api_public_setcorsheaders",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "api_public",
+      "target": "api_public_supabase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L151",
+      "weight": 1.0,
+      "source": "api_public_handler",
+      "target": "api_public_generatereferencenumber",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L154",
+      "weight": 1.0,
+      "source": "api_public_handler",
+      "target": "api_public_generatepincode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "api/public.js",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "api_public_handler",
+      "target": "api_public_setcorsheaders",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1531,6 +1927,72 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "lib_apiclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "lib_apiclient_getadminportalurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "lib_apiclient_getmainsiteurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "lib_apiclient_isadminportalactive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "lib_apiclient_isadminsubdomain",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "lib_apiclient_publicapi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
       "source_location": "L25",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -1544,9 +2006,9 @@
       "source_file": "src/App.jsx",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app",
-      "target": "lib_supabase_issafehttpurl",
-      "confidence_score": 1.0
+      "target": "lib_supabase_issafehttpurl"
     },
     {
       "relation": "imports",
@@ -1602,6 +2064,16 @@
       "confidence_score": 1.0,
       "source": "src_app",
       "target": "lib_translations_t"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "src_app_adminpanel",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1769,6 +2241,28 @@
       "confidence_score": 1.0,
       "source": "components_adminpanel",
       "target": "components_cloudflareturnstile"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "lib_apiclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/AdminPanel.jsx",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "components_adminpanel",
+      "target": "lib_apiclient_adminapi",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -2224,9 +2718,9 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "components_postadmodal",
-      "target": "lib_supabase_issafehttpurl",
-      "confidence_score": 1.0
+      "target": "lib_supabase_issafehttpurl"
     },
     {
       "relation": "imports",
@@ -2297,6 +2791,120 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_apiclient_adminapi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_apiclient_api_base",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_apiclient_getadminportalurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_apiclient_getmainsiteurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_apiclient_isadminportalactive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_apiclient_isadminsubdomain",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_apiclient_publicapi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_supabase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "lib_apiclient",
+      "target": "lib_supabase_supabase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "lib_apiclient_getmainsiteurl",
+      "target": "lib_apiclient_isadminsubdomain",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/apiClient.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "lib_apiclient_isadminportalactive",
+      "target": "lib_apiclient_isadminsubdomain",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.js",
       "source_location": "L27",
       "weight": 1.0,
@@ -2320,9 +2928,9 @@
       "source_file": "src/lib/supabase.js",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_supabase",
-      "target": "lib_supabase_issafehttpurl",
-      "confidence_score": 1.0
+      "target": "lib_supabase_issafehttpurl"
     },
     {
       "relation": "contains",
@@ -2330,9 +2938,9 @@
       "source_file": "src/lib/supabase.js",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_supabase",
-      "target": "lib_supabase_securerandomint",
-      "confidence_score": 1.0
+      "target": "lib_supabase_securerandomint"
     },
     {
       "relation": "contains",
@@ -2351,9 +2959,9 @@
       "source_file": "src/lib/supabase.js",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_supabase_generatepincode",
-      "target": "lib_supabase_securerandomint",
-      "confidence_score": 1.0
+      "target": "lib_supabase_securerandomint"
     },
     {
       "relation": "calls",
@@ -2362,9 +2970,9 @@
       "source_file": "src/lib/supabase.js",
       "source_location": "L52",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_supabase_generatereferencenumber",
-      "target": "lib_supabase_securerandomint",
-      "confidence_score": 1.0
+      "target": "lib_supabase_securerandomint"
     },
     {
       "relation": "contains",
@@ -2658,5 +3266,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "91af5b130a5270502bafda78a34e777444add3b4"
+  "built_at_commit": "1d77f45201a285f08ad6a6761b7b517103d64b8e"
 }
