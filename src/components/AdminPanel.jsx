@@ -535,8 +535,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
         q = q.eq('category', cat);
       }
       if (search && search.trim()) {
-        const term = `%${search.trim()}%`;
-        q = q.or(`title.ilike.${term},description.ilike.${term},city.ilike.${term},reference_number.ilike.${term},contact_name.ilike.${term}`);
+        const sanitized = search.trim().replace(/[,()]/g, ' ').trim();
+        if (sanitized) {
+          const term = `%${sanitized}%`;
+          q = q.or(`title.ilike.${term},description.ilike.${term},city.ilike.${term},reference_number.ilike.${term},contact_name.ilike.${term}`);
+        }
       }
 
       const { data, count, error } = await q;
@@ -987,16 +990,25 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }
   };
 
-  // Save Stripe & Monetization Settings
+  // Save Stripe & Monetization Settings (never persists secretKey/webhookSecret to public settings table)
   const saveStripeSettings = async (e) => {
     e.preventDefault();
     setSavingSettings(true);
     try {
+      const publicStripePayload = {
+        enabled: stripeSettings.enabled,
+        mode: stripeSettings.mode,
+        publishableKey: (stripeSettings.publishableKey || '').trim(),
+        vipPrice: Number(stripeSettings.vipPrice) || 99,
+        currency: stripeSettings.currency || 'SEK',
+        vipDurationDays: Number(stripeSettings.vipDurationDays) || 30,
+        vipBadgeText: stripeSettings.vipBadgeText || 'ویژه (VIP)'
+      };
       const { error } = await supabase
         .from('swedpersiska_settings')
         .upsert({
           key: 'stripe_settings',
-          value: stripeSettings,
+          value: publicStripePayload,
           updated_at: new Date().toISOString()
         });
 
@@ -1010,17 +1022,24 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
     }
   };
 
-  // Save Cloudflare Turnstile Anti-Bot Settings
+  // Save Cloudflare Turnstile Anti-Bot Settings (never persists secretKey to public settings table)
   const saveTurnstileSettings = async (e) => {
     if (e) e.preventDefault();
     setSavingSettings(true);
     try {
-      localStorage.setItem('swedpersiska_turnstile_settings', JSON.stringify(turnstileSettings));
+      const publicTurnstilePayload = {
+        enabled: turnstileSettings.enabled,
+        mode: turnstileSettings.mode,
+        siteKey: (turnstileSettings.siteKey || '').trim(),
+        protectAdminLogin: turnstileSettings.protectAdminLogin,
+        protectPostAd: turnstileSettings.protectPostAd
+      };
+      localStorage.setItem('swedpersiska_turnstile_settings', JSON.stringify(publicTurnstilePayload));
       const { error } = await supabase
         .from('swedpersiska_settings')
         .upsert({
           key: 'turnstile_settings',
-          value: turnstileSettings,
+          value: publicTurnstilePayload,
           updated_at: new Date().toISOString()
         });
 

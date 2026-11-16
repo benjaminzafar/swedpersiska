@@ -8,7 +8,7 @@ import {
   Crown, 
   AlertCircle
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, PUBLIC_AD_COLUMNS } from '../lib/supabase';
 
 export default function PaymentModal({ 
   ad, 
@@ -81,7 +81,7 @@ export default function PaymentModal({
           .from('swedpersiska_ads')
           .update({ is_featured: true })
           .eq('id', ad.id)
-          .select()
+          .select(PUBLIC_AD_COLUMNS)
           .single();
 
         if (error) throw error;

@@ -6,6 +6,39 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIU
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
+ * Safe public columns for swedpersiska_ads (excludes secret pin_code from public queries)
+ */
+export const PUBLIC_AD_COLUMNS =
+  'id, reference_number, title, title_fa, category, country, city, area, price, price_type, description, contact_name, contact_phone, contact_whatsapp, contact_telegram, contact_email, images, is_featured, status, views_count, created_at, updated_at';
+
+/**
+ * Validate that a URL uses a safe http/https scheme (or relative path)
+ */
+export function isSafeHttpUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (trimmed.startsWith('/')) return true;
+  try {
+    const parsed = new URL(trimmed);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Cryptographically strong random integer in [0, max)
+ */
+function secureRandomInt(max) {
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] % max;
+  }
+  return Math.floor(Math.random() * max);
+}
+
+/**
  * Generate a unique reference number for Swedish-Persian ads
  * Format: SP-YYMM-XXXX (e.g. SP-2611-F82A)
  */
@@ -16,14 +49,14 @@ export function generateReferenceNumber() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let rand = '';
   for (let i = 0; i < 4; i++) {
-    rand += chars.charAt(Math.floor(Math.random() * chars.length));
+    rand += chars.charAt(secureRandomInt(chars.length));
   }
   return `SP-${yy}${mm}-${rand}`;
 }
 
 /**
- * Generate a 4-digit PIN code for author ad management
+ * Generate a cryptographically strong 4-digit PIN code for author ad management
  */
 export function generatePinCode() {
-  return String(Math.floor(1000 + Math.random() * 9000));
+  return String(1000 + secureRandomInt(9000));
 }

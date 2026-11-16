@@ -8,7 +8,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import CloudflareTurnstile from './CloudflareTurnstile';
-import { supabase, generateReferenceNumber, generatePinCode } from '../lib/supabase';
+import { supabase, generateReferenceNumber, generatePinCode, isSafeHttpUrl } from '../lib/supabase';
 import { COUNTRIES, CATEGORIES, t } from '../lib/translations';
 
 export default function PostAdModal({ 
@@ -60,10 +60,15 @@ export default function PostAdModal({
 
   const currentCountryObj = COUNTRIES.find(c => c.id === adCountry) || COUNTRIES[0];
 
-  // Add image to list
+  // Add image to list (only safe http/https URLs)
   const addImage = () => {
-    if (imageUrl.trim()) {
-      setImagesList([...imagesList, imageUrl.trim()]);
+    const trimmed = imageUrl.trim();
+    if (trimmed) {
+      if (!isSafeHttpUrl(trimmed)) {
+        setErrorMsg('لطفاً یک لینک تصویر معتبر (https://...) وارد فرمایید.');
+        return;
+      }
+      setImagesList([...imagesList, trimmed]);
       setImageUrl('');
     }
   };
@@ -98,8 +103,8 @@ export default function PostAdModal({
       const refNum = generateReferenceNumber();
       const finalPin = pinCode.trim() || generatePinCode();
 
-      const allImages = [...imagesList];
-      if (imageUrl.trim()) {
+      const allImages = imagesList.filter(isSafeHttpUrl);
+      if (imageUrl.trim() && isSafeHttpUrl(imageUrl.trim())) {
         allImages.push(imageUrl.trim());
       }
 

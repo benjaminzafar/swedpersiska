@@ -19,7 +19,7 @@ import PostAdModal from './components/PostAdModal';
 import ManageAdModal from './components/ManageAdModal';
 import AdminPanel from './components/AdminPanel';
 import ErrorBoundary from './components/ErrorBoundary';
-import { supabase } from './lib/supabase';
+import { supabase, PUBLIC_AD_COLUMNS, isSafeHttpUrl } from './lib/supabase';
 import { COUNTRIES, CATEGORIES, t } from './lib/translations';
 
 
@@ -122,18 +122,31 @@ export default function App() {
   const [siteName, setSiteName] = useState('سوئد پرشیا');
   const [logoUrl, setLogoUrl] = useState('');
 
-  // Fetch Site Branding & Settings
+  // Fetch Site Branding & Public Settings (excludes secret keys)
   const fetchSettings = async () => {
     try {
-      const { data } = await supabase.from('swedpersiska_settings').select('*');
+      const { data } = await supabase
+        .from('swedpersiska_settings')
+        .select('key, value')
+        .in('key', ['site_branding', 'seo_settings', 'portal_categories', 'stripe_settings']);
       if (data) {
         const branding = data.find(item => item.key === 'site_branding')?.value;
         if (branding) {
           if (branding.siteName) setSiteName(branding.siteName);
-          if (branding.logoUrl) setLogoUrl(branding.logoUrl);
+          if (branding.logoUrl && isSafeHttpUrl(branding.logoUrl)) setLogoUrl(branding.logoUrl);
         }
         const stripe = data.find(item => item.key === 'stripe_settings')?.value;
-        if (stripe) setStripeSettings(stripe);
+        if (stripe) {
+          setStripeSettings({
+            enabled: stripe.enabled,
+            mode: stripe.mode,
+            publishableKey: stripe.publishableKey,
+            vipPrice: stripe.vipPrice,
+            currency: stripe.currency,
+            vipDurationDays: stripe.vipDurationDays,
+            vipBadgeText: stripe.vipBadgeText
+          });
+        }
       }
     } catch {}
   };
@@ -167,13 +180,30 @@ export default function App() {
     document.documentElement.lang = 'fa';
   }, []);
 
-  // Fetch ads from Supabase
+  // Helper to fetch a single active ad safely by UUID or reference_number without UUID cast errors
+  const fetchPublicAdByParam = async (rawParam) => {
+    if (!rawParam) return null;
+    const clean = rawParam.trim();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean);
+    let query = supabase.from('swedpersiska_ads').select(PUBLIC_AD_COLUMNS);
+    if (isUuid) {
+      query = query.eq('id', clean);
+    } else {
+      const safeRef = clean.replace(/[^a-zA-Z0-9_-]/g, '');
+      if (!safeRef) return null;
+      query = query.eq('reference_number', safeRef);
+    }
+    const { data } = await query.maybeSingle();
+    return data || null;
+  };
+
+  // Fetch ads from Supabase (excludes pin_code)
   const fetchAds = async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('swedpersiska_ads')
-        .select('*')
+        .select(PUBLIC_AD_COLUMNS)
         .eq('status', 'active')
         .order('is_featured', { ascending: false })
         .order('created_at', { ascending: false });
@@ -197,14 +227,9 @@ export default function App() {
       const params = new URLSearchParams(window.location.search);
       const adParam = params.get('ad');
       if (adParam) {
-        supabase
-          .from('swedpersiska_ads')
-          .select('*')
-          .or(`reference_number.eq.${adParam},id.eq.${adParam}`)
-          .maybeSingle()
-          .then(({ data }) => {
-            if (data) setActiveAdDetail(data);
-          });
+        fetchPublicAdByParam(adParam).then((data) => {
+          if (data) setActiveAdDetail(data);
+        });
       }
     } catch {}
   }, []);
@@ -233,14 +258,9 @@ export default function App() {
           if (found) {
             setActiveAdDetail(found);
           } else {
-            supabase
-              .from('swedpersiska_ads')
-              .select('*')
-              .or(`reference_number.eq.${adParam},id.eq.${adParam}`)
-              .maybeSingle()
-              .then(({ data }) => {
-                if (data) setActiveAdDetail(data);
-              });
+            fetchPublicAdByParam(adParam).then((data) => {
+              if (data) setActiveAdDetail(data);
+            });
           }
         } else {
           setActiveAdDetail(null);
@@ -473,19 +493,19 @@ export default function App() {
     heroSubheading = 'جامع‌ترین بازارچه و پرتال نیازمندی‌های فارسی‌زبانان در هلسینکی، اسپو، تامپره و سراسر فنلاند.';
   }
 
-  // Filter ads
+  // Filter ads safely (handles nullable fields)
   const filteredAds = ads.filter(ad => {
     const matchCountry = ad.country === selectedCountry || (!ad.country && selectedCountry === 'se');
     const matchCat = selectedCategory === 'all' || ad.category === selectedCategory;
     const matchCity = selectedCity === 'all' || ad.city === selectedCity;
     const q = searchQuery.toLowerCase().trim();
     const matchSearch = !q || 
-      ad.title.toLowerCase().includes(q) ||
+      (ad.title && ad.title.toLowerCase().includes(q)) ||
       (ad.title_fa && ad.title_fa.toLowerCase().includes(q)) ||
-      ad.description.toLowerCase().includes(q) ||
-      ad.city.toLowerCase().includes(q) ||
+      (ad.description && ad.description.toLowerCase().includes(q)) ||
+      (ad.city && ad.city.toLowerCase().includes(q)) ||
       (ad.area && ad.area.toLowerCase().includes(q)) ||
-      ad.reference_number.toLowerCase().includes(q);
+      (ad.reference_number && ad.reference_number.toLowerCase().includes(q));
 
     return matchCountry && matchCat && matchCity && matchSearch;
   });
@@ -651,7 +671,7 @@ export default function App() {
               <button
                 key={cat.id}
                 type="button"
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => handleCategoryChange(cat.id)}
                 className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
                   isActive
                     ? 'bg-[#1877F2] text-white shadow-xs'

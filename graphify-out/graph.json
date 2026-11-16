@@ -580,7 +580,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "components_manageadmodal",
-      "community": 14,
+      "community": 11,
       "norm_label": "manageadmodal.jsx"
     },
     {
@@ -590,7 +590,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "components_manageadmodal_manageadmodal",
-      "community": 14,
+      "community": 11,
       "norm_label": "manageadmodal()"
     },
     {
@@ -704,10 +704,30 @@
       "norm_label": "supabase"
     },
     {
+      "label": "isSafeHttpUrl()",
+      "file_type": "code",
+      "source_file": "src/lib/supabase.js",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "lib_supabase_issafehttpurl",
+      "community": 14,
+      "norm_label": "issafehttpurl()"
+    },
+    {
+      "label": "secureRandomInt()",
+      "file_type": "code",
+      "source_file": "src/lib/supabase.js",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "lib_supabase_securerandomint",
+      "community": 14,
+      "norm_label": "securerandomint()"
+    },
+    {
       "label": "generateReferenceNumber()",
       "file_type": "code",
       "source_file": "src/lib/supabase.js",
-      "source_location": "L12",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "lib_supabase_generatereferencenumber",
       "community": 14,
@@ -717,7 +737,7 @@
       "label": "generatePinCode()",
       "file_type": "code",
       "source_file": "src/lib/supabase.js",
-      "source_location": "L27",
+      "source_location": "L60",
       "_origin": "ast",
       "id": "lib_supabase_generatepincode",
       "community": 14,
@@ -1522,6 +1542,17 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app",
+      "target": "lib_supabase_issafehttpurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/App.jsx",
       "source_location": "L25",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -2193,6 +2224,17 @@
       "source_file": "src/components/PostAdModal.jsx",
       "source_location": "L11",
       "weight": 1.0,
+      "source": "components_postadmodal",
+      "target": "lib_supabase_issafehttpurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/PostAdModal.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "components_postadmodal",
       "target": "lib_supabase_supabase"
@@ -2276,11 +2318,53 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.js",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "lib_supabase",
+      "target": "lib_supabase_issafehttpurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/supabase.js",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "lib_supabase",
+      "target": "lib_supabase_securerandomint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/supabase.js",
       "source_location": "L6",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "lib_supabase",
       "target": "lib_supabase_supabase"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/supabase.js",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "lib_supabase_generatepincode",
+      "target": "lib_supabase_securerandomint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/supabase.js",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "lib_supabase_generatereferencenumber",
+      "target": "lib_supabase_securerandomint",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2574,5 +2658,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "277b990ae839a372a61dd85f9fef37375f2ce7d2"
+  "built_at_commit": "91af5b130a5270502bafda78a34e777444add3b4"
 }

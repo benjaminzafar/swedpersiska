@@ -225,9 +225,9 @@ export default function AdDetailPage({
                     <span>{ad.views_count || 1} بازدید</span>
                   </div>
 
-                  <div className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-400">
+                  <div className="inline-flex items-center gap-1 text-[11px] text-slate-400">
                     <span>کد مرجع:</span>
-                    <bdi className="font-bold text-slate-600">{ad.reference_number}</bdi>
+                    <bdi className="font-mono font-bold text-slate-600">{ad.reference_number}</bdi>
                   </div>
                 </div>
               </div>
@@ -251,11 +251,11 @@ export default function AdDetailPage({
                   {/* Phone */}
                   {ad.contact_phone && (
                     <a
-                      href={`tel:${ad.contact_phone}`}
+                      href={`tel:${ad.contact_phone.replace(/[^0-9+]/g, '')}`}
                       className="flex items-center justify-center gap-2 h-12 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-xs active:scale-95 transition-all"
                     >
                       <Phone size={17} />
-                      <span>تماس مستقیم: {ad.contact_phone}</span>
+                      <span>تماس مستقیم: <bdi dir="ltr" className="font-mono">{ad.contact_phone}</bdi></span>
                     </a>
                   )}
 
@@ -275,7 +275,7 @@ export default function AdDetailPage({
                   {/* Telegram */}
                   {ad.contact_telegram && (
                     <a
-                      href={ad.contact_telegram.startsWith('http') ? ad.contact_telegram : `https://t.me/${ad.contact_telegram.replace('@', '')}`}
+                      href={/^https?:\/\//i.test(ad.contact_telegram.trim()) ? ad.contact_telegram.trim() : `https://t.me/${ad.contact_telegram.trim().replace(/^@/, '').replace(/[^a-zA-Z0-9_]/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 h-12 px-4 rounded-xl bg-[#229ED9] hover:bg-[#1e8ec3] text-white text-sm font-bold shadow-xs active:scale-95 transition-all"

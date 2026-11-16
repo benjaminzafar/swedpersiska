@@ -1,16 +1,16 @@
 # Graph Report - swedpersiska  (2026-11-16)
 
 ## Corpus Check
-- 26 files · ~139,920 words
+- 26 files · ~140,244 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 110 nodes · 141 edges · 15 communities (13 shown, 2 thin omitted)
+- 112 nodes · 147 edges · 15 communities (13 shown, 2 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `277b990a`
+- Built from commit: `91af5b13`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -37,8 +37,8 @@
 6. `scripts` - 5 edges
 7. `ErrorBoundary` - 5 edges
 8. `Astryx Design System & Guidelines (Meta)` - 5 edges
-9. `SwedPersiska (سوئد پرشیا)` - 4 edges
-10. `rules` - 3 edges
+9. `generatePinCode()` - 4 edges
+10. `SwedPersiska (سوئد پرشیا)` - 4 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `PostAdModal()` --calls--> `generatePinCode()`  [EXTRACTED]
@@ -82,12 +82,12 @@ Cohesion: 0.33
 Nodes (5): 1. Frame-First Layouts, 2. Semantic Tokens Over Hardcoded Values, 3. High-End Master-Detail CRM UX, 4. Tactile Controls & Action Buttons, Astryx Design System & Guidelines (Meta)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.20
+Cohesion: 0.18
 Nodes (5): currentYear, CATEGORY_META, CATEGORIES, COUNTRIES, t
 
 ### Community 14 - "Community 14"
-Cohesion: 0.33
-Nodes (4): PostAdModal(), generatePinCode(), generateReferenceNumber(), supabase
+Cohesion: 0.38
+Nodes (6): PostAdModal(), generatePinCode(), generateReferenceNumber(), isSafeHttpUrl(), secureRandomInt(), supabase
 
 ## Knowledge Gaps
 - **50 isolated node(s):** `$schema`, `plugins`, `react/rules-of-hooks`, `react/only-export-components`, `name` (+45 more)
@@ -98,7 +98,7 @@ Nodes (4): PostAdModal(), generatePinCode(), generateReferenceNumber(), supabase
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `devDependencies` connect `Community 3` to `Community 1`?**
-  _High betweenness centrality (0.025) - this node is a cross-community bridge._
+  _High betweenness centrality (0.024) - this node is a cross-community bridge._
 - **What connects `$schema`, `plugins`, `react/rules-of-hooks` to the rest of the system?**
   _50 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**

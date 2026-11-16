@@ -53,14 +53,11 @@ export default function ManageAdModal({ lang = 'fa', onClose, onDeleted, onUpdat
         .from('swedpersiska_ads')
         .select('*')
         .eq('reference_number', cleanRef)
-        .single();
+        .eq('pin_code', cleanPin)
+        .maybeSingle();
 
       if (error || !data) {
-        throw new Error(lang === 'fa' ? 'آگهی با این شماره مرجع یافت نشد.' : 'Hittade ingen annons med detta referensnummer.');
-      }
-
-      if (data.pin_code !== cleanPin) {
-        throw new Error(lang === 'fa' ? 'پین کد وارد شده صحیح نیست.' : 'Felaktig PIN-kod för denna annons.');
+        throw new Error(lang === 'fa' ? 'شماره مرجع یا پین کد وارد شده صحیح نیست.' : 'Felaktigt referensnummer eller PIN-kod.');
       }
 
       setMatchedAd(data);
@@ -123,6 +120,7 @@ export default function ManageAdModal({ lang = 'fa', onClose, onDeleted, onUpdat
           updated_at: new Date().toISOString()
         })
         .eq('id', matchedAd.id)
+        .eq('pin_code', matchedAd.pin_code)
         .select()
         .single();
 
