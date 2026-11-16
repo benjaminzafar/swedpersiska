@@ -85,8 +85,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'active' | 'hidden' | 'vip'
 
-  // Master-Detail CRM Selection
+  // Master-Detail CRM Selection & Centered Detail Modal
   const [selectedAdId, setSelectedAdId] = useState(null);
+  const [selectedAdForModal, setSelectedAdForModal] = useState(null);
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [copiedPin, setCopiedPin] = useState(false);
   const [copiedRef, setCopiedRef] = useState(false);
@@ -344,6 +345,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
       if (error) throw error;
       setAds(ads.map(a => a.id === adId ? { ...a, country: newCountry } : a));
+      setSelectedAdForModal(prev => prev && prev.id === adId ? { ...prev, country: newCountry } : prev);
       const countryObj = COUNTRIES.find(c => c.id === newCountry) || COUNTRIES[0];
       triggerToast(`کشور آگهی به ${countryObj.nameFa} تغییر یافت.`);
       if (onRefreshAds) onRefreshAds();
@@ -364,6 +366,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
       if (error) throw error;
       setAds(ads.map(a => a.id === ad.id ? { ...a, is_featured: nextVal } : a));
+      setSelectedAdForModal(prev => prev && prev.id === ad.id ? { ...prev, is_featured: nextVal } : prev);
       triggerToast(nextVal ? 'آگهی به VIP تبدیل شد.' : 'نشان VIP حذف شد.');
       if (onRefreshAds) onRefreshAds();
     } catch (err) {
@@ -383,6 +386,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
       if (error) throw error;
       setAds(ads.map(a => a.id === ad.id ? { ...a, status: nextStatus } : a));
+      setSelectedAdForModal(prev => prev && prev.id === ad.id ? { ...prev, status: nextStatus } : prev);
       triggerToast(nextStatus === 'active' ? 'آگهی فعال و منتشر شد.' : 'آگهی مخفی شد.');
       if (onRefreshAds) onRefreshAds();
     } catch (err) {
@@ -408,6 +412,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       if (selectedAdId === id) {
         setSelectedAdId(updated.length > 0 ? updated[0].id : null);
         setMobileDetailOpen(false);
+      }
+      if (selectedAdForModal && selectedAdForModal.id === id) {
+        setSelectedAdForModal(null);
       }
       triggerToast('آگهی حذف شد.');
       if (onRefreshAds) onRefreshAds();
@@ -756,8 +763,8 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
   // ========================================================
   return (
     <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] text-zinc-900 font-sans select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-0 sm:p-4" 
-      dir="ltr"
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#f4f1ea] text-zinc-900 font-vazir select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden p-0 sm:p-4" 
+      dir="rtl"
     >
       
       {/* Dynamic Island Toast */}
@@ -769,22 +776,22 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          1. DESKTOP FLOATING SIDEBAR (Exact CCTV-BUSINESS Admin Frame)
+          1. DESKTOP FLOATING SIDEBAR (RIGHT-ALIGNED IN RTL)
       ======================================================== */}
       <aside
-        className="lg:fixed lg:top-4 lg:bottom-4 lg:left-4 lg:w-[248px] bg-[#11141a] text-white rounded-2xl px-2.5 pb-4 pt-0 hidden lg:flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-stone-800/60 select-none z-30 transition-all duration-200 ease-out"
+        className="lg:fixed lg:top-4 lg:bottom-4 lg:right-4 lg:left-auto lg:w-[248px] bg-[#11141a] text-white rounded-2xl px-2.5 pb-4 pt-0 hidden lg:flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-stone-800/60 select-none z-30 transition-all duration-200 ease-out"
         data-testid="admin-sidebar"
       >
         {/* Top Header / Brand */}
         <div className="flex flex-col w-full">
           <div className="flex h-14 items-center px-2 border-b border-stone-800/80 shrink-0">
-            <div className="flex items-center gap-2.5 group cursor-pointer" onClick={onClose} title="Webbplats">
+            <div className="flex items-center gap-2.5 group cursor-pointer" onClick={onClose} title="مشاهده وب‌سایت">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-slate-950 shadow-sm font-black text-xs transition-transform duration-200 group-hover:scale-105 active:scale-95">
                 SP
               </div>
               <div className="flex flex-col">
-                <span className="font-extrabold text-[13px] tracking-tight leading-none text-white">SWEDPERSISKA</span>
-                <span className="text-[10px] text-stone-400 font-mono tracking-wider uppercase mt-0.5">Admin Portal</span>
+                <span className="font-extrabold text-[13px] tracking-tight leading-none text-white">سوئد پرشیا</span>
+                <span className="text-[10px] text-stone-400 font-medium tracking-wide mt-0.5">پنل مدیریت سایت</span>
               </div>
             </div>
           </div>
@@ -792,11 +799,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           {/* Navigation Group Items */}
           <div className="flex-1 overflow-y-auto no-scrollbar py-2 space-y-3 max-h-[calc(100vh-175px)]">
             
-            {/* Group 1: Översikt */}
+            {/* Group 1: داشبورد */}
             <div className="space-y-0.5">
               <div className="px-2 pt-1.5 pb-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-                  Översikt
+                  داشبورد اصلی
                 </span>
               </div>
               <button
@@ -810,16 +817,16 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <LayoutDashboard size={16} strokeWidth={activeTab === 'overview' ? 2.4 : 1.75} className={activeTab === 'overview' ? 'text-slate-950 shrink-0' : 'text-stone-400 shrink-0'} />
-                  <span className="truncate">Översikt</span>
+                  <span className="truncate">داشبورد</span>
                 </div>
               </button>
             </div>
 
-            {/* Group 2: Annonser & VIP */}
+            {/* Group 2: مدیریت و درآمد */}
             <div className="space-y-0.5">
               <div className="px-2 pt-1.5 pb-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-                  Annonser &amp; VIP
+                  مدیریت و درآمد
                 </span>
               </div>
 
@@ -834,10 +841,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Layers size={16} strokeWidth={activeTab === 'ads' ? 2.4 : 1.75} className={activeTab === 'ads' ? 'text-slate-950 shrink-0' : 'text-stone-400 shrink-0'} />
-                  <span className="truncate">Annonser</span>
+                  <span className="truncate">مدیریت آگهی‌ها</span>
                 </div>
                 {ads.length > 0 && (
-                  <span className={`flex h-4 min-w-4 items-center justify-center rounded px-1.5 text-[9.5px] font-bold ${
+                  <span className={`flex h-4 min-w-4 items-center justify-center rounded px-1.5 text-[9.5px] font-mono font-bold ${
                     activeTab === 'ads' ? 'bg-slate-900 text-white' : 'bg-cyan-400/20 text-cyan-300 border border-cyan-400/30'
                   }`}>
                     {ads.length}
@@ -856,7 +863,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <CreditCard size={16} strokeWidth={activeTab === 'monetization' ? 2.4 : 1.75} className={activeTab === 'monetization' ? 'text-slate-950 shrink-0' : 'text-stone-400 shrink-0'} />
-                  <span className="truncate">VIP & Betalning</span>
+                  <span className="truncate">درگاه و VIP</span>
                 </div>
                 <span className="flex h-4 min-w-4 items-center justify-center rounded px-1.5 text-[9.5px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
                   VIP
@@ -864,11 +871,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               </button>
             </div>
 
-            {/* Group 3: System & Drift */}
+            {/* Group 3: سیستم و امنیت */}
             <div className="space-y-0.5">
               <div className="px-2 pt-1.5 pb-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-                  System & Drift
+                  سیستم و امنیت
                 </span>
               </div>
 
@@ -883,12 +890,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <ShieldCheck size={16} strokeWidth={activeTab === 'security' ? 2.4 : 1.75} className={activeTab === 'security' ? 'text-slate-950 shrink-0' : 'text-stone-400 shrink-0'} />
-                  <span className="truncate">Säkerhet & Drift</span>
+                  <span className="truncate">امنیت سیستم</span>
                 </div>
                 <span className={`flex h-4 min-w-4 items-center justify-center rounded px-1.5 text-[9.5px] font-bold ${
                   turnstileSettings.enabled ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/10 text-stone-400'
                 }`}>
-                  {turnstileSettings.enabled ? 'Aktiv' : 'Av'}
+                  {turnstileSettings.enabled ? 'فعال' : 'غیرفعال'}
                 </span>
               </button>
 
@@ -903,7 +910,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Settings size={16} strokeWidth={activeTab === 'settings' ? 2.4 : 1.75} className={activeTab === 'settings' ? 'text-slate-950 shrink-0' : 'text-stone-400 shrink-0'} />
-                  <span className="truncate">Inställningar</span>
+                  <span className="truncate">تنظیمات سایت</span>
                 </div>
               </button>
             </div>
@@ -918,20 +925,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               type="button"
               onClick={onClose}
               className="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[12px] font-semibold text-stone-200 bg-white/5 hover:bg-white/10 hover:text-white border border-stone-800/80 active:scale-95 transition-all text-center cursor-pointer"
-              title="Webbplats"
+              title="مشاهده وب‌سایت"
             >
               <ExternalLink size={14} className="text-blue-400 shrink-0" />
-              <span className="truncate">Webbplats</span>
+              <span className="truncate">سایت</span>
             </button>
 
             <button
               type="button"
               onClick={handleLogout}
               className="flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[12px] font-semibold text-rose-300 bg-rose-950/25 hover:bg-rose-950/45 border border-rose-900/40 active:scale-95 transition-all text-center cursor-pointer"
-              title="Logga ut"
+              title="خروج از حساب"
             >
               <LogOut size={14} className="shrink-0" />
-              <span className="truncate">Logga ut</span>
+              <span className="truncate">خروج</span>
             </button>
           </div>
         </div>
@@ -939,21 +946,21 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
       {/* Mobile Slide-in Drawer */}
       {mobileSidebarOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden font-sans select-none" dir="ltr">
+        <div className="fixed inset-0 z-50 lg:hidden font-vazir select-none" dir="rtl">
           <div 
             className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={() => setMobileSidebarOpen(false)}
           />
           
-          <div className="relative z-10 w-64 max-w-[85vw] h-full bg-[#11141a] text-white flex flex-col border-e border-stone-800/80 shadow-2xl animate-in slide-in-from-left duration-250 ease-out">
+          <div className="relative z-10 w-64 max-w-[85vw] h-full bg-[#11141a] text-white flex flex-col border-s border-stone-800/80 shadow-2xl animate-in slide-in-from-right duration-250 ease-out">
             <div className="flex h-14 items-center justify-between px-3 border-b border-stone-800/80 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="h-8 w-8 rounded-lg bg-white text-zinc-950 font-black text-xs flex items-center justify-center">
                   SP
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-extrabold text-xs text-white">SWEDPERSISKA</span>
-                  <span className="text-[10px] text-stone-400 font-mono">Admin Portal</span>
+                  <span className="font-extrabold text-xs text-white">سوئد پرشیا</span>
+                  <span className="text-[10px] text-stone-400">پنل مدیریت سایت</span>
                 </div>
               </div>
               <button
@@ -967,11 +974,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
             <div className="flex-1 overflow-y-auto p-3 space-y-1">
               {[
-                { id: 'overview', label: 'Översikt', icon: LayoutDashboard, badge: null },
-                { id: 'ads', label: 'Annonser', icon: Layers, badge: ads.length },
-                { id: 'monetization', label: 'VIP & Betalning', icon: CreditCard, badge: 'VIP' },
-                { id: 'security', label: 'Säkerhet', icon: ShieldCheck, badge: turnstileSettings.enabled ? 'Aktiv' : 'Av' },
-                { id: 'settings', label: 'Inställningar', icon: Settings, badge: null },
+                { id: 'overview', label: 'داشبورد', icon: LayoutDashboard, badge: null },
+                { id: 'ads', label: 'مدیریت آگهی‌ها', icon: Layers, badge: ads.length },
+                { id: 'monetization', label: 'درگاه و VIP', icon: CreditCard, badge: 'VIP' },
+                { id: 'security', label: 'امنیت سیستم', icon: ShieldCheck, badge: turnstileSettings.enabled ? 'فعال' : 'غیرفعال' },
+                { id: 'settings', label: 'تنظیمات سایت', icon: Settings, badge: null },
               ].map(item => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
@@ -1010,7 +1017,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 className="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-white/10 text-white text-xs font-bold"
               >
                 <ExternalLink size={14} />
-                <span>Webbplats</span>
+                <span>مشاهده سایت</span>
               </button>
 
               <button
@@ -1019,7 +1026,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 className="w-full h-10 flex items-center justify-center gap-2 rounded-xl bg-rose-500/20 text-rose-300 text-xs font-bold"
               >
                 <LogOut size={14} />
-                <span>Logga ut</span>
+                <span>خروج از حساب</span>
               </button>
             </div>
           </div>
@@ -1027,28 +1034,28 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       )}
 
       {/* ========================================================
-          2. MAIN CONTENT AREA (Exact CCTV-BUSINESS Placements & Zero Trapped Scroll)
+          2. MAIN CONTENT AREA (PADDED RIGHT FOR DESKTOP SIDEBAR)
       ======================================================== */}
-      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200 lg:pl-[260px] px-2.5 pb-8 sm:px-0 sm:pb-8">
+      <div className="flex-1 flex flex-col min-w-0 transition-all duration-200 lg:pr-[264px] lg:pl-0 px-2.5 pb-8 sm:px-0 sm:pb-8">
         
-        {/* Top Desktop Nav Bar (Exact CCTV-BUSINESS Vinthem Header - Aligned at y = 16px) */}
+        {/* Top Desktop Nav Bar */}
         <header className="hidden lg:flex items-center justify-between h-14 px-5 bg-white rounded-2xl border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4 sticky top-0 shrink-0 z-20 select-none">
-          {/* Left: Active Section Title (Clean & Calm) */}
+          {/* Right: Active Section Title */}
           <div className="flex items-center min-w-[150px] shrink-0">
-            <span className="font-bold text-stone-900 tracking-tight text-[15.5px]">
-              {activeTab === 'overview' && 'Översikt'}
-              {activeTab === 'ads' && 'Annonser'}
-              {activeTab === 'monetization' && 'VIP & Betalning'}
-              {activeTab === 'security' && 'Säkerhet'}
-              {activeTab === 'settings' && 'Inställningar'}
+            <span className="font-extrabold text-stone-900 tracking-tight text-[16px]">
+              {activeTab === 'overview' && 'داشبورد مدیریت'}
+              {activeTab === 'ads' && 'مدیریت آگهی‌ها'}
+              {activeTab === 'monetization' && 'درگاه بانکی و تعرفه VIP'}
+              {activeTab === 'security' && 'امنیت و فایروال'}
+              {activeTab === 'settings' && 'تنظیمات کلی سایت'}
             </span>
           </div>
 
-          {/* Right: Search Bar + Live Status + Refresh + Notification Bell + Actions */}
+          {/* Left: Actions + Search + Status */}
           <div className="flex items-center gap-3 shrink-0">
             {/* Search Bar */}
             <div className="relative w-64 xl:w-72">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+              <Search size={14} className="absolute start-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
               <input
                 ref={topSearchRef}
                 type="search"
@@ -1057,14 +1064,14 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   setSearchQuery(e.target.value);
                   if (activeTab !== 'ads') handleTabChange('ads');
                 }}
-                placeholder="Sök i admin... (Ctrl+K)"
-                className="w-full h-9 pl-9 pr-8 bg-stone-50 hover:bg-stone-100/70 focus:bg-white text-[12px] text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/80 focus:border-stone-400 outline-none transition-all shadow-2xs"
+                placeholder="جستجو در مدیریت... (Ctrl+K)"
+                className="w-full h-9 ps-9 pe-8 bg-stone-50 hover:bg-stone-100/70 focus:bg-white text-[12px] text-stone-900 placeholder:text-stone-400 rounded-xl border border-stone-200/80 focus:border-stone-400 outline-none transition-all shadow-2xs"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
+                  className="absolute end-2.5 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 rounded-md cursor-pointer"
                 >
                   <X size={13} />
                 </button>
@@ -1074,7 +1081,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
             {/* Live Online Badge */}
             <span className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>System 100% online</span>
+              <span>سیستم ۱۰۰٪ آنلاین</span>
             </span>
 
             {/* Refresh Button */}
@@ -1082,10 +1089,10 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               type="button"
               onClick={fetchAdminData}
               className="h-9 px-3 rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-950 hover:bg-stone-50 transition-colors shadow-2xs active:scale-95 flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
-              title="Uppdatera data"
+              title="بروزرسانی داده‌ها"
             >
               <RefreshCw size={14} className={loading ? 'animate-spin text-blue-600' : ''} />
-              <span className="hidden xl:inline">Uppdatera</span>
+              <span className="hidden xl:inline">بروزرسانی</span>
             </button>
 
             {/* Notification Bell */}
@@ -1096,11 +1103,11 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 handleTabChange('ads');
               }}
               className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-900 hover:bg-stone-50 transition-colors shadow-2xs active:scale-95 cursor-pointer"
-              title={`${ads.length} aktiva annonser`}
+              title={`${ads.length} آگهی فعال در سیستم`}
             >
               <Bell size={16} />
               {ads.length > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[9px] font-bold text-white ring-2 ring-white">
+                <span className="absolute -top-1 -start-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[9px] font-mono font-bold text-white ring-2 ring-white">
                   {ads.length}
                 </span>
               )}
@@ -1113,29 +1120,29 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               className="h-9 px-3.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95 transition-all"
             >
               <ExternalLink size={13} />
-              <span>Webbplats</span>
+              <span>مشاهده سایت</span>
             </button>
           </div>
         </header>
 
-        {/* Mobile Header (Exact CCTV-BUSINESS Mobile Bar) */}
+        {/* Mobile Header */}
         <header className="sticky top-0 z-30 flex flex-col w-full border-b border-stone-200 bg-white lg:hidden shadow-2xs select-none">
           <div className="flex h-14 w-full items-center justify-between px-3 sm:px-4">
             <div className="flex items-center gap-2.5 min-w-0">
               <button
                 onClick={() => setMobileSidebarOpen(true)}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-800 hover:bg-stone-100 active:scale-95 transition-all shadow-2xs"
-                title="Öppna meny"
+                title="باز کردن منو"
               >
                 <Menu size={19} />
               </button>
               <div className="min-w-0">
                 <span className="font-bold text-[14.5px] text-stone-900 tracking-tight truncate block max-w-[150px] sm:max-w-xs">
-                  {activeTab === 'overview' && 'Översikt'}
-                  {activeTab === 'ads' && 'Annonser'}
-                  {activeTab === 'monetization' && 'VIP & Betalning'}
-                  {activeTab === 'security' && 'Säkerhet'}
-                  {activeTab === 'settings' && 'Inställningar'}
+                  {activeTab === 'overview' && 'داشبورد'}
+                  {activeTab === 'ads' && 'مدیریت آگهی‌ها'}
+                  {activeTab === 'monetization' && 'درگاه و VIP'}
+                  {activeTab === 'security' && 'امنیت سیستم'}
+                  {activeTab === 'settings' && 'تنظیمات سایت'}
                 </span>
               </div>
             </div>
@@ -1145,6 +1152,7 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 type="button"
                 onClick={fetchAdminData}
                 className="flex h-9 w-9 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 hover:text-stone-900 hover:bg-stone-50 shadow-2xs active:scale-95"
+                title="بروزرسانی"
               >
                 <RefreshCw size={15} className={loading ? 'animate-spin text-blue-600' : ''} />
               </button>
@@ -1154,90 +1162,90 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                 className="h-9 px-3 rounded-xl bg-slate-900 text-white text-xs font-bold flex items-center gap-1 active:scale-95"
               >
                 <ExternalLink size={13} />
-                <span>Webbplats</span>
+                <span>سایت</span>
               </button>
             </div>
           </div>
         </header>
 
         {/* ========================================================
-            3. CONTENT CANVAS (Natural LTR Flow, NO Inside Scroll!)
+            3. CONTENT CANVAS (Persian RTL)
         ======================================================== */}
-        <div className="flex-1 flex flex-col min-w-0" dir="ltr">
+        <div className="flex-1 flex flex-col min-w-0" dir="rtl">
           
           {/* ========================================================
-              TAB 1: COMPLETE CCTV-BUSINESS OVERVIEW SCREEN
+              TAB 1: COMPLETE PERSIAN OVERVIEW SCREEN
           ======================================================== */}
           {activeTab === 'overview' && (
             <div className="space-y-5 sm:space-y-6 max-w-7xl w-full animate-in fade-in duration-150 ease-out">
               
-              {/* 1. ROW 1: 3 High-Level Metric Cards (Astryx Frame) */}
+              {/* 1. ROW 1: 3 High-Level Metric Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 
-                {/* Card 1: VIP-INTÄKTER */}
+                {/* Card 1: درآمد VIP */}
                 <div 
                   onClick={() => handleTabChange('monetization')}
-                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-left shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
-                      VIP-INTÄKTER (STRIPE)
+                      درآمد کل VIP (استرایپ)
                     </span>
                     <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
-                      Netto
+                      خالص
                     </span>
                   </div>
-                  <p className="mt-3 text-[26px] sm:text-[28px] font-bold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
                     {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} kr
                   </p>
                   <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
-                    <span>VIP-annonser betalda via Stripe</span>
-                    <span className="font-semibold text-stone-600 font-mono">{vipAds || 0} st</span>
+                    <span>آگهی‌های ویژه پرداخت‌شده از طریق استرایپ</span>
+                    <span className="font-semibold text-stone-600 font-mono">{vipAds || 0} آگهی</span>
                   </div>
                 </div>
 
-                {/* Card 2: ANNONSER & GRANSKNING */}
+                {/* Card 2: کل آگهی‌ها */}
                 <div 
                   onClick={() => handleTabChange('ads')}
-                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-left shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
-                      ANNONSER &amp; GRANSKNING
+                      کل آگهی‌های ثبت‌شده
                     </span>
                     <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200/70 animate-pulse">
-                      +{totalAds} annonser
+                      +{totalAds} آگهی
                     </span>
                   </div>
-                  <p className="mt-3 text-[26px] sm:text-[28px] font-bold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
                     {totalAds}
                   </p>
                   <div className="mt-1 flex items-center justify-between text-[11.5px] text-stone-400">
-                    <span>Publicerade på sajten</span>
-                    <span className="font-semibold text-stone-600 font-mono">{activeAds} st</span>
+                    <span>منتشر شده در پرتال</span>
+                    <span className="font-semibold text-stone-600 font-mono">{activeAds} فعال</span>
                   </div>
                 </div>
 
-                {/* Card 3: VISNINGAR & RÄCKVIDD */}
+                {/* Card 3: بازدید و ترافیک */}
                 <div 
                   onClick={() => handleTabChange('ads')}
-                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-left shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
+                  className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 text-right shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[12px] font-bold text-stone-500 uppercase tracking-wider">
-                      VISNINGAR &amp; RÄCKVIDD
+                      بازدید و ترافیک کل
                     </span>
                     <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
-                      4 länder
+                      ۴ کشور اسکاندیناوی
                     </span>
                   </div>
-                  <p className="mt-3 text-[26px] sm:text-[28px] font-bold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
+                  <p className="mt-3 text-[26px] sm:text-[28px] font-extrabold tracking-tight text-stone-900 group-hover:text-blue-600 transition-colors font-mono">
                     {totalViews.toLocaleString('sv-SE')}
                   </p>
                   <div className="mt-2">
                     <div className="flex items-center justify-between text-[11px] font-medium text-stone-500">
-                      <span>{activeAds} av {totalAds} annonser aktiva</span>
-                      <span className="font-bold text-stone-900 font-mono">100%</span>
+                      <span>{activeAds} از {totalAds} آگهی فعال در حال نمایش</span>
+                      <span className="font-bold text-stone-900 font-mono">۱۰۰٪</span>
                     </div>
                     <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
                       <div className="h-full rounded-full bg-emerald-500 transition-all duration-500 w-full" />
@@ -1247,22 +1255,19 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
               </div>
 
-              {/* 2. ROW 2: TWIN OPERATIONAL GRID (Classifieds CRM & VIP Monetization) */}
+              {/* 2. ROW 2: TWIN OPERATIONAL GRID */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
                 
-                {/* ========================================================= */}
-                {/* LEFT COLUMN: ANNONSER & KATEGORIER (PURE CLASSIFIEDS) */}
-                {/* ========================================================= */}
+                {/* RIGHT COLUMN: آگهی‌ها و دسته‌بندی‌ها */}
                 <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
-                  {/* Section Header */}
                   <div className="flex items-center justify-between border-b border-stone-100 pb-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/60 shadow-2xs">
                         <Layers size={20} strokeWidth={2} />
                       </div>
                       <div>
-                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">Annonser &amp; Utbud</h2>
-                        <p className="text-[12px] text-stone-500">Översikt över publicerade annonser och kategorier i Norden</p>
+                        <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">آگهی‌ها و دسته‌بندی‌ها</h2>
+                        <p className="text-[12px] text-stone-500">وضعیت آگهی‌های ثبت‌شده در سراسر کشورهای اسکاندیناوی</p>
                       </div>
                     </div>
                     <button
@@ -1270,64 +1275,64 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       onClick={() => handleTabChange('ads')}
                       className="hidden sm:inline-flex items-center gap-1 text-[12px] font-bold text-blue-700 hover:text-blue-900 cursor-pointer"
                     >
-                      <span>Alla annonser</span>
-                      <span>→</span>
+                      <span>همه آگهی‌ها</span>
+                      <span>←</span>
                     </button>
                   </div>
 
-                  {/* 4 Status Cards (Annonsstatus) */}
+                  {/* 4 Status Cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                     <button
                       type="button"
                       onClick={() => { setStatusFilter('all'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-stone-200/80 bg-stone-50/60 hover:bg-stone-100/70 p-3 text-left transition-all cursor-pointer group active:scale-[0.98]"
+                      className="rounded-xl border border-stone-200/80 bg-stone-50/60 hover:bg-stone-100/70 p-3 text-right transition-all cursor-pointer group active:scale-[0.98]"
                     >
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">Totalt</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">کل آگهی‌ها</span>
                       <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{totalAds}</p>
-                      <span className="text-[10.5px] font-medium text-stone-500">I systemet</span>
+                      <span className="text-[10.5px] font-medium text-stone-500">در دیتابیس</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { setStatusFilter('active'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100/70 p-3 text-left transition-all cursor-pointer group active:scale-[0.98]"
+                      className="rounded-xl border border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100/70 p-3 text-right transition-all cursor-pointer group active:scale-[0.98]"
                     >
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Aktiva</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">فعال</span>
                       <p className="mt-1.5 text-[20px] font-extrabold text-emerald-950 font-mono">{activeAds}</p>
-                      <span className="text-[10.5px] font-bold text-emerald-700">Synliga på sajten</span>
+                      <span className="text-[10.5px] font-bold text-emerald-700">قابل مشاهده</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { setStatusFilter('vip'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-amber-300 bg-amber-50/70 hover:bg-amber-100/70 p-3 text-left transition-all cursor-pointer group active:scale-[0.98]"
+                      className="rounded-xl border border-amber-300 bg-amber-50/70 hover:bg-amber-100/70 p-3 text-right transition-all cursor-pointer group active:scale-[0.98]"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">VIP-annonser</span>
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">آگهی‌های VIP</span>
                         <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
                       </div>
                       <p className="mt-1.5 text-[20px] font-extrabold text-amber-950 font-mono">{vipAds}</p>
-                      <span className="text-[10.5px] font-bold text-amber-700">Topplacering</span>
+                      <span className="text-[10.5px] font-bold text-amber-700">جایگاه ویژه</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { setStatusFilter('hidden'); handleTabChange('ads'); }}
-                      className="rounded-xl border border-stone-200/80 bg-stone-50/60 hover:bg-stone-100/70 p-3 text-left transition-all cursor-pointer group active:scale-[0.98]"
+                      className="rounded-xl border border-stone-200/80 bg-stone-50/60 hover:bg-stone-100/70 p-3 text-right transition-all cursor-pointer group active:scale-[0.98]"
                     >
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">Dolda</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">مخفی / آرشیو</span>
                       <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{ads.filter(a => a.status === 'hidden').length}</p>
-                      <span className="text-[10.5px] font-medium text-stone-500">Inaktiverade</span>
+                      <span className="text-[10.5px] font-medium text-stone-500">غیرفعال‌شده</span>
                     </button>
                   </div>
 
-                  {/* Category Distribution Pills / Strip */}
+                  {/* Popular Categories */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
-                        Populära kategorier
+                        دسته‌بندی‌های پرطرفدار
                       </span>
-                      <span className="text-[11px] text-stone-400 font-medium">Klicka för att filtrera</span>
+                      <span className="text-[11px] text-stone-400 font-medium">برای فیلتر کردن کلیک کنید</span>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1341,13 +1346,13 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                               setCategoryFilter(cat.id);
                               handleTabChange('ads');
                             }}
-                            className="flex items-center justify-between p-2.5 rounded-xl border border-stone-200/70 bg-stone-50/50 hover:bg-stone-100/80 hover:border-stone-300 transition-all text-left cursor-pointer group"
+                            className="flex items-center justify-between p-2.5 rounded-xl border border-stone-200/70 bg-stone-50/50 hover:bg-stone-100/80 hover:border-stone-300 transition-all text-right cursor-pointer group"
                           >
-                            <div className="min-w-0 pr-1">
+                            <div className="min-w-0 pl-1">
                               <span className="text-[11.5px] font-semibold text-stone-800 block truncate group-hover:text-black">
                                 {cat.fa}
                               </span>
-                              <span className="text-[10px] text-stone-400 uppercase font-mono capitalize">
+                              <span className="text-[10px] text-stone-400 uppercase font-mono">
                                 {cat.id}
                               </span>
                             </div>
@@ -1364,131 +1369,136 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <div className="space-y-2 pt-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
-                        Senaste publicerade annonser
+                        آخرین آگهی‌های ثبت‌شده
                       </span>
-                      <span className="text-[11px] text-stone-400 font-medium">Klicka för att granska</span>
+                      <span className="text-[11px] text-stone-400 font-medium">کلیک برای مشاهده جزئیات</span>
                     </div>
 
                     <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
-                      {ads.slice(0, 4).map(ad => (
-                        <button
-                          key={ad.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedAdId(ad.id);
-                            handleTabChange('ads');
-                          }}
-                          className="w-full p-3 flex items-center justify-between gap-3 text-left hover:bg-stone-50/80 transition-colors group cursor-pointer active:scale-[0.99]"
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs group-hover:bg-blue-600 transition-colors">
-                              <Layers size={15} />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="font-mono font-bold text-[13px] text-stone-900 truncate">
-                                  #{ad.reference_number || ad.id.slice(0, 8)}
-                                </span>
-                                {ad.is_featured && (
-                                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
-                                    VIP
-                                  </span>
+                      {ads.slice(0, 4).map(ad => {
+                        const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
+                        return (
+                          <div
+                            key={ad.id}
+                            onClick={() => setSelectedAdForModal(ad)}
+                            className="w-full p-3 flex items-center justify-between gap-3 text-right hover:bg-blue-50/30 transition-colors group cursor-pointer active:scale-[0.99]"
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-stone-100 border border-stone-200 overflow-hidden shrink-0">
+                                {ad.images && ad.images[0] ? (
+                                  <img src={ad.images[0]} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-stone-300">
+                                    <ImageIcon size={18} />
+                                  </div>
                                 )}
-                                <span className="text-xs text-stone-700 truncate font-semibold">
-                                  {ad.contact_name || 'Annonsör'}
-                                </span>
                               </div>
-                              <p className="text-[11px] text-stone-400 truncate mt-0.5">
-                                {ad.title} · {ad.city}
-                              </p>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-mono font-bold text-[12.5px] text-stone-900 truncate">
+                                    #{ad.reference_number || ad.id.slice(0, 8)}
+                                  </span>
+                                  <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                    {countryObj.nameFa}
+                                  </span>
+                                  {ad.is_featured && (
+                                    <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200/70">
+                                      VIP
+                                    </span>
+                                  )}
+                                  <span className="text-xs text-stone-700 truncate font-semibold">
+                                    {ad.contact_name || 'آگهی‌دهنده'}
+                                  </span>
+                                </div>
+                                <p className="text-[11.5px] text-stone-500 truncate mt-0.5">
+                                  {ad.title} · {ad.city}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-left shrink-0">
+                              <span className="text-xs font-bold text-stone-900 font-mono block">
+                                {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
+                              </span>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded border inline-block mt-0.5 ${
+                                ad.status === 'active'
+                                  ? 'text-emerald-700 bg-emerald-50 border-emerald-200/60'
+                                  : 'text-stone-600 bg-stone-100 border-stone-200/60'
+                              }`}>
+                                {ad.status === 'active' ? 'فعال' : 'مخفی'}
+                              </span>
                             </div>
                           </div>
-                          <div className="text-right shrink-0">
-                            <span className="text-[11px] text-stone-400 block font-mono">
-                              {new Date(ad.created_at || '2026-01-01').toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' })}
-                            </span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded border inline-block mt-0.5 ${
-                              ad.status === 'active'
-                                ? 'text-emerald-700 bg-emerald-50 border-emerald-200/60'
-                                : 'text-stone-600 bg-stone-100 border-stone-200/60'
-                            }`}>
-                              {ad.status === 'active' ? 'Aktiv' : 'Dold'}
-                            </span>
-                          </div>
-                        </button>
-                      ))}
+                        );
+                      })}
                       {ads.length === 0 && (
                         <div className="py-6 text-center text-xs text-stone-400">
-                          Inga annonser ännu.
+                          هنوز آگهی‌ای در سیستم ثبت نشده است.
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* ========================================================= */}
-                {/* RIGHT COLUMN: VIP & STRIPE-KASSA (CLASSIFIEDS MONETIZATION) */}
-                {/* ========================================================= */}
+                {/* LEFT COLUMN: درگاه و ارتقای VIP */}
                 <div className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-4 sm:p-6 flex flex-col space-y-4">
-                  {/* Section Header */}
                   <div className="flex items-center gap-3 border-b border-stone-100 pb-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-2xs">
                       <CreditCard size={20} strokeWidth={2} />
                     </div>
                     <div>
-                      <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">VIP &amp; Stripe-kassa</h2>
-                      <p className="text-[12px] text-stone-500">Transaktioner, VIP-uppgraderingar och Stripe-betalningar</p>
+                      <h2 className="text-[16px] font-bold text-stone-900 tracking-tight">درگاه پرداخت و VIP</h2>
+                      <p className="text-[12px] text-stone-500">تراکنش‌ها، ارتقای ویژه و وضعیت اتصال به Stripe</p>
                     </div>
                   </div>
 
-                  {/* 4 Financial / VIP Stages */}
+                  {/* 4 Status Cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <div className="rounded-xl border border-amber-300 bg-amber-50/70 p-3 text-left">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">VIP aktiva</span>
+                    <div className="rounded-xl border border-amber-300 bg-amber-50/70 p-3 text-right">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">VIP فعال</span>
                       <p className="mt-1.5 text-[20px] font-extrabold text-amber-950 font-mono">{vipAds}</p>
-                      <span className="text-[10.5px] font-bold text-amber-700">Premiumnotiser</span>
+                      <span className="text-[10.5px] font-bold text-amber-700">آگهی‌های ویژه</span>
                     </div>
 
-                    <div className="rounded-xl border border-blue-200/80 bg-blue-50/50 p-3 text-left">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-800">Stripe kassa</span>
+                    <div className="rounded-xl border border-blue-200/80 bg-blue-50/50 p-3 text-right">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-800">درگاه Stripe</span>
                       <p className="mt-1.5 text-[20px] font-extrabold text-blue-950 font-mono">
-                        {stripeSettings.mode === 'live' ? 'Live' : 'Test'}
+                        {stripeSettings.mode === 'live' ? 'اصلی' : 'تستی'}
                       </p>
-                      <span className="text-[10.5px] font-medium text-blue-700">100% uppkopplad</span>
+                      <span className="text-[10.5px] font-medium text-blue-700">۱۰۰٪ متصل</span>
                     </div>
 
-                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-left">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">VIP-pris</span>
+                    <div className="rounded-xl border border-stone-200/80 bg-stone-50/50 p-3 text-right">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700">تعرفه VIP</span>
                       <p className="mt-1.5 text-[20px] font-extrabold text-stone-900 font-mono">{stripeSettings.vipPrice || 99} kr</p>
-                      <span className="text-[10.5px] font-medium text-stone-400">Per annons</span>
+                      <span className="text-[10.5px] font-medium text-stone-400">به ازای هر آگهی</span>
                     </div>
 
-                    <div className="rounded-xl border border-emerald-300 bg-emerald-50/70 p-3 text-left">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Total intäkt</span>
+                    <div className="rounded-xl border border-emerald-300 bg-emerald-50/70 p-3 text-right">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">کل درآمد</span>
                       <p className="mt-1.5 text-[20px] font-extrabold text-emerald-950 font-mono">
                         {((vipAds || 0) * (stripeSettings.vipPrice || 99)).toLocaleString('sv-SE')} kr
                       </p>
-                      <span className="text-[10.5px] font-bold text-emerald-700">Via Stripe</span>
+                      <span className="text-[10.5px] font-bold text-emerald-700">از طریق Stripe</span>
                     </div>
                   </div>
 
                   {/* Financial Snapshot Metrics */}
                   <div className="bg-stone-50 rounded-xl p-3 border border-stone-200/60 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
                     <div>
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Snittpris VIP</span>
+                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">تعرفه میانگین</span>
                       <span className="text-[13px] font-extrabold text-stone-900 font-mono">{stripeSettings.vipPrice || 99} kr</span>
                     </div>
-                    <div className="border-l sm:border-x border-stone-200/80">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Stripe Kassa</span>
-                      <span className="text-[13px] font-extrabold text-emerald-700 font-mono">100% aktiv</span>
+                    <div className="border-e sm:border-x border-stone-200/80">
+                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">درگاه بانکی</span>
+                      <span className="text-[13px] font-extrabold text-emerald-700 font-mono">۱۰۰٪ فعال</span>
                     </div>
-                    <div className="border-t sm:border-t-0 sm:border-r border-stone-200/80 pt-2 sm:pt-0">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">VIP-köp</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{vipAds} st</span>
+                    <div className="border-t sm:border-t-0 sm:border-s border-stone-200/80 pt-2 sm:pt-0">
+                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">خریدهای VIP</span>
+                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">{vipAds} عدد</span>
                     </div>
                     <div className="border-t sm:border-t-0 border-stone-200/80 pt-2 sm:pt-0">
-                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">Betalsätt</span>
-                      <span className="text-[13px] font-extrabold text-stone-900 font-mono">Kort / Stripe</span>
+                      <span className="block text-[10.5px] font-bold uppercase text-stone-400">روش پرداخت</span>
+                      <span className="text-[13px] font-extrabold text-stone-900">کارت / استرایپ</span>
                     </div>
                   </div>
 
@@ -1496,38 +1506,42 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
-                        Senaste VIP-transaktioner
+                        آخرین تراکنش‌های VIP
                       </span>
-                      <span className="text-[11px] text-stone-400 font-medium">Stripe-betalningar</span>
+                      <span className="text-[11px] text-stone-400 font-medium">پرداخت‌های موفق Stripe</span>
                     </div>
 
                     <div className="divide-y divide-stone-100 rounded-xl border border-stone-200/70 overflow-hidden">
                       {ads.filter(a => a.is_featured).slice(0, 4).map(ad => (
-                        <div key={ad.id} className="w-full p-3 flex items-center justify-between gap-3 text-left hover:bg-stone-50/80 transition-colors">
+                        <div 
+                          key={ad.id} 
+                          onClick={() => setSelectedAdForModal(ad)}
+                          className="w-full p-3 flex items-center justify-between gap-3 text-right hover:bg-stone-50/80 transition-colors cursor-pointer"
+                        >
                           <div className="flex items-center gap-3 min-w-0">
                             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200/80">
                               VIP
                             </div>
                             <div className="min-w-0">
-                              <span className="font-mono font-bold text-[13px] text-stone-900 truncate">
+                              <span className="font-mono font-bold text-[13px] text-stone-900 truncate block">
                                 VIP #{ad.reference_number || ad.id.slice(0, 8)}
                               </span>
                               <p className="text-[11px] text-stone-400 truncate">{ad.title}</p>
                             </div>
                           </div>
-                          <div className="text-right shrink-0">
+                          <div className="text-left shrink-0">
                             <span className="text-xs font-bold text-stone-900 font-mono block">
                               {stripeSettings.vipPrice || 99} kr
                             </span>
                             <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60 inline-block mt-0.5">
-                              Betald via Stripe
+                              پرداخت با Stripe
                             </span>
                           </div>
                         </div>
                       ))}
                       {ads.filter(a => a.is_featured).length === 0 && (
                         <div className="py-6 text-center text-xs text-stone-400">
-                          Inga VIP-köp ännu. När annonsörer uppgraderar till VIP syns transaktionerna här.
+                          هنوز خرید VIP انجام نشده است. پس از ارتقای آگهی‌ها توسط کاربران، تراکنش‌ها در اینجا نمایش داده می‌شوند.
                         </div>
                       )}
                     </div>
@@ -1540,9 +1554,9 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-black text-zinc-900">
-                    Nordisk räckvidd (Nordic Regional Breakdown)
+                    پوشش منطقه‌ای اسکاندیناوی (Nordic Regional Breakdown)
                   </h3>
-                  <span className="text-xs text-stone-500">Live statistik för Sverige, Norge, Danmark, Finland</span>
+                  <span className="text-xs text-stone-500">آمار زنده آگهی‌ها به تفکیک سوئد، نروژ، دانمارک و فنلاند</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1552,20 +1566,20 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
                       <div 
                         key={country.id}
                         onClick={() => { setCountryFilter(country.id); handleTabChange('ads'); }}
-                        className="p-4 rounded-2xl border border-stone-200/80 hover:border-zinc-900 bg-white hover:shadow-xs transition-all cursor-pointer space-y-2.5 group"
+                        className="p-4 rounded-2xl border border-stone-200/80 hover:border-zinc-900 bg-white hover:shadow-xs transition-all cursor-pointer space-y-2.5 group text-right"
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-xs text-zinc-900 group-hover:text-black">
-                            {country.name} ({country.nameFa})
+                            {country.nameFa} ({country.name})
                           </span>
                           <span className="px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 text-[10px] font-mono font-bold">
-                            {stats.total} annonser
+                            {stats.total} آگهی
                           </span>
                         </div>
                         <div className="flex items-center justify-between text-xs pt-1 border-t border-stone-100">
-                          <span className="text-stone-500 text-[11px]">{stats.active} aktiva</span>
+                          <span className="text-stone-500 text-[11px]">{stats.active} فعال</span>
                           <span className="text-amber-700 font-bold text-[11px]">{stats.vip} VIP</span>
-                          <span className="text-stone-600 font-mono text-[11px]">{stats.views} visningar</span>
+                          <span className="text-stone-600 font-mono text-[11px]">{stats.views} بازدید</span>
                         </div>
                       </div>
                     );
@@ -1577,12 +1591,12 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
           )}
 
           {/* ========================================================
-              TAB 2: ANNONSER (FULL-WIDTH COMPREHENSIVE VIEW)
+              TAB 2: HIGH-DENSITY LUXURY TABLE (PERSIAN RTL)
           ======================================================== */}
           {activeTab === 'ads' && (
             <div className="space-y-4 max-w-7xl w-full animate-in fade-in duration-150 ease-out">
               
-              {/* Filter Controls Bar (Top Astryx Frame) */}
+              {/* Filter Controls Bar */}
               <div className="p-4 rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-3">
                 
                 {/* 1. Country Filter Pills */}
@@ -1677,273 +1691,265 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
 
               </div>
 
-              {/* Ads Full-Width Stream (Showing Complete Info Directly!) */}
-              <div className="space-y-3.5 pb-12">
+              {/* High-Density Luxury Ads Table */}
+              <div className="bg-white rounded-2xl border border-stone-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden">
                 {filteredAds.length === 0 ? (
-                  <div className="text-center py-20 bg-white rounded-2xl border border-stone-200/80 p-8 text-stone-400 space-y-2">
+                  <div className="text-center py-20 p-8 text-stone-400 space-y-2">
                     <Layers size={36} className="mx-auto text-stone-300" />
                     <p className="text-sm font-semibold text-stone-600">هیچ آگهی با این فیلترها یافت نشد.</p>
                     <p className="text-xs text-stone-400">فیلترهای جستجو یا کشور را تغییر دهید.</p>
                   </div>
                 ) : (
-                  filteredAds.map(ad => {
-                    const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
-                    const catObj = CATEGORIES.find(c => c.id === ad.category);
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-right border-collapse">
+                      <thead>
+                        <tr className="bg-stone-50/90 border-b border-stone-200/80 text-[11.5px] font-bold text-stone-500 select-none">
+                          <th className="py-3 px-3 text-center w-14">تصویر</th>
+                          <th className="py-3 px-3 min-w-[130px]">شناسه و رمز</th>
+                          <th className="py-3 px-3 min-w-[220px]">عنوان و دسته‌بندی</th>
+                          <th className="py-3 px-3 min-w-[120px]">شهر و قیمت</th>
+                          <th className="py-3 px-3 min-w-[180px]">اطلاعات تماس</th>
+                          <th className="py-3 px-3 text-center w-20">بازدید</th>
+                          <th className="py-3 px-3 text-center w-24">وضعیت</th>
+                          <th className="py-3 px-3 text-center min-w-[150px]">عملیات</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100 text-xs">
+                        {filteredAds.map(ad => {
+                          const countryObj = COUNTRIES.find(c => c.id === (ad.country || 'se')) || COUNTRIES[0];
+                          const catObj = CATEGORIES.find(c => c.id === ad.category);
 
-                    return (
-                      <div
-                        key={ad.id}
-                        id={`ad-item-${ad.id}`}
-                        className="rounded-2xl border border-stone-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:border-stone-300 transition-all p-4 sm:p-5 space-y-4"
-                      >
-                        {/* 1. Header Row: Reference, Category, Country, Status Badges & Actions */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-stone-100">
-                          
-                          {/* Badges / Identification */}
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {/* Country Badge */}
-                            <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-200/70">
-                              {countryObj.nameFa}
-                            </span>
-
-                            {/* Reference Number with 1-Click Copy */}
-                            <button
-                              type="button"
-                              onClick={() => copyText(ad.reference_number, `ref-${ad.id}`, 'کد پیگیری')}
-                              className="font-mono text-[11px] text-stone-800 font-bold bg-stone-100 hover:bg-stone-200 px-2 py-0.5 rounded border border-stone-200/80 flex items-center gap-1 cursor-pointer transition-colors"
-                              title="کپی کد پیگیری"
+                          return (
+                            <tr
+                              key={ad.id}
+                              id={`ad-item-${ad.id}`}
+                              className="hover:bg-blue-50/40 transition-colors group"
                             >
-                              <span>#{ad.reference_number || ad.id.slice(0, 8)}</span>
-                              {copiedKey === `ref-${ad.id}` ? <Check size={11} className="text-emerald-600" /> : <Copy size={11} className="text-stone-400" />}
-                            </button>
+                              {/* 1. Thumbnail */}
+                              <td className="py-2.5 px-3 text-center align-middle">
+                                <div 
+                                  onClick={() => setSelectedAdForModal(ad)}
+                                  className="w-11 h-11 rounded-xl bg-stone-100 border border-stone-200/80 overflow-hidden shrink-0 mx-auto cursor-pointer shadow-2xs group-hover:scale-105 transition-transform"
+                                  title="کلیک برای مشاهده جزئیات کامل"
+                                >
+                                  {ad.images && ad.images[0] ? (
+                                    <img src={ad.images[0]} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-stone-300 bg-stone-50">
+                                      <ImageIcon size={18} />
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
 
-                            {/* Edit PIN with 1-Click Copy */}
-                            <button
-                              type="button"
-                              onClick={() => copyText(ad.pin_code || '1234', `pin-${ad.id}`, 'رمز ویرایش')}
-                              className="font-mono text-[11px] font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 px-2 py-0.5 rounded border border-amber-200/70 flex items-center gap-1 cursor-pointer transition-colors"
-                              title="کپی رمز ویرایش"
-                            >
-                              <span>رمز: {ad.pin_code || '1234'}</span>
-                              {copiedKey === `pin-${ad.id}` ? <Check size={11} className="text-emerald-600" /> : <Copy size={11} className="text-amber-600" />}
-                            </button>
+                              {/* 2. Reference, PIN & Country */}
+                              <td className="py-2.5 px-3 align-middle">
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <button
+                                      type="button"
+                                      onClick={() => copyText(ad.reference_number, `ref-${ad.id}`, 'کد پیگیری')}
+                                      className="font-mono text-[11px] font-bold text-stone-800 bg-stone-100 hover:bg-stone-200 px-1.5 py-0.5 rounded border border-stone-200 flex items-center gap-1 cursor-pointer transition-colors"
+                                      title="کپی کد پیگیری"
+                                    >
+                                      <span>#{ad.reference_number || ad.id.slice(0, 8)}</span>
+                                      {copiedKey === `ref-${ad.id}` ? <Check size={10} className="text-emerald-600" /> : <Copy size={10} className="text-stone-400" />}
+                                    </button>
 
-                            {/* Category Badge */}
-                            {catObj && (
-                              <span className="px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 text-[10.5px] font-semibold">
-                                {catObj.fa}
-                              </span>
-                            )}
+                                    <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/70">
+                                      {countryObj.nameFa}
+                                    </span>
+                                  </div>
 
-                            {/* VIP Badge */}
-                            {ad.is_featured ? (
-                              <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10.5px] font-extrabold border border-amber-300 flex items-center gap-1">
-                                <Sparkles size={11} className="text-amber-600" />
-                                <span>VIP ویژه</span>
-                              </span>
-                            ) : null}
+                                  <div>
+                                    <button
+                                      type="button"
+                                      onClick={() => copyText(ad.pin_code || '1234', `pin-${ad.id}`, 'رمز ویرایش')}
+                                      className="font-mono text-[10.5px] font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200 flex items-center gap-1 cursor-pointer transition-colors"
+                                      title="کپی رمز ویرایش"
+                                    >
+                                      <span>رمز: {ad.pin_code || '1234'}</span>
+                                      {copiedKey === `pin-${ad.id}` ? <Check size={10} className="text-emerald-600" /> : <Copy size={10} className="text-amber-600" />}
+                                    </button>
+                                  </div>
+                                </div>
+                              </td>
 
-                            {/* Status Badge */}
-                            <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold border ${
-                              ad.status === 'active'
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                : 'bg-stone-100 text-stone-600 border-stone-200'
-                            }`}>
-                              {ad.status === 'active' ? 'فعال' : 'مخفی'}
-                            </span>
-                          </div>
-
-                          {/* Quick Actions (Right side of header) */}
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            {/* Toggle VIP */}
-                            <button
-                              type="button"
-                              onClick={() => toggleFeatured(ad)}
-                              className={`h-8 px-2.5 rounded-xl border text-[11.5px] font-bold transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
-                                ad.is_featured
-                                  ? 'bg-amber-50 text-amber-800 border-amber-300'
-                                  : 'bg-white hover:bg-stone-50 text-stone-600 border-stone-200'
-                              }`}
-                              title={ad.is_featured ? 'حذف نشان VIP' : 'تبدیل به VIP'}
-                            >
-                              <Sparkles size={13} className={ad.is_featured ? 'text-amber-600' : 'text-stone-400'} />
-                              <span>{ad.is_featured ? 'VIP فعال' : 'VIP کردن'}</span>
-                            </button>
-
-                            {/* Toggle Active / Hidden */}
-                            <button
-                              type="button"
-                              onClick={() => toggleStatus(ad)}
-                              className={`h-8 px-2.5 rounded-xl border text-[11.5px] font-bold transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
-                                ad.status === 'active'
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                                  : 'bg-stone-100 text-stone-700 border-stone-300'
-                              }`}
-                              title={ad.status === 'active' ? 'مخفی کردن' : 'فعال‌سازی'}
-                            >
-                              <CheckCircle size={13} className={ad.status === 'active' ? 'text-emerald-600' : 'text-stone-400'} />
-                              <span>{ad.status === 'active' ? 'فعال' : 'مخفی'}</span>
-                            </button>
-
-                            {/* View Live on Site */}
-                            <button
-                              type="button"
-                              onClick={() => window.open(`?ad=${ad.reference_number || ad.id}`, '_blank')}
-                              className="h-8 px-2.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-[11.5px] font-semibold flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
-                              title="مشاهده آگهی در سایت"
-                            >
-                              <ExternalLink size={13} />
-                              <span className="hidden sm:inline">مشاهده</span>
-                            </button>
-
-                            {/* Delete Ad */}
-                            <button
-                              type="button"
-                              onClick={() => deleteAdAdmin(ad.id)}
-                              className="h-8 w-8 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center cursor-pointer active:scale-95 transition-all"
-                              title="حذف دائمی آگهی"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* 2. Middle Row: Photo + Title + Pricing + Location + Description */}
-                        <div className="flex flex-col sm:flex-row gap-4 items-start">
-                          {/* Image Thumbnail */}
-                          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-stone-100 border border-stone-200/80 overflow-hidden shrink-0 shadow-2xs">
-                            {ad.images && ad.images[0] ? (
-                              <img src={ad.images[0]} alt="" className="h-full w-full object-cover hover:scale-105 transition-transform" />
-                            ) : (
-                              <div className="h-full w-full flex flex-col items-center justify-center text-[11px] text-stone-400 gap-1 bg-stone-50">
-                                <ImageIcon size={20} className="text-stone-300" />
-                                <span>بدون عکس</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Title & Core Details */}
-                          <div className="flex-1 min-w-0 space-y-2">
-                            <h3 className="text-base font-extrabold text-stone-900 tracking-tight leading-snug">
-                              {ad.title}
-                            </h3>
-
-                            {/* City, Price & Views Strip */}
-                            <div className="flex items-center gap-3 text-xs text-stone-500 flex-wrap">
-                              <span className="flex items-center gap-1 text-stone-700 font-medium">
-                                <MapPin size={13} className="text-stone-400" />
-                                <span>{ad.city || 'نامشخص'} ({countryObj.nameFa})</span>
-                              </span>
-                              <span>•</span>
-                              <span className="font-bold text-stone-900 font-mono">
-                                {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
-                              </span>
-                              <span>•</span>
-                              <span className="flex items-center gap-1 font-mono text-stone-600">
-                                <Eye size={13} className="text-stone-400" />
-                                <span>{ad.views_count || 1} بازدید</span>
-                              </span>
-                              <span>•</span>
-                              <span className="text-stone-400 font-mono text-[11px]">
-                                ثبت: {new Date(ad.created_at || '2026-01-01').toLocaleDateString('sv-SE')}
-                              </span>
-                            </div>
-
-                            {/* Description Full Text */}
-                            {ad.description && (
-                              <p className="text-xs text-stone-600 leading-relaxed whitespace-pre-line bg-stone-50/70 p-3 rounded-xl border border-stone-100">
-                                {ad.description}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* 3. Bottom Row: Complete Contact Information & Quick Country Changer */}
-                        <div className="pt-3 border-t border-stone-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-xs bg-stone-50/50 p-3 rounded-xl">
-                          
-                          {/* Contacts Details */}
-                          <div className="flex items-center gap-4 flex-wrap text-stone-700">
-                            {ad.contact_name && (
-                              <div className="flex items-center gap-1.5">
-                                <User size={13} className="text-stone-400" />
-                                <span className="text-stone-500">نام:</span>
-                                <span className="font-bold text-stone-900">{ad.contact_name}</span>
-                              </div>
-                            )}
-
-                            {ad.contact_phone && (
-                              <a
-                                href={`tel:${ad.contact_phone}`}
-                                className="flex items-center gap-1.5 font-mono text-stone-900 font-semibold hover:text-blue-600 transition-colors"
-                              >
-                                <Phone size={13} className="text-stone-400" />
-                                <span>{ad.contact_phone}</span>
-                              </a>
-                            )}
-
-                            {ad.contact_whatsapp && (
-                              <a
-                                href={`https://wa.me/${ad.contact_whatsapp.replace(/[^0-9]/g, '')}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center gap-1 font-mono text-emerald-700 font-bold hover:underline"
-                              >
-                                <span>واتساپ: {ad.contact_whatsapp}</span>
-                              </a>
-                            )}
-
-                            {ad.contact_telegram && (
-                              <a
-                                href={`https://t.me/${ad.contact_telegram.replace('@', '')}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center gap-1 font-mono text-sky-700 font-bold hover:underline"
-                              >
-                                <Send size={12} />
-                                <span>{ad.contact_telegram}</span>
-                              </a>
-                            )}
-
-                            {ad.contact_email && (
-                              <a
-                                href={`mailto:${ad.contact_email}`}
-                                className="flex items-center gap-1.5 font-mono text-stone-600 hover:text-stone-900 hover:underline"
-                              >
-                                <Mail size={13} className="text-stone-400" />
-                                <span>{ad.contact_email}</span>
-                              </a>
-                            )}
-                          </div>
-
-                          {/* Quick Country Switcher for this Ad */}
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <span className="text-[11px] font-bold text-stone-500">تغییر کشور:</span>
-                            <div className="inline-flex rounded-lg border border-stone-200 bg-white p-0.5">
-                              {COUNTRIES.map(c => {
-                                const isCurrent = (ad.country || 'se') === c.id;
-                                return (
-                                  <button
-                                    key={c.id}
-                                    type="button"
-                                    onClick={() => updateAdCountry(ad.id, c.id)}
-                                    className={`px-2 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-                                      isCurrent
-                                        ? 'bg-slate-900 text-white shadow-2xs'
-                                        : 'text-stone-600 hover:text-stone-950 hover:bg-stone-100'
-                                    }`}
+                              {/* 3. Title & Category */}
+                              <td className="py-2.5 px-3 align-middle">
+                                <div className="min-w-0 max-w-[280px]">
+                                  <span 
+                                    onClick={() => setSelectedAdForModal(ad)}
+                                    className="font-extrabold text-[13px] text-stone-900 hover:text-blue-600 cursor-pointer line-clamp-1 block transition-colors leading-snug"
+                                    title={ad.title}
                                   >
-                                    {c.nameFa}
+                                    {ad.title}
+                                  </span>
+                                  <div className="flex items-center gap-2 mt-1 text-[11px] text-stone-400">
+                                    {catObj && (
+                                      <span className="px-1.5 py-0.2 rounded bg-stone-100 text-stone-600 font-medium text-[10.5px]">
+                                        {catObj.fa}
+                                      </span>
+                                    )}
+                                    <span className="font-mono text-[10px]">
+                                      {new Date(ad.created_at || '2026-01-01').toLocaleDateString('sv-SE')}
+                                    </span>
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* 4. City & Price */}
+                              <td className="py-2.5 px-3 align-middle">
+                                <div className="space-y-0.5">
+                                  <div className="flex items-center gap-1 text-stone-700 font-medium text-[11.5px]">
+                                    <MapPin size={12} className="text-stone-400 shrink-0" />
+                                    <span>{ad.city || 'نامشخص'}</span>
+                                  </div>
+                                  <span className="font-extrabold text-stone-900 font-mono text-[12px] block">
+                                    {ad.price ? `${Number(ad.price).toLocaleString()} ${ad.price_type || 'kr'}` : 'توافقی'}
+                                  </span>
+                                </div>
+                              </td>
+
+                              {/* 5. Contact Information */}
+                              <td className="py-2.5 px-3 align-middle">
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-1 text-stone-800 font-bold text-[11.5px]">
+                                    <User size={12} className="text-stone-400 shrink-0" />
+                                    <span className="truncate max-w-[120px]">{ad.contact_name || 'بدون نام'}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5">
+                                    {ad.contact_phone && (
+                                      <a
+                                        href={`tel:${ad.contact_phone}`}
+                                        className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold text-blue-700 hover:underline bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200/60"
+                                        title={`تماس تلفنی: ${ad.contact_phone}`}
+                                      >
+                                        <Phone size={10} />
+                                        <span>{ad.contact_phone}</span>
+                                      </a>
+                                    )}
+                                    {ad.contact_whatsapp && (
+                                      <a
+                                        href={`https://wa.me/${ad.contact_whatsapp.replace(/[^0-9]/g, '')}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="h-6 w-6 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 flex items-center justify-center text-[10px] font-bold"
+                                        title={`واتساپ: ${ad.contact_whatsapp}`}
+                                      >
+                                        W
+                                      </a>
+                                    )}
+                                    {ad.contact_telegram && (
+                                      <a
+                                        href={`https://t.me/${ad.contact_telegram.replace('@', '')}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="h-6 w-6 rounded bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200 flex items-center justify-center text-[10px]"
+                                        title={`تلگرام: ${ad.contact_telegram}`}
+                                      >
+                                        <Send size={10} />
+                                      </a>
+                                    )}
+                                    {ad.contact_email && (
+                                      <a
+                                        href={`mailto:${ad.contact_email}`}
+                                        className="h-6 w-6 rounded bg-stone-100 text-stone-600 hover:bg-stone-200 border border-stone-200 flex items-center justify-center text-[10px]"
+                                        title={`ایمیل: ${ad.contact_email}`}
+                                      >
+                                        <Mail size={10} />
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* 6. Views */}
+                              <td className="py-2.5 px-3 text-center align-middle">
+                                <span className="inline-flex items-center gap-1 font-mono text-[11.5px] font-semibold text-stone-600 bg-stone-50 px-2 py-0.5 rounded border border-stone-200/60">
+                                  <Eye size={11} className="text-stone-400" />
+                                  <span>{ad.views_count || 1}</span>
+                                </span>
+                              </td>
+
+                              {/* 7. Status & VIP */}
+                              <td className="py-2.5 px-3 text-center align-middle">
+                                <div className="space-y-1">
+                                  <span className={`inline-block px-2 py-0.5 rounded-full text-[10.5px] font-bold border ${
+                                    ad.status === 'active'
+                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                      : 'bg-stone-100 text-stone-600 border-stone-200'
+                                  }`}>
+                                    {ad.status === 'active' ? 'فعال' : 'مخفی'}
+                                  </span>
+                                  {ad.is_featured && (
+                                    <span className="flex items-center justify-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-extrabold border border-amber-300">
+                                      <Sparkles size={10} className="text-amber-600" />
+                                      <span>VIP</span>
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+
+                              {/* 8. Actions */}
+                              <td className="py-2.5 px-3 text-center align-middle">
+                                <div className="flex items-center justify-center gap-1">
+                                  {/* View Full Info Modal */}
+                                  <button
+                                    type="button"
+                                    onClick={() => setSelectedAdForModal(ad)}
+                                    className="h-8 px-2 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                                    title="مشاهده جزئیات کامل و تصاویر"
+                                  >
+                                    <Eye size={13} />
+                                    <span>کامل</span>
                                   </button>
-                                );
-                              })}
-                            </div>
-                          </div>
 
-                        </div>
+                                  {/* Toggle VIP */}
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleFeatured(ad)}
+                                    className={`h-8 w-8 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
+                                      ad.is_featured
+                                        ? 'bg-amber-50 text-amber-800 border-amber-300'
+                                        : 'bg-white hover:bg-stone-50 text-stone-400 border-stone-200'
+                                    }`}
+                                    title={ad.is_featured ? 'حذف نشان VIP' : 'ویژه کردن (VIP)'}
+                                  >
+                                    <Sparkles size={13} className={ad.is_featured ? 'text-amber-600' : 'text-stone-400'} />
+                                  </button>
 
-                      </div>
-                    );
-                  })
+                                  {/* Toggle Active / Hidden */}
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleStatus(ad)}
+                                    className={`h-8 w-8 rounded-lg border flex items-center justify-center cursor-pointer transition-all active:scale-95 ${
+                                      ad.status === 'active'
+                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                        : 'bg-stone-100 text-stone-500 border-stone-300'
+                                    }`}
+                                    title={ad.status === 'active' ? 'مخفی کردن آگهی' : 'فعال‌سازی آگهی'}
+                                  >
+                                    <CheckCircle size={13} className={ad.status === 'active' ? 'text-emerald-600' : 'text-stone-400'} />
+                                  </button>
+
+                                  {/* Delete Ad */}
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteAdAdmin(ad.id)}
+                                    className="h-8 w-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center cursor-pointer transition-all active:scale-95"
+                                    title="حذف دائمی آگهی"
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
 
@@ -2456,112 +2462,292 @@ export default function AdminPanel({ onClose, onRefreshAds }) {
       </div>
 
       {/* ========================================================
-          SINGLE MOBILE DETAILS DRAWER (Apple iOS 18 Sheet)
+          CENTERED FULL-INFO MODAL DIALOG (Centered, Frosted Backdrop)
       ======================================================== */}
-      {mobileDetailOpen && currentSelectedAd && (
-        <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden font-vazir" dir="rtl">
+      {selectedAdForModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 select-none"
+          dir="rtl"
+          onClick={() => setSelectedAdForModal(null)}
+        >
           <div 
-            className="fixed inset-0 bg-black/40 backdrop-blur-md animate-in fade-in duration-200"
-            onClick={() => setMobileDetailOpen(false)}
-          />
-          <div className="relative w-full max-h-[88vh] bg-white rounded-t-[28px] border-t border-black/[0.08] p-5 pb-8 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden z-10 space-y-4 text-zinc-900 shadow-2xl animate-in slide-in-from-bottom duration-250 ease-out">
-            {/* Tactile Grab Handle */}
-            <div className="w-12 h-1.5 bg-stone-300 rounded-full mx-auto -mt-1 mb-2 shrink-0" />
+            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 select-text"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-stone-100 bg-stone-50/70">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-extrabold text-[15px] text-stone-900">
+                  جزئیات کامل آگهی
+                </span>
+                <span className="font-mono text-xs font-bold text-stone-700 bg-stone-200/80 px-2 py-0.5 rounded">
+                  #{selectedAdForModal.reference_number || selectedAdForModal.id.slice(0, 8)}
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-200">
+                  {COUNTRIES.find(c => c.id === (selectedAdForModal.country || 'se'))?.nameFa}
+                </span>
+                {selectedAdForModal.is_featured && (
+                  <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[11px] font-extrabold border border-amber-300 flex items-center gap-1">
+                    <Sparkles size={11} className="text-amber-600" />
+                    <span>VIP ویژه</span>
+                  </span>
+                )}
+                <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${
+                  selectedAdForModal.status === 'active'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-stone-100 text-stone-600 border-stone-200'
+                }`}>
+                  {selectedAdForModal.status === 'active' ? 'فعال' : 'مخفی'}
+                </span>
+              </div>
 
-            <div className="flex items-center justify-between pb-3 border-b border-black/[0.06]">
-              <h3 className="text-sm font-black text-zinc-900 truncate max-w-[240px]">
-                {currentSelectedAd.title}
-              </h3>
               <button
                 type="button"
-                onClick={() => setMobileDetailOpen(false)}
-                className="h-8 w-8 flex items-center justify-center rounded-full text-stone-500 hover:text-zinc-900 hover:bg-black/[0.05] active:scale-90"
+                onClick={() => setSelectedAdForModal(null)}
+                className="h-8 w-8 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-500 hover:text-stone-800 transition-colors cursor-pointer"
+                title="بستن پنجره"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
-            {/* Quick Actions Bar */}
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => toggleFeatured(currentSelectedAd)}
-                className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all border ${
-                  currentSelectedAd.is_featured
-                    ? 'bg-[#fef6e7] text-[#9a6200] border-[#fbdca7]'
-                    : 'bg-stone-100 text-stone-700 border-stone-200'
-                }`}
-              >
-                {currentSelectedAd.is_featured ? 'برداشتن VIP' : 'اعطای VIP'}
-              </button>
+            {/* Modal Body (Natural internal scroll) */}
+            <div className="overflow-y-auto p-5 sm:p-6 space-y-5 flex-1">
+              
+              {/* Photo Preview / Gallery */}
+              {selectedAdForModal.images && selectedAdForModal.images.length > 0 ? (
+                <div className="space-y-2">
+                  <div className="w-full h-64 sm:h-72 rounded-2xl overflow-hidden bg-stone-100 border border-stone-200 shadow-2xs">
+                    <img 
+                      src={selectedAdForModal.images[0]} 
+                      alt="" 
+                      className="w-full h-full object-cover" 
+                    />
+                  </div>
+                  {selectedAdForModal.images.length > 1 && (
+                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                      {selectedAdForModal.images.map((imgUrl, idx) => (
+                        <div key={idx} className="h-16 rounded-xl overflow-hidden bg-stone-100 border border-stone-200">
+                          <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="w-full h-32 rounded-2xl bg-stone-50 border border-stone-200/80 flex flex-col items-center justify-center text-stone-400 gap-1.5">
+                  <ImageIcon size={28} className="text-stone-300" />
+                  <span className="text-xs">تصویری برای این آگهی ثبت نشده است</span>
+                </div>
+              )}
 
-              <button
-                type="button"
-                onClick={() => toggleStatus(currentSelectedAd)}
-                className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all border ${
-                  currentSelectedAd.status === 'active'
-                    ? 'bg-[#eaf7ee] text-[#1b7a37] border-[#c4e9cb]'
-                    : 'bg-rose-50 text-rose-700 border-rose-200'
-                }`}
-              >
-                {currentSelectedAd.status === 'active' ? 'مخفی کردن' : 'فعال‌سازی'}
-              </button>
-            </div>
+              {/* Title & Key Codes */}
+              <div className="space-y-2 pb-3 border-b border-stone-100">
+                <h2 className="text-lg font-black text-stone-900 leading-snug">
+                  {selectedAdForModal.title}
+                </h2>
 
-            {/* Country Selector for this Ad */}
-            <div className="p-3 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] space-y-2">
-              <label className="block text-[11px] font-bold text-stone-700">تغییر کشور:</label>
-              <div className="grid grid-cols-2 gap-1.5">
-                {COUNTRIES.map(c => {
-                  const isCurrent = (currentSelectedAd.country || 'se') === c.id;
-                  return (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => updateAdCountry(currentSelectedAd.id, c.id)}
-                      className={`py-2 px-2 rounded-xl text-xs font-bold transition-all ${
-                        isCurrent ? 'bg-zinc-900 text-white shadow-xs' : 'bg-white text-zinc-700 border border-stone-200'
-                      }`}
+                <div className="flex items-center gap-2.5 text-xs text-stone-500 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => copyText(selectedAdForModal.reference_number, `modal-ref`, 'کد پیگیری')}
+                    className="font-mono text-xs font-bold text-stone-800 bg-stone-100 hover:bg-stone-200 px-2.5 py-1 rounded-lg border border-stone-200 flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>کد رهگیری: #{selectedAdForModal.reference_number || selectedAdForModal.id.slice(0, 8)}</span>
+                    <Copy size={12} className="text-stone-400" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => copyText(selectedAdForModal.pin_code || '1234', `modal-pin`, 'رمز ویرایش')}
+                    className="font-mono text-xs font-extrabold text-amber-900 bg-amber-50 hover:bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-200 flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>رمز ویرایش: {selectedAdForModal.pin_code || '1234'}</span>
+                    <Copy size={12} className="text-amber-600" />
+                  </button>
+
+                  <span className="flex items-center gap-1 font-mono text-stone-600">
+                    <Eye size={13} className="text-stone-400" />
+                    <span>{selectedAdForModal.views_count || 1} بازدید</span>
+                  </span>
+
+                  <span className="text-stone-400 font-mono text-xs">
+                    تاریخ ثبت: {new Date(selectedAdForModal.created_at || '2026-01-01').toLocaleDateString('sv-SE')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Location & Pricing Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
+                  <span className="text-[11px] font-bold text-stone-400 uppercase">موقعیت مکانی</span>
+                  <div className="flex items-center gap-1.5 text-sm font-bold text-stone-900">
+                    <MapPin size={15} className="text-blue-600" />
+                    <span>{selectedAdForModal.city || 'نامشخص'} ({COUNTRIES.find(c => c.id === (selectedAdForModal.country || 'se'))?.nameFa})</span>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-1">
+                  <span className="text-[11px] font-bold text-stone-400 uppercase">قیمت / مبلغ</span>
+                  <div className="text-sm font-extrabold text-stone-900 font-mono">
+                    {selectedAdForModal.price ? `${Number(selectedAdForModal.price).toLocaleString()} ${selectedAdForModal.price_type || 'kr'}` : 'توافقی'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Full Description */}
+              <div className="space-y-1.5">
+                <span className="text-xs font-bold text-stone-500">متن کامل آگهی:</span>
+                <div className="p-4 rounded-2xl bg-stone-50/70 border border-stone-200/70 text-xs sm:text-[13px] text-stone-700 leading-relaxed whitespace-pre-line">
+                  {selectedAdForModal.description || 'توضیحاتی برای این آگهی ثبت نشده است.'}
+                </div>
+              </div>
+
+              {/* Full Contact Information Card */}
+              <div className="p-4 rounded-2xl bg-blue-50/40 border border-blue-200/70 space-y-3">
+                <span className="text-xs font-bold text-blue-900 block">اطلاعات کامل تماس آگهی‌دهنده:</span>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                  {selectedAdForModal.contact_name && (
+                    <div className="flex items-center gap-2 text-stone-800">
+                      <User size={14} className="text-stone-400" />
+                      <span className="text-stone-500">نام:</span>
+                      <span className="font-bold">{selectedAdForModal.contact_name}</span>
+                    </div>
+                  )}
+
+                  {selectedAdForModal.contact_phone && (
+                    <a
+                      href={`tel:${selectedAdForModal.contact_phone}`}
+                      className="flex items-center gap-2 font-mono text-blue-700 font-bold hover:underline"
                     >
-                      {c.nameFa}
-                    </button>
-                  );
-                })}
+                      <Phone size={14} className="text-blue-500" />
+                      <span>{selectedAdForModal.contact_phone}</span>
+                    </a>
+                  )}
+
+                  {selectedAdForModal.contact_whatsapp && (
+                    <a
+                      href={`https://wa.me/${selectedAdForModal.contact_whatsapp.replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-2 font-mono text-emerald-700 font-bold hover:underline"
+                    >
+                      <span>واتساپ: {selectedAdForModal.contact_whatsapp}</span>
+                    </a>
+                  )}
+
+                  {selectedAdForModal.contact_telegram && (
+                    <a
+                      href={`https://t.me/${selectedAdForModal.contact_telegram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-2 font-mono text-sky-700 font-bold hover:underline"
+                    >
+                      <Send size={13} />
+                      <span>{selectedAdForModal.contact_telegram}</span>
+                    </a>
+                  )}
+
+                  {selectedAdForModal.contact_email && (
+                    <a
+                      href={`mailto:${selectedAdForModal.contact_email}`}
+                      className="flex items-center gap-2 font-mono text-stone-600 hover:text-stone-900 hover:underline sm:col-span-2"
+                    >
+                      <Mail size={14} className="text-stone-400" />
+                      <span>{selectedAdForModal.contact_email}</span>
+                    </a>
+                  )}
+                </div>
               </div>
+
+              {/* Quick Country Switcher */}
+              <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <span className="text-xs font-bold text-stone-600">تغییر کشور آگهی:</span>
+                <div className="inline-flex rounded-xl border border-stone-200 bg-white p-1 gap-1">
+                  {COUNTRIES.map(c => {
+                    const isCurrent = (selectedAdForModal.country || 'se') === c.id;
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => updateAdCountry(selectedAdForModal.id, c.id)}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          isCurrent
+                            ? 'bg-slate-900 text-white shadow-2xs'
+                            : 'text-stone-600 hover:text-stone-950 hover:bg-stone-100'
+                        }`}
+                      >
+                        {c.nameFa}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
             </div>
 
-            {/* Reference & PIN info */}
-            <div className="p-3.5 rounded-2xl bg-[#f8fafc] border border-[#e5ebf4] space-y-2 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-stone-500">کد پیگیری:</span>
-                <span className="font-mono font-bold text-zinc-900">{currentSelectedAd.reference_number}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-stone-500">رمز ویرایش:</span>
-                <span className="font-mono font-bold text-[#9a6200] bg-[#fef6e7] px-2 py-0.5 rounded border border-[#fbdca7]">{currentSelectedAd.pin_code || '1234'}</span>
-              </div>
-            </div>
+            {/* Modal Footer Actions */}
+            <div className="px-5 sm:px-6 py-4 bg-stone-50 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Toggle VIP */}
+                <button
+                  type="button"
+                  onClick={() => toggleFeatured(selectedAdForModal)}
+                  className={`h-9 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 ${
+                    selectedAdForModal.is_featured
+                      ? 'bg-amber-50 text-amber-800 border-amber-300'
+                      : 'bg-white hover:bg-stone-100 text-stone-700 border-stone-200'
+                  }`}
+                >
+                  <Sparkles size={14} className={selectedAdForModal.is_featured ? 'text-amber-600' : 'text-stone-400'} />
+                  <span>{selectedAdForModal.is_featured ? 'VIP فعال است' : 'تبدیل به VIP'}</span>
+                </button>
 
-            {/* Live Link & Delete */}
-            <div className="space-y-2 pt-1">
+                {/* Toggle Status */}
+                <button
+                  type="button"
+                  onClick={() => toggleStatus(selectedAdForModal)}
+                  className={`h-9 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 ${
+                    selectedAdForModal.status === 'active'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                      : 'bg-stone-100 text-stone-700 border-stone-300'
+                  }`}
+                >
+                  <CheckCircle size={14} className={selectedAdForModal.status === 'active' ? 'text-emerald-600' : 'text-stone-400'} />
+                  <span>{selectedAdForModal.status === 'active' ? 'آگهی فعال است' : 'آگهی مخفی است'}</span>
+                </button>
+
+                {/* View on Site */}
+                <button
+                  type="button"
+                  onClick={() => window.open(`?ad=${selectedAdForModal.reference_number || selectedAdForModal.id}`, '_blank')}
+                  className="h-9 px-3 rounded-xl border border-stone-200 bg-white hover:bg-stone-100 text-stone-700 text-xs font-semibold flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                >
+                  <ExternalLink size={14} />
+                  <span>مشاهده در سایت</span>
+                </button>
+
+                {/* Delete Ad */}
+                <button
+                  type="button"
+                  onClick={() => deleteAdAdmin(selectedAdForModal.id)}
+                  className="h-9 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                >
+                  <Trash2 size={14} />
+                  <span>حذف آگهی</span>
+                </button>
+              </div>
+
               <button
                 type="button"
-                onClick={() => window.open(`?ad=${currentSelectedAd.reference_number || currentSelectedAd.id}`, '_blank')}
-                className="w-full py-2.5 rounded-xl bg-zinc-900 text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                onClick={() => setSelectedAdForModal(null)}
+                className="h-9 px-4 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-bold cursor-pointer transition-colors"
               >
-                <Eye size={14} />
-                <span>مشاهده در سایت</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => deleteAdAdmin(currentSelectedAd.id)}
-                className="w-full py-2.5 rounded-xl bg-rose-50 text-rose-600 text-xs font-bold flex items-center justify-center gap-1.5 border border-rose-200 cursor-pointer"
-              >
-                <Trash2 size={14} />
-                <span>حذف آگهی</span>
+                بستن
               </button>
             </div>
+
           </div>
         </div>
       )}
